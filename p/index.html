@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GitHub Pages 图片管理器（只读）</title>
+  <title>GitHub Pages 图片管理器（分页加载版）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body {
@@ -55,6 +55,12 @@
       font-size: .9rem;
       color: #555;
     }
+    #loading {
+      text-align: center;
+      padding: 1rem;
+      color: #888;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -65,8 +71,17 @@
 
   <div id="status">载入中...</div>
   <div id="grid" class="grid"></div>
+  <div id="loading">加载更多...</div>
 
 <script>
+const OWNER_REPO = "wxixh67/vds";
+const PATH = "p";
+const PAGE_SIZE = 20;
+
+let allItems = [];
+let currentPage = 0;
+let loading = false;
+
 async function listImages(ownerRepo, path = 'p') {
   const api = `https://api.github.com/repos/${ownerRepo}/contents/${path}`;
   const res = await fetch(api);
@@ -88,21 +103,58 @@ function makeCard(item) {
   return el;
 }
 
+function loadNextPage() {
+  if (loading) return;
+  loading = true;
+
+  const grid = document.getElementById('grid');
+  const loadingEl = document.getElementById('loading');
+
+  const start = currentPage * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const items = allItems.slice(start, end);
+
+  if (!items.length) {
+    loadingEl.style.display = "none";
+    return;
+  }
+
+  for (const it of items) {
+    grid.appendChild(makeCard(it));
+  }
+
+  currentPage++;
+  loading = false;
+
+  if (end >= allItems.length) {
+    loadingEl.textContent = "✅ 已全部加载完成";
+  } else {
+    loadingEl.style.display = "block";
+  }
+}
+
 (async () => {
   const status = document.getElementById('status');
-  const grid = document.getElementById('grid');
+  const loadingEl = document.getElementById('loading');
   try {
-    const items = await listImages("wxixh67/vds", "p");
-    if (!items.length) {
+    allItems = await listImages(OWNER_REPO, PATH);
+    if (!allItems.length) {
       status.textContent = '⚠️ p/ 目录下没有图片或目录不存在。';
     } else {
-      status.textContent = `✅ 找到 ${items.length} 张图片。`;
-      for (const it of items) grid.appendChild(makeCard(it));
+      status.textContent = `✅ 找到 ${allItems.length} 张图片。`;
+      loadNextPage();
     }
   } catch (e) {
     status.textContent = '❌ 错误：' + e.message;
   }
 })();
+
+// 无限滚动监听
+window.addEventListener('scroll', () => {
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+    loadNextPage();
+  }
+});
 </script>
 </body>
 </html>
