@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GitHub Pages 图片管理器（分页加载版）</title>
+  <title>GitHub Pages 图片管理器（原图版）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body {
@@ -21,9 +21,11 @@
     h1 {
       font-size: 1.5rem;
     }
+
+    /* 使用 flex 而不是强制网格裁切 */
     .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 12px;
     }
     .card {
@@ -33,14 +35,16 @@
       background: #fff;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       transition: transform 0.15s ease;
+      flex: 0 0 auto;
+      max-width: 100%;
     }
     .card:hover {
       transform: scale(1.03);
     }
     .card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
+      width: auto;        /* 按原始分辨率 */
+      height: auto;
+      max-width: 100%;    /* 如果太宽，就缩小到容器 */
       display: block;
     }
     .meta {
@@ -75,7 +79,7 @@
 
 <script>
 const OWNER_REPO = "wxixh67/vds";
-const PATH = "p/p";
+const PATH = "p/p";   // 这里要确保目录正确
 const PAGE_SIZE = 20;
 
 let allItems = [];
