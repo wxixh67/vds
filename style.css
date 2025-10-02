@@ -1,0 +1,109 @@
+/* ========== 全局基础样式 ========== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 容器限制宽度，居中 */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ========== 页头 ========== */
+.site-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.brand {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+/* ========== 卡片 (section) ========== */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+/* 网格布局 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+  text-decoration: none;
+  background: #fafafa;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.tile:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.5rem;
+}
+
+.tile span {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* ========== 关于我文本 ========== */
+.card p {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* ========== 页脚 ========== */
+.site-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+  padding: 0.75rem;
+  border-top: 1px solid #e5e5e5;
+  margin-top: -0.5rem; /* 🔑 缩小“关于我”和footer间距 */
+}
