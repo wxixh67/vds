@@ -34,20 +34,30 @@
 </head>
 <body>
   <h1>我的图片在线浏览</h1>
-  <div class="gallery">
-    <!-- 点击缩略图可以放大 -->
-    <a href="images/1.png" data-lightbox="album" data-title="图片1">
-      <img src="images/pic1.jpg" alt="pic1">
-    </a>
-    <a href="images/2.png" data-lightbox="album" data-title="图片2">
-      <img src="images/3.png" alt="pic2">
-    </a>
-    <a href="images/pic3.webp" data-lightbox="album" data-title="图片3">
-      <img src="images/pic3.webp" alt="pic3">
-    </a>
-  </div>
+  <div class="gallery" id="gallery"></div>
 
-  <!-- 引入 Lightbox 脚本 -->
   <script src="https://cdn.jsdelivr.net/npm/lightbox2@2/dist/js/lightbox.min.js"></script>
+  <script>
+    // 动态加载 images.json
+    fetch('images.json')
+      .then(response => response.json())
+      .then(images => {
+        const gallery = document.getElementById('gallery');
+        images.forEach(img => {
+          const link = document.createElement('a');
+          link.href = img.src;
+          link.setAttribute('data-lightbox', 'album');
+          link.setAttribute('data-title', img.title);
+
+          const image = document.createElement('img');
+          image.src = img.src;
+          image.alt = img.title;
+
+          link.appendChild(image);
+          gallery.appendChild(link);
+        });
+      })
+      .catch(err => console.error('加载图片列表失败:', err));
+  </script>
 </body>
 </html>
