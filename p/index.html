@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>电影在线 - GitHub Pages</title>
+  <meta charset="UTF-8">
+  <title>我的在线相册</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; }
-    header { padding:20px; text-align:center; background:#222; }
-    .movie-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap:20px; padding:20px; }
-    .movie-card { background:#333; border-radius:10px; padding:10px; text-align:center; }
-    video { width:100%; border-radius:10px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🎬 我的在线电影网站</h1>
-  </header>
-  
-  <div class="movie-grid">
-    <div class="movie-card">
-      <h3>示例电影 1</h3>
-      <video controls>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-        你的浏览器不支持播放
-      </video>
-    </div>
-
-    <div class="movie-card">
-      <h3>示例电影 2</h3>
-      <video controls>
-        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-        你的浏览器不支持播放
-      </video>
-    </div>
+  <h1>我的图片在线浏览</h1>
+  <div class="gallery">
+    <img src="images/pic1.jpg" alt="pic1">
+    <img src="images/pic2.png" alt="pic2">
+    <img src="images/pic3.webp" alt="pic3">
   </div>
 </body>
 </html>
