@@ -10,8 +10,12 @@ image_files = [f for f in os.listdir(image_folder) if any(f.lower().endswith(ext
 
 # 生成 img 标签列表
 img_tags = []
-for index, image_file in enumerate(image_files, start=1):
-    img_tag = f'<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/{index}.png" alt="Image {index}" width="300">'
+for image_file in image_files:
+    # 获取文件名（去除扩展名）
+    file_name = os.path.splitext(image_file)[0]
+    
+    # 构造 img 标签
+    img_tag = f'<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/{file_name}.png" alt="{file_name}" width="300">'
     img_tags.append(img_tag)
 
 # 将 img 标签写入 ttt.txt 文件
