@@ -1,0 +1,5 @@
+[
+  { "src": "images/1.png", "title": "图片1" },
+  { "src": "images/2.png", "title": "图片2" },
+  { "src": "images/3.png", "title": "图片3" }
+]
