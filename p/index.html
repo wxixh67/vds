@@ -57,17 +57,32 @@
     max-height:100vh;
     width:auto;
     height:auto;
-    object-fit:contain;   /* 保持比例，铺满屏幕 */
+    object-fit:contain;
     display:block;
     border-radius:6px;
     box-shadow:0 10px 30px rgba(0,0,0,0.6);
   }
-  .lb-close{position:absolute;right:20px;top:20px;background:var(--card);border:1px solid rgba(255,255,255,0.1);padding:10px;border-radius:999px;cursor:pointer;font-size:18px;color:#fff}
+
+  /* 关闭按钮 - 透明 SVG X */
+  .lb-close {
+    position:absolute;
+    right:20px;
+    top:20px;
+    background:transparent;
+    border:none;
+    padding:10px;
+    cursor:pointer;
+    color:rgba(255,255,255,0.7);
+    transition:color .2s ease;
+  }
+  .lb-close:hover {
+    color:#fff;
+  }
+
   .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;pointer-events:none}
   .lb-nav button{pointer-events:auto;background:rgba(0,0,0,0.4);border:0;padding:16px;cursor:pointer;font-size:28px;color:var(--accent);border-radius:8px}
   footer{color:#93a3b6;text-align:center;padding:16px 12px;margin-top:20px;font-size:13px}
 
-  /* responsive tweaks */
   @media (min-width:900px){
     .grid{grid-template-columns: repeat(auto-fill,minmax(220px,1fr));}
   }
@@ -86,7 +101,12 @@
 <!-- Lightbox -->
 <div id="lb" class="lb" role="dialog" aria-hidden="true">
   <div class="lb-content">
-    <button id="lb-close" class="lb-close" aria-label="关闭">✕</button>
+    <button id="lb-close" class="lb-close" aria-label="关闭">
+      <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
     <div class="lb-nav">
       <button id="prev" aria-label="上一张">‹</button>
       <button id="next" aria-label="下一张">›</button>
