@@ -22,7 +22,7 @@
       font-size: 1.5rem;
     }
 
-    /* 使用 flex 而不是强制网格裁切 */
+    /* 使用 flex 布局，保持原图比例 */
     .grid {
       display: flex;
       flex-wrap: wrap;
@@ -36,15 +36,15 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       transition: transform 0.15s ease;
       flex: 0 0 auto;
-      max-width: 100%;
+      max-width: 280px;   /* 限制单卡片最大宽度 */
     }
     .card:hover {
       transform: scale(1.03);
     }
     .card img {
-      width: auto;        /* 按原始分辨率 */
+      width: auto;        
       height: auto;
-      max-width: 100%;    /* 如果太宽，就缩小到容器 */
+      max-width: 100%;    
       display: block;
     }
     .meta {
@@ -79,7 +79,7 @@
 
 <script>
 const OWNER_REPO = "wxixh67/vds";
-const PATH = "p/p";   // 这里要确保目录正确
+const PATH = "p";     // ✅ 修正为 p
 const PAGE_SIZE = 20;
 
 let allItems = [];
@@ -119,7 +119,7 @@ function loadNextPage() {
   const items = allItems.slice(start, end);
 
   if (!items.length) {
-    loadingEl.style.display = "none";
+    loadingEl.textContent = "✅ 已全部加载完成";  // ✅ 改进提示
     return;
   }
 
@@ -131,9 +131,10 @@ function loadNextPage() {
   loading = false;
 
   if (end >= allItems.length) {
-    loadingEl.textContent = "✅ 已全部加载完成";
+    loadingEl.textContent = "✅ 已全部加载完成";  // ✅ 改进提示
   } else {
     loadingEl.style.display = "block";
+    loadingEl.textContent = "加载更多...";
   }
 }
 
