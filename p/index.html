@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>图片浏览</title>
+<style>
+  :root{
+    --gap:10px;
+    --bg:#0f1724;
+    --card:#0b1220;
+    --accent:#9ad3ff;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:#e6eef8;font-family:system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  header{padding:18px 20px;display:flex;align-items:center;gap:12px}
+  h1{margin:0;font-size:18px}
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+    gap:var(--gap);
+    padding:12px;
+    max-width:1200px;
+    margin:0 auto 40px;
+  }
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform .28s ease;
+    cursor:zoom-in;
+  }
+  .card:hover img{ transform: scale(1.03); }
+  .meta{
+    position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,0.45);padding:6px 8px;border-radius:6px;font-size:12px;
+  }
+
+  /* Lightbox */
+  .lb{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,12,0.75);z-index:999;
+    padding:20px;backdrop-filter: blur(6px);
+  }
+  .lb.open{display:flex;}
+  .lb-content{max-width:calc(100% - 60px);max-height:calc(100% - 60px);position:relative;}
+  .lb-content img{max-width:100%;max-height:100%;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.6);border-radius:8px;}
+  .lb-close{position:absolute;right:-6px;top:-6px;background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:999px;cursor:pointer}
+  .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;pointer-events:none}
+  .lb-nav button{pointer-events:auto;background:transparent;border:0;padding:12px;cursor:pointer;font-size:22px;color:var(--accent)}
+  footer{color:#93a3b6;text-align:center;padding:16px 12px;margin-top:20px;font-size:13px}
+
+  /* responsive tweaks */
+  @media (min-width:900px){
+    .grid{grid-template-columns: repeat(auto-fill,minmax(220px,1fr));}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>图片浏览（GitHub Pages）</h1>
+  <div style="margin-left:auto;font-size:13px;opacity:.8">把图片放到 <code>/images/</code> 文件夹并更新 images.json</div>
+</header>
+
+<main>
+  <div id="grid" class="grid" aria-live="polite"></div>
+</main>
+
+<!-- Lightbox -->
+<div id="lb" class="lb" role="dialog" aria-hidden="true">
+  <div class="lb-content">
+    <button id="lb-close" class="lb-close" aria-label="关闭">✕</button>
+    <div class="lb-nav">
+      <button id="prev" aria-label="上一张">‹</button>
+      <button id="next" aria-label="下一张">›</button>
+    </div>
+    <img id="lb-img" src="" alt="">
+  </div>
+</div>
+
+<footer>提示：图片使用 <code>loading="lazy"</code> 懒加载以节省带宽。</footer>
+
+<script>
+/*
+  两种方式获取图片列表：
+  1) 如果有 images.json（数组形式），则 fetch 它；
+  2) 如果没有 images.json，请在下面的 images 数组里手动填入路径（相对仓库）。
+*/
+
+/* === 方式 A：自动从 images.json 读取（推荐） ===
+格式示例 images.json:
+["images/01.jpg","images/02.jpg","images/foo.png"]
+*/
+async function loadImagesList(){
+  try{
+    const res = await fetch('images.json', {cache: 'no-cache'});
+    if(!res.ok) throw new Error('no images.json');
+    const arr = await res.json();
+    if(!Array.isArray(arr)) throw new Error('images.json 格式错误');
+    return arr;
+  }catch(e){
+    // fallback to manual list below
+    return manualImages();
+  }
+}
+
+/* === 方式 B：手动列出图片（当你不想维护 images.json 时） === */
+function manualImages(){
+  return [
+    /* 把你的图片路径放在这里（相对于 repo 根或 pages 根） */
+    // "images/01.jpg",
+    // "images/02.jpg",
+    // "images/03.png",
+  ];
+}
+
+/* 渲染格子 */
+function makeGridItem(src){
+  const card = document.createElement('div');
+  card.className = 'card';
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.alt = src.split('/').pop();
+  img.src = src;
+  img.tabIndex = 0;
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.textContent = img.alt;
+  card.appendChild(img);
+  card.appendChild(meta);
+
+  // 点击打开 lightbox
+  img.addEventListener('click', ()=> openLightbox(src));
+  img.addEventListener('keydown', (e)=> { if(e.key === 'Enter') openLightbox(src); });
+
+  return card;
+}
+
+/* Lightbox 控制 */
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lb-img');
+const lbClose = document.getElementById('lb-close');
+let images = [], currentIndex = 0;
+
+function openLightbox(src){
+  currentIndex = images.indexOf(src);
+  if(currentIndex < 0) currentIndex = 0;
+  lbImg.src = src;
+  lbImg.alt = src.split('/').pop();
+  lb.classList.add('open');
+  lb.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox(){
+  lb.classList.remove('open');
+  lb.setAttribute('aria-hidden', 'true');
+  lbImg.src = '';
+  document.body.style.overflow = '';
+}
+
+function showIndex(i){
+  if(i < 0) i = images.length - 1;
+  if(i >= images.length) i = 0;
+  currentIndex = i;
+  lbImg.src = images[currentIndex];
+  lbImg.alt = images[currentIndex].split('/').pop();
+}
+
+/* 键盘控制 */
+document.addEventListener('keydown', (e)=>{
+  if(lb.classList.contains('open')){
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowLeft') showIndex(currentIndex - 1);
+    if(e.key === 'ArrowRight') showIndex(currentIndex + 1);
+  }
+});
+
+document.getElementById('prev').addEventListener('click', ()=> showIndex(currentIndex - 1));
+document.getElementById('next').addEventListener('click', ()=> showIndex(currentIndex + 1));
+lbClose.addEventListener('click', closeLightbox);
+lb.addEventListener('click', (e)=> { if(e.target === lb) closeLightbox(); });
+
+/* init */
+(async function init(){
+  images = await loadImagesList();
+  const grid = document.getElementById('grid');
+  if(!images || images.length === 0){
+    grid.innerHTML = '<p style="opacity:.8">没有找到图片。把图片放到 <code>/images/</code> 并通过 images.json 或手动数组填充。</p>';
+    return;
+  }
+  images.forEach(src => grid.appendChild(makeGridItem(src)));
+})();
+</script>
+</body>
+</html>
