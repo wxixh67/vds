@@ -1,61 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片托管网站</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .gallery img {
-            margin: 10px;
-            max-width: 100%;
-            height: auto;
-            border: 2px solid #ccc;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>电影在线 - GitHub Pages</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; }
+    header { padding:20px; text-align:center; background:#222; }
+    .movie-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap:20px; padding:20px; }
+    .movie-card { background:#333; border-radius:10px; padding:10px; text-align:center; }
+    video { width:100%; border-radius:10px; }
+  </style>
 </head>
 <body>
-    <h1>欢迎来到图片托管网站</h1>
-    <div class="gallery">
-        <!-- 在这里插入你的图片 -->
-
-
-
-
-
-
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/08d2c5d2-4adc-448d-9c00-48f17286516c.png" alt="08d2c5d2-4adc-448d-9c00-48f17286516c" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/0b340387-521f-4451-b52b-5c2245d40361.png" alt="0b340387-521f-4451-b52b-5c2245d40361" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/1.png" alt="1" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/2.png" alt="2" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/3.png" alt="3" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/3a75ac0c-39b7-449b-ac7f-571d0d11f444.png" alt="3a75ac0c-39b7-449b-ac7f-571d0d11f444" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/3c21bf36-0465-4b61-847c-ea0d361a23bd.png" alt="3c21bf36-0465-4b61-847c-ea0d361a23bd" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/4.png" alt="4" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/5.png" alt="5" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/51f4e363-c944-481c-880d-23ccf39f3f8a.png" alt="51f4e363-c944-481c-880d-23ccf39f3f8a" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/58d872d5-7097-4ab8-a4f2-fd6e71c79642.png" alt="58d872d5-7097-4ab8-a4f2-fd6e71c79642" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/7c94134c-cd32-4435-a9c0-bf95f0150590.png" alt="7c94134c-cd32-4435-a9c0-bf95f0150590" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/baa24c90-a8c6-4794-8a01-d4a7abccdd58.png" alt="baa24c90-a8c6-4794-8a01-d4a7abccdd58" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/bc0fcb1a-c3bf-4a4a-b137-9ec43d292b14.png" alt="bc0fcb1a-c3bf-4a4a-b137-9ec43d292b14" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/be4f2a3a-5b2d-4891-86f5-5fd59324839a.png" alt="be4f2a3a-5b2d-4891-86f5-5fd59324839a" width="300">
-<img src="https://raw.githubusercontent.com/wxixh67/vds/main/p/images/f5bbaefc-47fc-4b44-8d76-b8ca51d0d8ac.png" alt="f5bbaefc-47fc-4b44-8d76-b8ca51d0d8ac" width="300">
-
-
-
-
-
-
-
-        <!-- 可以添加更多图片 -->
+  <header>
+    <h1>🎬 我的在线电影网站</h1>
+  </header>
+  
+  <div class="movie-grid">
+    <div class="movie-card">
+      <h3>示例电影 1</h3>
+      <video controls>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        你的浏览器不支持播放
+      </video>
     </div>
+
+    <div class="movie-card">
+      <h3>示例电影 2</h3>
+      <video controls>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+        你的浏览器不支持播放
+      </video>
+    </div>
+  </div>
 </body>
 </html>
