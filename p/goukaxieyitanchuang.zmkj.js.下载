@@ -1,0 +1,192 @@
+(function () {
+    
+    function isMobile() {
+        // 获取浏览器的 userAgent
+        const userAgent = navigator.userAgent.toLowerCase();
+        
+        // 判断是否是移动设备
+        return /iphone|ipod|ipad|android|blackberry|windows phone|opera mini|mobile|tablet/i.test(userAgent);
+    }
+    
+    fetch('/zmkj-utils/params-wrapper.php')
+      .then(response => response.json())
+      .then(data => {
+        const openDIVPattern = data.openDIVPattern;
+        const forcedViewingTime = parseInt(data.forcedViewingTime);
+        const cardPurchaseAgreementContents = data.cardPurchaseAgreementContents;
+        const cardPurchaseAgreementContentsDIVPC = data.cardPurchaseAgreementContentsDIVPC;
+        const cardPurchaseAgreementContentsDIVH5 = data.cardPurchaseAgreementContentsDIVH5;
+        if (openDIVPattern === '1') {
+            // console.log("待开发");
+            if (isMobile()) {
+                if (cardPurchaseAgreementContentsDIVH5 !== null && cardPurchaseAgreementContentsDIVH5 !== '') {
+                    // console.log('当前是移动端设备');
+                    (function() {
+                        // 弹出窗口 HTML
+                        const popupHTML = `
+                            <div id="agreementPopup" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 9999; font-size: 15px;">
+                                ${cardPurchaseAgreementContentsDIVH5}
+                                <div id="countdown" style="display: none"></div>
+                                <button id="agreeBtn" style="display: none">关闭</button>
+                            </div>
+                        `;
+                        
+                        // 插入弹出窗口到页面中
+                        document.body.insertAdjacentHTML("beforeend", popupHTML);
+                        
+                        // 倒计时初始时间
+                        let countdownTime = forcedViewingTime;
+                        
+                        // 获取相关 DOM 元素
+                        const countdownElement = document.getElementById("countdown");
+                        const agreeButton = document.getElementById("agreeBtn");
+                        
+                        // 是否倒计时已完成
+                        let isCountdownFinished = false;
+                        
+                        // 启动倒计时
+                        const countdownInterval = setInterval(function() {
+                            countdownTime--;
+                            countdownElement.textContent = `阅读倒计时: ${countdownTime}秒`;
+                    
+                            if (countdownTime <= 0) {
+                                clearInterval(countdownInterval); // 清除倒计时
+                                countdownElement.style.display = "none"; // 隐藏倒计时显示
+                                agreeButton.disabled = false; // 启用按钮
+                                agreeButton.style.cursor = "pointer"; // 修改按钮样式
+                                isCountdownFinished = true; // 设置倒计时完成标志
+                            }
+                        }, 1000);
+                        
+                        // 按钮点击事件
+                        agreeButton.addEventListener("click", function() {
+                            if (isCountdownFinished) {
+                                document.getElementById("agreementPopup").remove(); // 移除弹出窗口
+                            }
+                        });
+                    
+                        // 弹出窗口点击事件
+                        document.getElementById("agreementPopup").addEventListener("click", function(event) {
+                            if (event.target === this && isCountdownFinished) {
+                                document.getElementById("agreementPopup").remove(); // 点击外部区域并且倒计时完成时移除弹出窗口
+                            }
+                        });
+                    })();
+                }
+
+            } else {
+                // console.log('当前不是移动端设备');
+                if (cardPurchaseAgreementContentsDIVPC !== null && cardPurchaseAgreementContentsDIVPC !== '') {
+                    (function() {
+                        // 弹出窗口 HTML
+                        const popupHTML = `
+                            <div id="agreementPopup" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 9999; font-size: 15px;">
+                                ${cardPurchaseAgreementContentsDIVPC}
+                                <div id="countdown" style="display: none"></div>
+                                <button id="agreeBtn" style="display: none">关闭</button>
+                            </div>
+                        `;
+                        
+                        // 插入弹出窗口到页面中
+                        document.body.insertAdjacentHTML("beforeend", popupHTML);
+                        
+                        // 倒计时初始时间
+                        let countdownTime = forcedViewingTime;
+                        
+                        // 获取相关 DOM 元素
+                        const countdownElement = document.getElementById("countdown");
+                        const agreeButton = document.getElementById("agreeBtn");
+                        
+                        // 是否倒计时已完成
+                        let isCountdownFinished = false;
+                        
+                        // 启动倒计时
+                        const countdownInterval = setInterval(function() {
+                            countdownTime--;
+                            countdownElement.textContent = `阅读倒计时: ${countdownTime}秒`;
+                    
+                            if (countdownTime <= 0) {
+                                clearInterval(countdownInterval); // 清除倒计时
+                                countdownElement.style.display = "none"; // 隐藏倒计时显示
+                                agreeButton.disabled = false; // 启用按钮
+                                agreeButton.style.cursor = "pointer"; // 修改按钮样式
+                                isCountdownFinished = true; // 设置倒计时完成标志
+                            }
+                        }, 1000);
+                        
+                        // 按钮点击事件
+                        agreeButton.addEventListener("click", function() {
+                            if (isCountdownFinished) {
+                                document.getElementById("agreementPopup").remove(); // 移除弹出窗口
+                            }
+                        });
+                    
+                        // 弹出窗口点击事件
+                        document.getElementById("agreementPopup").addEventListener("click", function(event) {
+                            if (event.target === this && isCountdownFinished) {
+                                document.getElementById("agreementPopup").remove(); // 点击外部区域并且倒计时完成时移除弹出窗口
+                            }
+                        });
+                    })();
+                }
+            }
+        } else {
+            (function() {
+              const popupHTML = `
+                <div id="agreementPopup" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 9999; font-size: 15px;">
+                  <div style="background-color: white; padding: 10px; border-radius: 10px; width: 80%; max-width: 600px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                    <h3 style="color: #007bff;">购卡协议</h3>
+                    <div style="text-align: left; max-height: 70vh; overflow-y: auto; overflow-x: hidden;">${cardPurchaseAgreementContents}</div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                      <button id="agreeBtn" style="padding: 5px 20px; background-color: #cccccc; color: white; border: none; border-radius: 5px; cursor: not-allowed;" disabled>同意</button>
+                      <button id="cancelBtn" style="padding: 5px 20px; background-color: #d9534f; color: white; border: none; border-radius: 5px; cursor: pointer;">拒绝</button>
+                    </div>
+                    <div id="countdown" style="margin-top: 10px; color: #007bff;"></div>
+                  </div>
+                </div>`;
+            
+              document.body.insertAdjacentHTML("beforeend", popupHTML);
+            
+              let countdownTime = forcedViewingTime,
+                  countdownElement = document.getElementById("countdown"),
+                  agreeButton = document.getElementById("agreeBtn"),
+                  isCountdownFinished = false;
+            
+              // 倒计时函数
+              const countdownInterval = setInterval(function() {
+                countdownTime--;
+                countdownElement.textContent = `阅读倒计时: ${countdownTime}秒`;
+            
+                if (countdownTime <= 0) {
+                  clearInterval(countdownInterval);
+                  countdownElement.style.display = "none";
+                  agreeButton.disabled = false;
+                  agreeButton.style.backgroundColor = "#007bff";
+                  agreeButton.style.cursor = "pointer";
+                  agreeButton.textContent = "同意";
+                  isCountdownFinished = true;
+                }
+              }, 1000);
+            
+              // 同意按钮点击事件
+              agreeButton.addEventListener("click", function() {
+                document.getElementById("agreementPopup").remove();
+              });
+            
+              // 拒绝按钮点击事件
+              document.getElementById("cancelBtn").addEventListener("click", function() {
+                alert("不同意将无法购卡");
+              });
+            
+              // 点击弹窗外部关闭
+              document.getElementById("agreementPopup").addEventListener("click", function(event) {
+                if (event.target === this && isCountdownFinished) {
+                  document.getElementById("agreementPopup").remove();
+                }
+              });
+            })();
+
+        }
+      })
+      .catch(error => console.error('Error fetching params:', error));
+})();

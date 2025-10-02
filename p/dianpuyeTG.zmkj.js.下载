@@ -1,0 +1,38 @@
+(function() {
+    
+   let shopPageTG = setInterval(function() {
+  // 获取 div 内容
+  var spanElement = document.querySelector('.van-cell__value span');
+  if (spanElement) {
+    var spanContent = spanElement.textContent;
+    // 判断第一个字符是否为 '@'
+    if (spanContent.charAt(0) === '@') {
+      // 替换 href 链接
+      var link = document.querySelector('.van-cell-group.van-hairline--top-bottom .van-cell.van-cell--clickable');
+      if (link) {
+        link.href = link.href.replace('mqq://im/chat?chat_type=wpa&uin=@qq.com&version=1&src_type=web&web_src=qq.com', 'https://blog.zmkj.website/api/TgorQQ/?user=' + spanContent);
+      }
+
+      // 替换图标
+      var icon = document.querySelector('.van-cell-group.van-hairline--top-bottom .van-space-item');
+      if (icon) {
+        icon.innerHTML = '<svg t="1734165047854" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1621" width="16" height="16"><path d="M0 1024l106.496-474.112 588.8-36.864-588.8-39.936-106.496-473.088 1024 512z" p-id="1622"></path></svg>';
+      }
+
+      // 替换文本内容
+      var text = document.querySelector('.van-cell-group.van-hairline--top-bottom .van-space-item:nth-child(2)');
+      if (text) {
+        text.textContent = 'TG(电报/纸飞机)';
+      }
+      
+      if (icon.innerHTML === '<svg t="1734165047854" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1621" width="16" height="16"><path d="M0 1024l106.496-474.112 588.8-36.864-588.8-39.936-106.496-473.088 1024 512z" p-id="1622"></path></svg>' && text.textContent === 'TG(电报/纸飞机)') {
+          clearInterval(shopPageTG);
+      }
+      
+    }else {
+      clearInterval(shopPageTG);
+    }
+  }
+}, 300);
+
+})();

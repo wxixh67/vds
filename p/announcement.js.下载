@@ -1,0 +1,934 @@
+(function () {
+    // 获取店铺信息
+    function getShopInfo() {
+        let shopName = '';
+        let merchantId = '';
+        
+        // 1. 从 nickname 元素获取商家名称（优先级最高）
+        const nicknameElement = document.querySelector('.nickname');
+        if (nicknameElement) {
+            shopName = nicknameElement.textContent.trim();
+        }
+
+        // 2. 从带有店铺名称class的元素获取
+        if (!shopName) {
+            const shopNameElements = document.querySelectorAll('.shop-name, .store-name, .merchant-name');
+            for (const element of shopNameElements) {
+                const text = element.textContent.trim();
+                if (text) {
+                    shopName = text;
+                    break;
+                }
+            }
+        }
+
+        // 3. 从页面标题获取商家名称
+        if (!shopName) {
+            const pageTitle = document.title.trim();
+            if (pageTitle) {
+                const index = pageTitle.indexOf('的小店');
+                if (index !== -1) {
+                    shopName = pageTitle.substring(0, index);
+                }
+            }
+        }
+
+        // 4. 从商家ID属性元素获取
+        if (!merchantId) {
+            const merchantIdElement = document.querySelector('[data-merchant-id]');
+            if (merchantIdElement) {
+                merchantId = merchantIdElement.getAttribute('data-merchant-id');
+            }
+        }
+
+        // 5. 从页面元素中获取商家信息
+        if (!shopName || !merchantId) {
+            const shopInfoScript = document.querySelector('script[data-shop-info]');
+            if (shopInfoScript) {
+                try {
+                    const shopInfo = JSON.parse(shopInfoScript.textContent);
+                    if (!shopName && shopInfo.shopName) {
+                        shopName = shopInfo.shopName;
+                    }
+                    if (!merchantId && shopInfo.merchantId) {
+                        merchantId = shopInfo.merchantId;
+                    }
+                } catch (e) {
+                    console.error('解析商家信息失败:', e);
+                }
+            }
+        }
+        
+        // 6. 从 meta 标签获取
+        if (!shopName) {
+            const metaTags = [
+                document.querySelector('meta[name="shop-name"]'),
+                document.querySelector('meta[property="og:site_name"]'),
+                document.querySelector('meta[name="author"]')
+            ];
+            
+            for (const tag of metaTags) {
+                if (tag && tag.getAttribute('content')) {
+                    shopName = tag.getAttribute('content');
+                    break;
+                }
+            }
+        }
+        
+        if (!merchantId) {
+            const merchantIdMeta = document.querySelector('meta[name="merchant-id"]');
+            if (merchantIdMeta) {
+                merchantId = merchantIdMeta.getAttribute('content');
+            }
+        }
+        
+        // 7. 从 URL 参数获取（备用方式）
+        if (!shopName || !merchantId) {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!shopName) {
+                const urlShopName = urlParams.get('shop_name');
+                if (urlShopName) shopName = urlShopName;
+            }
+            if (!merchantId) {
+                const urlMerchantId = urlParams.get('merchant_id');
+                if (urlMerchantId) merchantId = urlMerchantId;
+            }
+        }
+
+        // 8. 从URL路径中提取可能的店铺名或ID
+        if (!shopName || !merchantId) {
+            const pathParts = window.location.pathname.split('/');
+            for (const part of pathParts) {
+                // 如果路径部分看起来像店铺名（包含字母或非ASCII字符）
+                if (/[a-zA-Z\u00C0-\u00FF\u0100-\uFFFF]/.test(part) && part.length > 1 && !shopName) {
+                    shopName = decodeURIComponent(part);
+                }
+                // 如果路径部分看起来像ID（纯数字）
+                else if (/^\d+$/.test(part) && part.length > 0 && !merchantId) {
+                    merchantId = part;
+                }
+            }
+        }
+
+        return { shopName, merchantId };
+    }
+
+    // 创建公告弹窗
+    function createAnnouncementModal(content, title) {
+        if (!content) return;
+        
+        // 检查是否已存在公告弹窗
+        if (document.querySelector('.store-announcement-modal')) {
+            return;
+        }
+        
+        // 使用传入的标题或默认标题
+        title = title || '店铺公告';
+        
+        const modal = document.createElement('div');
+        modal.className = 'store-announcement-modal';
+        modal.innerHTML = `
+            <div class="store-announcement-content">
+                <div class="store-announcement-header">
+                    <h3>${title}</h3>
+                    <button class="close-btn" title="关闭"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12 5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/></svg></button>
+                </div>
+                <div class="store-announcement-body">
+                    <div class="announcement-content">${content}</div>
+                </div>
+            </div>
+            <!-- 添加图片预览模态框 -->
+            <div class="image-preview-modal">
+                <img src="" alt="预览图片">
+                <button class="close-preview-btn" title="关闭"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="white" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12 5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/></svg></button>
+                <div class="zoom-controls">
+                    <button class="zoom-in" title="放大"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="white" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+                    <button class="zoom-out" title="缩小"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="white" d="M19 13H5v-2h14v2z"/></svg></button>
+                </div>
+            </div>
+        `;
+
+        // 添加样式
+        const style = document.createElement('style');
+        style.textContent = `
+            /* 主容器样式 */
+            .store-announcement-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.65);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 99999;
+                opacity: 0;
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(3px);
+                -webkit-backdrop-filter: blur(3px);
+            }
+            
+            /* 白色内容框 */
+            .store-announcement-content {
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 550px;
+                max-height: 90vh;
+                transform: translateY(-30px) scale(0.95);
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                overflow: hidden;
+                border: 1px solid rgba(235, 235, 235, 0.8);
+            }
+            
+            /* 弹窗头部 */
+            .store-announcement-header {
+                padding: 16px 20px;
+                background: #f9fafb;
+                border-bottom: 1px solid #edf2f7;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            /* 弹窗标题 */
+            .store-announcement-header h3 {
+                margin: 0;
+                font-size: 17px;
+                color: #374151;
+                font-weight: 600;
+                position: relative;
+                padding-left: 22px;
+            }
+            
+            /* 标题前的图标 */
+            .store-announcement-header h3::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 16px;
+                height: 16px;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3E%3Cpath d='M10.3 4.9c.8-.8 2-.8 2.8 0l8 8c.8.8.8 2 0 2.8l-8 8c-.8.8-2 .8-2.8 0l-8-8c-.8-.8-.8-2 0-2.8l8-8z'/%3E%3C/svg%3E");
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            
+            /* 关闭按钮 */
+            .close-btn {
+                background: none;
+                border: none;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                cursor: pointer;
+                color: #6b7280;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                outline: none;
+            }
+            
+            .close-btn:hover {
+                background: #f3f4f6;
+                color: #1f2937;
+            }
+            
+            .close-btn:active {
+                transform: scale(0.95);
+            }
+            
+            /* 弹窗主体内容区 */
+            .store-announcement-body {
+                padding: 24px;
+                overflow-y: auto;
+                max-height: calc(90vh - 140px);
+                line-height: 1.6;
+                color: #4b5563;
+                font-size: 14.5px;
+                word-break: break-all;
+                scrollbar-width: thin;
+                scrollbar-color: #cbd5e0 #f1f5f9;
+            }
+            
+            /* 自定义滚动条 */
+            .store-announcement-body::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            .store-announcement-body::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 3px;
+            }
+            
+            .store-announcement-body::-webkit-scrollbar-thumb {
+                background-color: #cbd5e0;
+                border-radius: 3px;
+            }
+            
+            .store-announcement-body::-webkit-scrollbar-thumb:hover {
+                background-color: #a0aec0;
+            }
+            /* 编辑器内容样式同步 */
+            .store-announcement-body p {
+                margin: 10px 0;
+            }
+            .store-announcement-body img {
+                max-width: 100%;
+                height: auto;
+            }
+            .store-announcement-body table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 10px 0;
+            }
+            .store-announcement-body td,
+            .store-announcement-body th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            /* 文本对齐方式 */
+            .store-announcement-body .align-left { text-align: left; }
+            .store-announcement-body .align-center { text-align: center; }
+            .store-announcement-body .align-right { text-align: right; }
+            .store-announcement-body .align-justify { text-align: justify; }
+            /* 文本样式 */
+            .store-announcement-body strong { font-weight: bold; }
+            .store-announcement-body em { font-style: italic; }
+            .store-announcement-body u { text-decoration: underline; }
+            .store-announcement-body strike { text-decoration: line-through; }
+            .store-announcement-body code { 
+                background-color: #f6f6f6;
+                padding: 2px 4px;
+                border-radius: 3px;
+            }
+            /* 列表样式 */
+            .store-announcement-body ul,
+            .store-announcement-body ol {
+                padding-left: 20px;
+                margin: 10px 0;
+            }
+            .store-announcement-body ul { list-style-type: disc; }
+            .store-announcement-body ol { list-style-type: decimal; }
+            /* 链接样式 */
+            .store-announcement-body a {
+                color: #409eff;
+                text-decoration: none;
+            }
+            .store-announcement-body a:hover {
+                color: #66b1ff;
+                text-decoration: underline;
+            }
+            
+            /* 链接按钮样式 */
+            .store-announcement-body a.announcement-btn,
+            .announcement-content a.announcement-btn {
+                display: inline-block;
+                padding: 6px 16px;
+                /* 默认背景色在自定义按钮上会被覆盖 */
+                background-color: #409eff; /* 默认蓝色 */
+                color: white !important;
+                border-radius: 4px;
+                text-decoration: none !important;
+                margin: 5px 0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                transition: all 0.25s ease;
+                font-weight: 500;
+                line-height: 1.5;
+                text-align: center;
+            }
+            
+            .store-announcement-body a.announcement-btn:hover,
+            .announcement-content a.announcement-btn:hover {
+                opacity: 0.9;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                text-decoration: none !important;
+            }
+            
+            /* 支持不同颜色的按钮 */
+            .store-announcement-body a.announcement-btn-red,
+            .announcement-content a.announcement-btn-red {
+                background-color: #F56C6C;
+            }
+            
+            .store-announcement-body a.announcement-btn-green,
+            .announcement-content a.announcement-btn-green {
+                background-color: #67C23A;
+            }
+            
+            .store-announcement-body a.announcement-btn-orange,
+            .announcement-content a.announcement-btn-orange {
+                background-color: #E6A23C;
+            }
+            
+            .store-announcement-body a.announcement-btn-teal,
+            .announcement-content a.announcement-btn-teal {
+                background-color: #009688;
+            }
+            
+            .store-announcement-body a.announcement-btn-purple,
+            .announcement-content a.announcement-btn-purple {
+                background-color: #9C27B0;
+            }
+            
+            .store-announcement-body a.announcement-btn-gray,
+            .announcement-content a.announcement-btn-gray {
+                background-color: #909399;
+            }
+            
+            /* 自定义颜色按钮 */
+            .store-announcement-body a.announcement-btn-custom,
+            .announcement-content a.announcement-btn-custom {
+                /* 自定义颜色会通过内联样式设置 */
+            }
+            
+            .store-announcement-modal.show {
+                opacity: 1;
+            }
+            .store-announcement-modal.show .store-announcement-content {
+                transform: translateY(0) scale(1);
+            }
+            @media (max-width: 768px) {
+                .store-announcement-content {
+                    width: 95%;
+                    margin: 10px;
+                }
+                .store-announcement-body {
+                    max-height: calc(90vh - 100px);
+                    padding: 15px;
+                }
+            }
+            
+            /* 编辑器样式同步 */
+            .announcement-content {
+                color: #4a5568;
+                line-height: 1.6;
+                font-size: 15px;
+            }
+            
+            /* 标题样式 */
+            .announcement-content h1 { font-size: 2em; margin: 0.67em 0; }
+            .announcement-content h2 { font-size: 1.5em; margin: 0.75em 0; }
+            .announcement-content h3 { font-size: 1.17em; margin: 0.83em 0; }
+            .announcement-content h4 { font-size: 1em; margin: 1.12em 0; }
+            .announcement-content h5 { font-size: 0.83em; margin: 1.5em 0; }
+            .announcement-content h6 { font-size: 0.75em; margin: 1.67em 0; }
+            
+            /* 引用块样式更新 - 与 wangEditor 保持一致 */
+            .announcement-content blockquote {
+                margin: 10px 0;
+                padding: 10px 15px;
+                background-color: rgb(233, 244, 254);  /* 浅蓝色背景 */
+                border-left: 4px solid rgb(66, 153, 225);  /* 蓝色边框 */
+                color: rgb(74, 85, 104);  /* 文字颜色 */
+                font-size: 14px;
+                line-height: 1.6;
+            }
+            
+            /* 嵌套引用的样式 */
+            .announcement-content blockquote blockquote {
+                margin-left: 0;
+                margin-right: 0;
+                background-color: #f4f4f5;  /* 灰色背景 */
+                border-left-color: #909399;  /* 灰色边框 */
+            }
+            
+            /* 引用块内的段落样式 */
+            .announcement-content blockquote p {
+                margin: 5px 0;
+            }
+            .announcement-content blockquote p:first-child {
+                margin-top: 0;
+            }
+            .announcement-content blockquote p:last-child {
+                margin-bottom: 0;
+            }
+            
+            /* 文本样式 */
+            .announcement-content strong { font-weight: bold; }
+            .announcement-content em { font-style: italic; }
+            .announcement-content u { text-decoration: underline; }
+            .announcement-content s, .announcement-content del { text-decoration: line-through; }
+            .announcement-content sub { vertical-align: sub; font-size: smaller; }
+            .announcement-content sup { vertical-align: super; font-size: smaller; }
+            .announcement-content code {
+                background-color: #f6f6f6;
+                border-radius: 3px;
+                padding: 2px 4px;
+                font-family: monospace;
+            }
+            
+            /* 列表样式 */
+            .announcement-content ul, .announcement-content ol {
+                padding-left: 2em;
+                margin: 1em 0;
+            }
+            .announcement-content ul { list-style-type: disc; }
+            .announcement-content ol { list-style-type: decimal; }
+            .announcement-content li { margin: 0.5em 0; }
+            
+            /* 对齐方式 */
+            .announcement-content .w-e-text-align-left { text-align: left; }
+            .announcement-content .w-e-text-align-center { text-align: center; }
+            .announcement-content .w-e-text-align-right { text-align: right; }
+            .announcement-content .w-e-text-align-justify { text-align: justify; }
+            
+            /* 字体大小 */
+            .announcement-content .w-e-text-small { font-size: 0.875em; }
+            .announcement-content .w-e-text-large { font-size: 1.125em; }
+            
+            /* 表格样式 */
+            .announcement-content table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 1em 0;
+            }
+            .announcement-content th,
+            .announcement-content td {
+                border: 1px solid #ddd;
+                padding: 0.5em;
+            }
+            .announcement-content th {
+                background-color: #f8f9fa;
+            }
+            
+            /* 公告内容中的图片样式 */
+            .announcement-content img {
+                width: 100% !important;  /* 宽度占满容器 */
+                height: auto !important;  /* 高度自适应 */
+                max-width: 700px !important;  /* 最大宽度限制 */
+                display: block;  /* 块级显示 */
+                margin: 10px auto;  /* 上下间距，左右居中 */
+                cursor: zoom-in;
+            }
+            
+            /* 图片预览模态框样式 */
+            .image-preview-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.92);
+                z-index: 100000;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                transition: opacity 0.3s ease;
+                opacity: 0;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+            }
+            
+            .image-preview-modal.show {
+                display: flex;
+                opacity: 1;
+            }
+            
+            .image-preview-modal img {
+                max-width: 90%;
+                max-height: 85vh;
+                width: auto !important;
+                height: auto !important;
+                object-fit: contain;
+                cursor: zoom-out;
+                border-radius: 4px;
+                box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+                transition: transform 0.3s ease;
+            }
+            
+            /* 缩放控制按钮 */
+            .zoom-controls {
+                position: fixed;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 20px;
+                background: rgba(0, 0, 0, 0.6);
+                padding: 10px 16px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+            
+            .zoom-controls button {
+                background: none;
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+                background: rgba(255, 255, 255, 0.15);
+            }
+            
+            .zoom-controls button:hover {
+                background: rgba(255, 255, 255, 0.25);
+                transform: scale(1.05);
+            }
+            
+            .zoom-controls button:active {
+                transform: scale(0.95);
+            }
+            
+            /* 关闭预览按钮 */
+            .close-preview-btn {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.5);
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+            
+            .close-preview-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.05);
+            }
+            
+            .close-preview-btn:active {
+                transform: scale(0.95);
+            }
+            
+            /* 移动端响应式处理 */
+            @media screen and (max-width: 768px) {
+                .announcement-content img,
+                .image-preview-modal img {
+                    width: 95% !important;
+                    height: auto !important;
+                }
+                
+                .image-preview-modal {
+                    padding: 10px;
+                }
+                
+                .zoom-controls {
+                    bottom: 30px;
+                    padding: 8px 12px;
+                }
+                
+                .zoom-controls button {
+                    width: 36px;
+                    height: 36px;
+                }
+                
+                .close-preview-btn {
+                    top: 15px;
+                    right: 15px;
+                    width: 36px;
+                    height: 36px;
+                }
+            }
+            
+            /* 给公告内容中的图片添加鼠标样式和美化效果 */
+            .announcement-content img {
+                cursor: zoom-in;
+                border-radius: 8px;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+            
+            .announcement-content img:hover {
+                transform: scale(1.01);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 关闭按钮事件
+        const closeModal = () => {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+                style.remove();
+            }, 300);
+        };
+
+        // 绑定关闭事件
+        modal.querySelector('.close-btn').onclick = closeModal;
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        };
+
+        // ESC键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 图片点击放大功能
+        const imagePreviewModal = modal.querySelector('.image-preview-modal');
+        const previewImage = imagePreviewModal.querySelector('img');
+        
+        // 图片缩放功能
+        let currentScale = 1;
+        
+        // 为公告内容中的所有图片添加点击事件
+        modal.querySelectorAll('.announcement-content img').forEach(img => {
+            img.addEventListener('click', () => {
+                previewImage.src = img.src;
+                // 重置缩放
+                currentScale = 1;
+                previewImage.style.transform = `scale(${currentScale})`;
+                // 添加优雅的延迟以确保图片加载
+                setTimeout(() => {
+                    imagePreviewModal.classList.add('show');
+                }, 50);
+            });
+        });
+
+        // 缩放功能
+        if (modal.querySelector('.zoom-in')) {
+            modal.querySelector('.zoom-in').addEventListener('click', () => {
+                currentScale = Math.min(currentScale + 0.25, 3); // 最大放大3倍
+                previewImage.style.transform = `scale(${currentScale})`;
+            });
+        }
+        
+        if (modal.querySelector('.zoom-out')) {
+            modal.querySelector('.zoom-out').addEventListener('click', () => {
+                currentScale = Math.max(currentScale - 0.25, 0.5); // 最小缩小到0.5倍
+                previewImage.style.transform = `scale(${currentScale})`;
+            });
+        }
+
+        // 点击预览图片关闭预览
+        previewImage.addEventListener('click', (e) => {
+            // 防止缩放功能误触关闭
+            e.stopPropagation();
+            // 只有当图片处于正常比例时才允许点击关闭
+            if (currentScale === 1) {
+                closeImagePreview();
+            }
+        });
+
+        // 点击关闭按钮关闭预览
+        modal.querySelector('.close-preview-btn').addEventListener('click', () => {
+            closeImagePreview();
+        });
+        
+        // 点击背景关闭预览
+        imagePreviewModal.addEventListener('click', (e) => {
+            if (e.target === imagePreviewModal) {
+                closeImagePreview();
+            }
+        });
+
+        // ESC键关闭预览
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && imagePreviewModal.classList.contains('show')) {
+                closeImagePreview();
+            }
+        });
+        
+        // 关闭图片预览
+        function closeImagePreview() {
+            imagePreviewModal.classList.remove('show');
+            // 重置缩放
+            setTimeout(() => {
+                currentScale = 1;
+                if (previewImage) previewImage.style.transform = '';
+            }, 300);
+        }
+
+        // 添加到页面并显示
+        document.body.appendChild(modal);
+        // 强制重绘
+        modal.offsetHeight;
+        modal.classList.add('show');
+        
+        // 处理链接，转换为按钮形式
+        processAnnouncementLinks(modal);
+    }
+    
+    // 处理公告内容中的链接，将其转换为按钮形式
+    function processAnnouncementLinks(modal) {
+        if (!modal) return;
+        
+        const links = modal.querySelectorAll('.announcement-content a');
+        links.forEach(link => {
+            // 检查链接是否已经有按钮类
+            if (link.classList.contains('announcement-btn')) return;
+            
+            // 检查是否有指定颜色
+            const linkText = link.textContent.toLowerCase();
+            const href = link.getAttribute('href') || '#';
+            
+            // 默认添加按钮类
+            link.classList.add('announcement-btn');
+            
+            // 先移除所有可能的颜色类
+            link.classList.remove(
+                'announcement-btn-red', 
+                'announcement-btn-green', 
+                'announcement-btn-blue', 
+                'announcement-btn-orange',
+                'announcement-btn-teal',
+                'announcement-btn-purple',
+                'announcement-btn-gray',
+                'announcement-btn-custom'
+            );
+            
+            // 清除可能存在的内联样式
+            link.style.backgroundColor = '';
+            
+            // 根据链接文本或自定义属性设置颜色
+            if (link.hasAttribute('data-color')) {
+                const color = link.getAttribute('data-color');
+                if (['red', 'green', 'blue', 'orange', 'teal', 'purple', 'gray'].includes(color)) {
+                    link.classList.add(`announcement-btn-${color}`);
+                } else {
+                    // 如果是自定义颜色代码
+                    link.classList.add('announcement-btn-custom');
+                    link.style.backgroundColor = color;
+                }
+            } else if (linkText.includes('购买') || linkText.includes('buy') || linkText.includes('order')) {
+                link.classList.add('announcement-btn-red');
+            } else if (linkText.includes('详情') || linkText.includes('detail') || linkText.includes('more')) {
+                link.classList.add('announcement-btn-teal');
+            } else if (linkText.includes('下载') || linkText.includes('download')) {
+                link.classList.add('announcement-btn-green');
+            } else if (linkText.includes('联系') || linkText.includes('contact')) {
+                link.classList.add('announcement-btn-orange');
+            } else if (window.announcementDefaultButtonColor) {
+                // 应用默认按钮颜色
+                const defaultColor = window.announcementDefaultButtonColor;
+                
+                // 检查是否是预设颜色名称或自定义颜色代码
+                if (['red', 'green', 'blue', 'orange', 'teal', 'purple', 'gray'].includes(defaultColor)) {
+                    link.classList.add(`announcement-btn-${defaultColor}`);
+                } else {
+                    // 如果是自定义颜色代码(十六进制或rgba)
+                    link.classList.add('announcement-btn-custom');
+                    link.style.backgroundColor = defaultColor;
+                }
+            }
+            
+            // 如果是外部链接，添加target="_blank"
+            if (href.startsWith('http') && !href.includes(window.location.hostname)) {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            }
+        });
+    }
+
+    // 获取并显示公告
+    function showAnnouncement() {
+        const { shopName, merchantId } = getShopInfo();
+        
+        // 如果既没有获取到店铺名称也没有获取到商家ID，则不显示公告
+        if (!shopName && !merchantId) {
+            return;
+        }
+        
+        // 检查显示频率
+        const shouldShow = (announcementData) => {
+            // 使用商家ID和内容哈希值创建唯一存储键，确保内容变化时会重新显示
+            const contentHash = hashString(announcementData.announcement);
+            const storageKey = `store_announcement_${shopName || merchantId}_${contentHash}`;
+            const lastShow = localStorage.getItem(storageKey);
+            const now = new Date().getTime();
+            
+            if (!lastShow) return true;
+            
+            const frequency = announcementData.frequency || 'once';
+            switch (frequency) {
+                case 'once':
+                    return false; // 已经显示过就不再显示
+                case 'login':
+                    return true; // 每次访问都显示
+                case 'daily':
+                    const oneDayMs = 24 * 60 * 60 * 1000;
+                    return (now - parseInt(lastShow)) >= oneDayMs;
+                case 'weekly':
+                    const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+                    return (now - parseInt(lastShow)) >= oneWeekMs;
+                default:
+                    return true;
+            }
+        };
+        
+        // 简单的字符串哈希函数，用于生成内容的唯一标识
+        function hashString(str) {
+            if (!str) return '0';
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString();
+        }
+
+        // 构建请求参数
+        const params = new URLSearchParams();
+        if (shopName) params.append('shop_name', shopName);
+        if (merchantId) params.append('merchant_id', merchantId);
+
+        // 发送请求获取公告内容
+        const baseUrl = window.location.protocol + '//' + window.location.host;
+        fetch(baseUrl + '/plugin/Storeannouncements/api/fetchData?' + params.toString(), {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.code === 200 && data.data) {
+                // 检查公告开关状态和公告内容
+                if (data.data.status === 1 && data.data.announcement) {
+                    // 保存默认按钮颜色设置到全局变量
+                    window.announcementDefaultButtonColor = data.data.button_color || 'blue';
+                    
+                    // 检查是否应该显示
+                    if (shouldShow(data.data)) {
+                        createAnnouncementModal(data.data.announcement, data.data.title);
+                        
+                        // 使用相同的唯一键存储显示时间
+                        const contentHash = hashString(data.data.announcement);
+                        const storageKey = `store_announcement_${shopName || merchantId}_${contentHash}`;
+                        localStorage.setItem(storageKey, new Date().getTime().toString());
+                    }
+                }
+            } else {
+                // 如果是未找到商家信息的错误，静默处理
+                if (data.code === 0 && data.msg === '未找到商家信息') {
+                    return;
+                }
+            }
+        })
+        .catch(error => {
+            // 错误处理
+        });
+    }
+
+    // 确保页面完全加载后再显示公告
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', showAnnouncement);
+    } else {
+        showAnnouncement();
+    }
+})(); 
