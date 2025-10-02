@@ -52,7 +52,16 @@
   }
   .lb.open{display:flex;}
   .lb-content{max-width:calc(100% - 60px);max-height:calc(100% - 60px);position:relative;}
-  .lb-content img{max-width:100%;max-height:100%;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.6);border-radius:8px;}
+  .lb-content img{
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    border-radius:8px;
+  }
   .lb-close{position:absolute;right:-6px;top:-6px;background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:999px;cursor:pointer}
   .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;pointer-events:none}
   .lb-nav button{pointer-events:auto;background:transparent;border:0;padding:12px;cursor:pointer;font-size:22px;color:var(--accent)}
@@ -89,16 +98,7 @@
 <footer>提示：图片使用 <code>loading="lazy"</code> 懒加载以节省带宽。</footer>
 
 <script>
-/*
-  两种方式获取图片列表：
-  1) 如果有 images.json（数组形式），则 fetch 它；
-  2) 如果没有 images.json，请在下面的 images 数组里手动填入路径（相对仓库）。
-*/
-
-/* === 方式 A：自动从 images.json 读取（推荐） ===
-格式示例 images.json:
-["images/01.jpg","images/02.jpg","images/foo.png"]
-*/
+/* === 加载图片列表 === */
 async function loadImagesList(){
   try{
     const res = await fetch('images.json', {cache: 'no-cache'});
@@ -107,22 +107,18 @@ async function loadImagesList(){
     if(!Array.isArray(arr)) throw new Error('images.json 格式错误');
     return arr;
   }catch(e){
-    // fallback to manual list below
     return manualImages();
   }
 }
 
-/* === 方式 B：手动列出图片（当你不想维护 images.json 时） === */
 function manualImages(){
   return [
-    /* 把你的图片路径放在这里（相对于 repo 根或 pages 根） */
     // "images/01.jpg",
     // "images/02.jpg",
-    // "images/03.png",
   ];
 }
 
-/* 渲染格子 */
+/* === 渲染格子 === */
 function makeGridItem(src){
   const card = document.createElement('div');
   card.className = 'card';
@@ -137,14 +133,13 @@ function makeGridItem(src){
   card.appendChild(img);
   card.appendChild(meta);
 
-  // 点击打开 lightbox
   img.addEventListener('click', ()=> openLightbox(src));
   img.addEventListener('keydown', (e)=> { if(e.key === 'Enter') openLightbox(src); });
 
   return card;
 }
 
-/* Lightbox 控制 */
+/* === Lightbox 控制 === */
 const lb = document.getElementById('lb');
 const lbImg = document.getElementById('lb-img');
 const lbClose = document.getElementById('lb-close');
@@ -189,7 +184,27 @@ document.getElementById('next').addEventListener('click', ()=> showIndex(current
 lbClose.addEventListener('click', closeLightbox);
 lb.addEventListener('click', (e)=> { if(e.target === lb) closeLightbox(); });
 
-/* init */
+/* === 手机端滑动切换 === */
+let startX = 0, endX = 0;
+lbImg.addEventListener('touchstart', (e) => {
+  startX = e.touches[0].clientX;
+});
+lbImg.addEventListener('touchmove', (e) => {
+  endX = e.touches[0].clientX;
+});
+lbImg.addEventListener('touchend', () => {
+  let diff = endX - startX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) {
+      showIndex(currentIndex - 1);
+    } else {
+      showIndex(currentIndex + 1);
+    }
+  }
+  startX = endX = 0;
+});
+
+/* === 初始化 === */
 (async function init(){
   images = await loadImagesList();
   const grid = document.getElementById('grid');
