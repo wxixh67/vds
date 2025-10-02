@@ -1,7 +1,17 @@
-const images = document.querySelectorAll('.gallery img');
+// 获取画廊容器
+const gallery = document.getElementById('gallery');
 
-images.forEach(img => {
-    img.addEventListener('click', () => {
+// 加载 images.json
+fetch('images/images.json')
+  .then(response => response.json())
+  .then(images => {
+    images.forEach(filename => {
+      const img = document.createElement('img');
+      img.src = `images/${filename}`;
+      img.alt = filename;
+
+      // 点击放大
+      img.addEventListener('click', () => {
         const overlay = document.createElement('div');
         overlay.style.position = 'fixed';
         overlay.style.top = 0;
@@ -18,5 +28,9 @@ images.forEach(img => {
         overlay.addEventListener('click', () => document.body.removeChild(overlay));
 
         document.body.appendChild(overlay);
+      });
+
+      gallery.appendChild(img);
     });
-});
+  })
+  .catch(err => console.error('加载图片失败:', err));
