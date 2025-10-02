@@ -5,39 +5,77 @@
   <title>GitHub Pages 图片管理器（只读）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    body{font-family:system-ui,Segoe UI,Roboto; padding:1rem; max-width:1100px;margin:auto}
-    header{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-    .card{border-radius:8px;overflow:hidden;border:1px solid #eee;background:#fff}
-    .card img{width:100%;height:160px;object-fit:cover;display:block}
-    .meta{padding:.5rem;font-size:.85rem;word-break:break-all}
-    input, button{padding:.5rem;border-radius:6px;border:1px solid #ccc}
+    body {
+      font-family: system-ui, Segoe UI, Roboto;
+      padding: 1rem;
+      max-width: 1100px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #eee;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: transform 0.15s ease;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+    .meta {
+      padding: .5rem;
+      font-size: .85rem;
+      word-break: break-all;
+      text-align: center;
+      color: #333;
+    }
+    #status {
+      margin: .5rem 0 1rem;
+      font-size: .9rem;
+      color: #555;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>图片库</h1>
-    <div style="margin-left:auto">仓库: <input id="repo" value="YOUR_USERNAME/YOUR_REPO" style="width:220px"></div>
-    <button id="btn">载入</button>
+    <div style="margin-left:auto">仓库: <b>wxixh67/vds</b> · 路径: <b>p/</b></div>
   </header>
 
-  <p>把图片放到仓库的 <code>images/</code> 文件夹（或在 repo 改名），然后点“载入”。</p>
-
-  <div id="status">等待操作……</div>
+  <div id="status">载入中...</div>
   <div id="grid" class="grid"></div>
 
 <script>
-async function listImages(ownerRepo, path = 'images') {
+async function listImages(ownerRepo, path = 'p') {
   const api = `https://api.github.com/repos/${ownerRepo}/contents/${path}`;
   const res = await fetch(api);
   if (!res.ok) throw new Error(await res.text());
   const items = await res.json();
-  // 过滤图片类型
   return items.filter(i => i.type === 'file' && /\.(jpe?g|png|gif|webp|svg)$/i.test(i.name));
 }
 
 function makeCard(item) {
-  // raw.githubusercontent.com 链接
   const raw = item.download_url;
   const el = document.createElement('div');
   el.className = 'card';
@@ -50,21 +88,21 @@ function makeCard(item) {
   return el;
 }
 
-document.getElementById('btn').addEventListener('click', async () => {
-  const repo = document.getElementById('repo').value.trim();
+(async () => {
   const status = document.getElementById('status');
   const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  status.textContent = '载入中...';
   try {
-    const items = await listImages(repo);
-    if (!items.length) status.textContent = 'images/ 目录下没有图片或目录不存在。';
-    else status.textContent = `找到 ${items.length} 张图片。`;
-    for (const it of items) grid.appendChild(makeCard(it));
+    const items = await listImages("wxixh67/vds", "p");
+    if (!items.length) {
+      status.textContent = '⚠️ p/ 目录下没有图片或目录不存在。';
+    } else {
+      status.textContent = `✅ 找到 ${items.length} 张图片。`;
+      for (const it of items) grid.appendChild(makeCard(it));
+    }
   } catch (e) {
-    status.textContent = '错误：' + e.message;
+    status.textContent = '❌ 错误：' + e.message;
   }
-});
+})();
 </script>
 </body>
 </html>
