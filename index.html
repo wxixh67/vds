@@ -368,11 +368,27 @@
     </footer>
 
     <script>
+        // 检测系统主题偏好
+        function getSystemThemePreference() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        }
+
+        // 初始化主题
+        function initializeTheme() {
+            // 优先使用用户之前的选择，如果没有则使用系统偏好
+            const storedTheme = localStorage.getItem('theme');
+            const systemTheme = getSystemThemePreference();
+            const initialTheme = storedTheme || systemTheme;
+            
+            document.documentElement.setAttribute('data-theme', initialTheme);
+            updateButtonIcon();
+        }
+
         // 主题切换功能
         const themeToggle = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        
-        document.documentElement.setAttribute('data-theme', currentTheme);
         
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -389,8 +405,22 @@
             themeToggle.textContent = currentTheme === 'light' ? '🌙' : '☀️';
             themeToggle.title = currentTheme === 'light' ? '切换深色模式' : '切换浅色模式';
         }
-        
-        updateButtonIcon();
+
+        // 监听系统主题变化
+        if (window.matchMedia) {
+            const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            colorSchemeQuery.addEventListener('change', (e) => {
+                // 只有当用户没有手动设置过主题时才跟随系统变化
+                if (!localStorage.getItem('theme')) {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    updateButtonIcon();
+                }
+            });
+        }
+
+        // 页面加载时初始化主题
+        document.addEventListener('DOMContentLoaded', initializeTheme);
     </script>
 </body>
 </html>
