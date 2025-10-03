@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facebook服务导航站</title>
@@ -368,30 +365,18 @@
     </footer>
 
     <script>
-        // 检测系统主题偏好
-        function getSystemThemePreference() {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                return 'dark';
-            }
-            return 'light';
-        }
-
-        // 初始化主题
-        function initializeTheme() {
-            // 始终使用系统主题偏好
-            const systemTheme = getSystemThemePreference();
-            document.documentElement.setAttribute('data-theme', systemTheme);
-            updateButtonIcon();
-        }
-
         // 主题切换功能
         const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        
+        document.documentElement.setAttribute('data-theme', currentTheme);
         
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             
             document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
             updateButtonIcon();
         });
         
@@ -401,20 +386,8 @@
             themeToggle.textContent = currentTheme === 'light' ? '🌙' : '☀️';
             themeToggle.title = currentTheme === 'light' ? '切换深色模式' : '切换浅色模式';
         }
-
-        // 监听系统主题变化
-        if (window.matchMedia) {
-            const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            colorSchemeQuery.addEventListener('change', (e) => {
-                // 始终跟随系统主题变化
-                const newTheme = e.matches ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                updateButtonIcon();
-            });
-        }
-
-        // 页面加载时初始化主题
-        document.addEventListener('DOMContentLoaded', initializeTheme);
+        
+        updateButtonIcon();
     </script>
 </body>
 </html>
