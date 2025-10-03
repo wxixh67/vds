@@ -1,0 +1,16 @@
+import os
+
+# 图片文件夹路径
+folder_path = r"C:\Users\l\Documents\GitHub\image-viewer\images"
+
+# 获取文件夹下所有文件并按名字排序
+files = sorted(os.listdir(folder_path))
+
+# 只保留图片文件（可根据需要扩展）
+image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+
+# 生成 HTML 标签
+for image_file in image_files:
+    # 去掉扩展名，生成 alt 文本
+    name_without_ext = os.path.splitext(image_file)[0]
+    print(f'<img src="images/{image_file}" alt="图片{name_without_ext}">')
