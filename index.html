@@ -1,71 +1,396 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>脸书卖家</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook服务导航站</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --link-color: #0066cc;
+            --link-hover-color: #004499;
+            --border-color: #e0e0e0;
+            --category-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --link-color: #4da6ff;
+            --link-hover-color: #80c1ff;
+            --border-color: #404040;
+            --category-bg: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .title-section {
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .description {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        [data-theme="dark"] .description {
+            color: #aaa;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--category-bg);
+        }
+
+        .category {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .link-item {
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .link-item:hover {
+            background-color: var(--category-bg);
+        }
+
+        .link-item a {
+            color: var(--link-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .link-item a:hover {
+            color: var(--link-hover-color);
+        }
+
+        .link-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-description {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        [data-theme="dark"] .link-description {
+            color: #aaa;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        [data-theme="dark"] footer {
+            color: #aaa;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            .links {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .title-section {
+                margin-right: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .description {
+                font-size: 0.9rem;
+            }
+            
+            .theme-toggle {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <img src="assets/avatar.png" alt="我的头像" class="avatar" />
-      <div class="brand">脸书卖家</div>
-    </div>
-  </header>
+    <header>
+        <div class="header-content">
+            <div class="title-section">
+                <h1>Facebook服务导航站</h1>
+                <p class="description">官方购买渠道与客服支持</p>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
+        </div>
+    </header>
+    
+    <main>
+        <section class="category">
+            <h2 class="category-title">官方服务</h2>
+            <div class="links">
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">🛒</div>
+                        <div class="link-content">
+                            <div>官方卡网</div>
+                            <div class="link-description">购买脸书白号官方平台</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://t.me/Facebookkf_bot">
+                        <div class="link-icon">🤖</div>
+                        <div class="link-content">
+                            <div>官方客服</div>
+                            <div class="link-description">Telegram客服机器人</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://t.me/fb180">
+                        <div class="link-icon">👥</div>
+                        <div class="link-content">
+                            <div>官方群组</div>
+                            <div class="link-description">Telegram官方交流群组</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://www.facebook.com/">
+                        <div class="link-icon">🌐</div>
+                        <div class="link-content">
+                            <div>脸书官网</div>
+                            <div class="link-description">Facebook官方网站</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="category">
+            <h2 class="category-title">学习资源</h2>
+            <div class="links">
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">💻</div>
+                        <div class="link-content">
+                            <div>freeCodeCamp</div>
+                            <div class="link-description">免费编程学习平台</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">🎨</div>
+                        <div class="link-content">
+                            <div>CSS-Tricks</div>
+                            <div class="link-description">CSS技巧与教程</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">📝</div>
+                        <div class="link-content">
+                            <div>DEV Community</div>
+                            <div class="link-description">开发者社区与博客</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="category">
+            <h2 class="category-title">实用工具</h2>
+            <div class="links">
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">🔍</div>
+                        <div class="link-content">
+                            <div>RegExr</div>
+                            <div class="link-description">正则表达式测试工具</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">📊</div>
+                        <div class="link-content">
+                            <div>JSON Formatter</div>
+                            <div class="link-description">JSON格式化与验证</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">✏️</div>
+                        <div class="link-content">
+                            <div>Figma</div>
+                            <div class="link-description">界面设计与原型工具</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="category">
+            <h2 class="category-title">个人项目</h2>
+            <div class="links">
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">🚀</div>
+                        <div class="link-content">
+                            <div>项目一</div>
+                            <div class="link-description">我的第一个项目</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">⚛️</div>
+                        <div class="link-content">
+                            <div>项目二</div>
+                            <div class="link-description">React应用示例</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="link-item">
+                    <a href="https://fh10.zmfaka.cn/shop/24XZCD9E">
+                        <div class="link-icon">📚</div>
+                        <div class="link-content">
+                            <div>个人博客</div>
+                            <div class="link-description">技术思考与分享</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2022 Facebook服务导航站 | 使用 GitHub Pages 部署</p>
+    </footer>
 
-  <main class="container">
-    <!-- 官方链接 -->
-    <section class="card">
-      <h2>官方链接</h2>
-      <div class="grid">
-        <a class="tile" href="https://fh10.zmfaka.cn/shop/24XZCD9E" rel="noopener">
-          <img class="icon" src="assets/shop.svg" alt="卡网">
-          <span>官方卡网</span>
-        </a>
-
-        <a class="tile" href="https://t.me/Facebookkf_bot" rel="noopener">
-          <img class="icon" src="assets/support.svg" alt="客服">
-          <span>官方客服</span>
-        </a>
-
-        <a class="tile" href="https://t.me/fb180" rel="noopener">
-          <img class="icon" src="assets/group.svg" alt="群组">
-          <span>官方群组</span>
-        </a>
-
-        <a class="tile" href="https://www.facebook.com/" rel="noopener">
-          <img class="icon" src="assets/facebook.svg" alt="Facebook">
-          <span>脸书官网</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- 效率工具 -->
-    <section class="card">
-      <h2>效率工具</h2>
-      <div class="grid">
-        <a class="tile" href="https://linshiyou.com/" rel="noopener">
-          <img class="icon" src="assets/calendar.svg" alt="Calendar">
-          <span>临时邮箱</span>
-        </a>
-
-        <a class="tile" href="https://www.bing.com/" rel="noopener">
-          <img class="icon" src="assets/drive.svg" alt="Google 云端硬盘">
-          <span>Bing 搜索</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- 关于我 -->
-    <section class="card">
-      <h2>关于我</h2>
-      <p>我是一名专业的脸书白号服务商，专注于为客户提供各类账号和售后产品服务。</p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2018-2025 脸书卖家</p>
-  </footer>
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateButtonIcon();
+        });
+        
+        // 更新按钮图标
+        function updateButtonIcon() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            themeToggle.textContent = currentTheme === 'light' ? '🌙' : '☀️';
+            themeToggle.title = currentTheme === 'light' ? '切换深色模式' : '切换浅色模式';
+        }
+        
+        updateButtonIcon();
+    </script>
 </body>
 </html>
