@@ -1,25 +1,10 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facebook服务导航站</title>
     <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --link-color: #0066cc;
-            --link-hover-color: #004499;
-            --border-color: #e0e0e0;
-            --category-bg: #f5f5f5;
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --text-color: #e0e0e0;
-            --link-color: #4da6ff;
-            --link-hover-color: #80c1ff;
-            --border-color: #404040;
-            --category-bg: #2a2a2a;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -29,33 +14,87 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
+            color: #333333;
+            background-color: #ffffff;
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
             transition: background-color 0.3s, color 0.3s;
         }
 
+        /* 黑暗模式样式 */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode header {
+            border-bottom-color: #333;
+        }
+
+        body.dark-mode .description {
+            color: #aaa;
+        }
+
+        body.dark-mode .category-title {
+            border-bottom-color: #333;
+        }
+
+        body.dark-mode .link-item:hover {
+            background-color: #2a2a2a;
+        }
+
+        body.dark-mode .link-item a {
+            color: #4dabf7;
+        }
+
+        body.dark-mode .link-item a:hover {
+            color: #74c0fc;
+        }
+
+        body.dark-mode .link-description {
+            color: #aaa;
+        }
+
+        body.dark-mode footer {
+            border-top-color: #333;
+            color: #aaa;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 8px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s;
+            z-index: 100;
+        }
+
+        body.dark-mode .theme-toggle {
+            background-color: #333;
+            color: #f0f0f0;
+        }
+
+        .theme-toggle:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-mode .theme-toggle:hover {
+            background-color: #444;
+        }
+
         header {
             margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #e0e0e0;
             padding-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             position: relative;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .title-section {
-            flex: 1;
         }
 
         h1 {
@@ -68,31 +107,6 @@
             font-size: 1rem;
         }
 
-        [data-theme="dark"] .description {
-            color: #aaa;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-
-        .theme-toggle:hover {
-            background-color: var(--category-bg);
-        }
-
         .category {
             margin-bottom: 2rem;
         }
@@ -101,7 +115,7 @@
             font-size: 1.3rem;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .links {
@@ -119,11 +133,11 @@
         }
 
         .link-item:hover {
-            background-color: var(--category-bg);
+            background-color: #f5f5f5;
         }
 
         .link-item a {
-            color: var(--link-color);
+            color: #0066cc;
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -131,7 +145,7 @@
         }
 
         .link-item a:hover {
-            color: var(--link-hover-color);
+            color: #004499;
         }
 
         .link-icon {
@@ -154,21 +168,13 @@
             margin-top: 2px;
         }
 
-        [data-theme="dark"] .link-description {
-            color: #aaa;
-        }
-
         footer {
             margin-top: 3rem;
             padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid #e0e0e0;
             text-align: center;
             font-size: 0.9rem;
             color: #666;
-        }
-
-        [data-theme="dark"] footer {
-            color: #aaa;
         }
 
         @media (max-width: 600px) {
@@ -178,15 +184,6 @@
             
             .links {
                 grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: row;
-                align-items: center;
-            }
-            
-            .title-section {
-                margin-right: 15px;
             }
             
             h1 {
@@ -199,22 +196,20 @@
             }
             
             .theme-toggle {
-                width: 36px;
-                height: 36px;
-                font-size: 1rem;
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 1rem;
             }
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
+    
     <header>
-        <div class="header-content">
-            <div class="title-section">
-                <h1>Facebook服务导航站</h1>
-                <p class="description">官方购买渠道与客服支持</p>
-            </div>
-            <button class="theme-toggle" id="themeToggle" title="切换深色模式">🌙</button>
-        </div>
+        <h1>Facebook服务导航站</h1>
+        <p class="description">官方购买渠道与客服支持</p>
     </header>
     
     <main>
@@ -367,27 +362,29 @@
     <script>
         // 主题切换功能
         const themeToggle = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
+        const body = document.body;
         
-        document.documentElement.setAttribute('data-theme', currentTheme);
+        // 检查本地存储中的主题设置
+        const currentTheme = localStorage.getItem('theme');
         
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateButtonIcon();
-        });
-        
-        // 更新按钮图标
-        function updateButtonIcon() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            themeToggle.textContent = currentTheme === 'light' ? '🌙' : '☀️';
-            themeToggle.title = currentTheme === 'light' ? '切换深色模式' : '切换浅色模式';
+        // 如果之前选择了黑暗模式，则应用黑暗模式
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
         }
         
-        updateButtonIcon();
+        // 切换主题
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = '☀️';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = '🌙';
+            }
+        });
     </script>
 </body>
 </html>
