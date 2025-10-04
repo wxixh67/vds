@@ -38,7 +38,6 @@
             margin-bottom: 20px;
         }
         
-        /* 去掉边框的头像样式 */
         .avatar {
             font-size: 120px;  
             color: #1877F2;    
@@ -70,7 +69,7 @@
         
         .name i {
             font-size: 28px;
-            color: #1877F2; /* Facebook蓝色官方认证色 */
+            color: #1877F2;
         }
         
         .nav-container {
@@ -124,6 +123,16 @@
             transform: scale(1.2);
             color: #fff;
         }
+
+        /* 版权信息样式 */
+        .copyright {
+            margin-top: 25px;
+            font-size: 14px;
+            color: rgba(245, 233, 215, 0.8);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 15px;
+        }
         
         @media (max-width: 480px) {
             .container {
@@ -150,11 +159,9 @@
 <body>
     <div class="container">
         <div class="avatar-container">
-            <!-- 用 Font Awesome 的 Facebook 图标 -->
             <i class="fab fa-facebook avatar"></i>
         </div>
         
-        <!-- 标题左边换成官方认证徽章 -->
         <h1 class="name"><i class="fas fa-circle-check"></i> Facebook</h1>
         
         <div class="nav-container">
@@ -189,6 +196,11 @@
             <a href="https://fh10.zmfaka.cn/shop/24XZCD9E" class="social-icon">
                 <i class="fab fa-twitter"></i>
             </a>
+        </div>
+
+        <!-- 版权信息 -->
+        <div class="copyright">
+            版权所有 © 2025 Facebook. 保留所有权利。
         </div>
     </div>
 </body>
