@@ -38,14 +38,18 @@
             margin-bottom: 20px;
         }
         
+        /* 去掉边框的头像样式 */
         .avatar {
-            width: 150px;
-            height: 150px;
+            font-size: 120px;  
+            color: #1877F2;    
             border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid rgba(255, 255, 255, 0.4);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .avatar:hover {
@@ -127,8 +131,8 @@
             }
             
             .avatar {
-                width: 120px;
-                height: 120px;
+                font-size: 90px;
+                padding: 15px;
             }
             
             .name {
@@ -146,7 +150,8 @@
 <body>
     <div class="container">
         <div class="avatar-container">
-            <img src="头像/httpswww.facebook.comimagesfb_icon_325x325.png" alt="头像" class="avatar">
+            <!-- 用 Font Awesome 的 Facebook 图标 -->
+            <i class="fab fa-facebook avatar"></i>
         </div>
         
         <!-- 标题左边换成官方认证徽章 -->
