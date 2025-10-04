@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小琰导航站</title>
+  <style>
+    @charset "utf-8";
+    @font-face {
+      font-family: "DIY font";    
+      src: url("HarmonyOS_Sans_SC_Medium.subset.woff2");
+    }
+
+    * {
+      font-family: "DIY font";
+      transition: all 0.2s;
+    }
+
+    body {
+      background-image: url('club/images/bg.jpg');
+      background-size: 400% 400%;
+      animation: softGradientAnimation 10s ease infinite;
+      background-size: cover;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    @keyframes softGradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      position: relative;
+    }
+
+    .status-bar {
+      display: inline-block;
+      display: flex;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      color: #444444;
+      padding: 7px;
+      font-size: 14px;
+      width: 300px;
+      margin-bottom: 6px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .time {
+      justify-content: center;
+      font-weight: bold;
+      flex: 1;
+      text-align: left;
+    }
+
+    .right-content {
+      font-weight: bold;
+      text-align: right;
+      justify-content: flex-end;
+    }
+
+    .icons-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .signal-icons {
+      width: 30px;
+      height: 17px;
+      background-image: url('club/images/signal-icons.png');
+      background-size: cover;
+    }
+
+    .battery-icons {
+      width: 34px;
+      height: 17px;
+      background-image: url('club/images/battery-icons.png');
+      background-size: cover;
+      right: 0px;
+    }
+
+    .tag {
+      margin: 5px;
+      display: inline-block;
+      padding: 8px 11px;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      color: #403080;
+    }
+
+    .big-card {
+      width: 300px;
+      padding: 8px;
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(15px) saturate(150%) contrast(60%) brightness(120%);
+      background-clip: padding-box;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      padding: 1.5px;
+      border-radius: 50%;
+      background-color: lightgray;
+    }
+
+    .text-container {
+      display: flex;
+      flex-direction: column;
+      margin-left: 12px;
+    }
+
+    .text-container p {
+      margin: 1px 0;
+    }
+
+    .glass-button {
+      width: 45.75%;
+      margin: 5px;
+      padding: 15px;
+      border: none;
+      border-radius: 15px;
+      background: rgba(180, 200, 230, 0.2);
+      backdrop-filter: blur(10px);
+      color: #403080;
+      font-size: 16px;
+      text-align: center;
+      outline: none;
+      transition: all 0.4s ease-in-out;
+      box-shadow: 0 4px 6px rgba(50, 50, 100, 0.1);
+    }
+
+    .glass-button:hover {
+      background: rgba(200, 220, 240, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(50, 50, 100, 0.15);
+    }
+
+    .success-popup {
+      opacity: 0;
+      animation: slideDown 0.5s ease forwards;
+      font-size: 16px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .popup {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 280px;
+      background: linear-gradient(to bottom, #5DC6FF, white);
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .song-item {
+      color: #5D82FF;
+      padding: 5px 0;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    .song-item:last-child {
+      border-bottom: none;
+    }
+
+    .song-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .popup button {
+      margin-top: 8px;
+      background-color: #87CEEB;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .popup button:hover {
+      background-color: #4682B4;
+    }
+
+    .popup img {
+      margin-top: 0 auto;
+      width: 80px;
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-bar">
+    <div class="time"></div>
+    <div class="right-content">
+      <div class="icons-container">
+        <div class="data-speed"></div>
+        <div class="signal-icons"></div>
+        <div class="battery-icons"></div>
+      </div>
+    </div>
+  </div>
+  <div class="big-card">
+    <div class="container">
+      <img class="avatar" src="club/images/your-avatar-image.jpg" alt="头像">
+      <div class="text-container">
+        <p style="font-size: 20px;">小琰导航站</p>
+        <p id="copyText" style="font-size: 9px;color: #444444;"><img src="club/images/qq.png" style="width: 10px;">小琰导航站</p>
+      </div>
+    </div>
+  </div>
+  <div class="big-card additional-card">
+    <span class="tag">导航</span>
+    <div class="nav-container">
+      <!-- Content rendered dynamically by JS -->
+    </div>
+  </div>
+  <div class="big-card additional-card">
+    <p style="display: flex;justify-content: center;font-size: 10px;margin-bottom: 0px;">本站由<a href="https://yb.zmkj.cn">造梦空间</a>提供技术支持</p>
+  </div>
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      document.querySelector('.time').textContent = timeString;
+    }
+
+    function animateTime() {
+      updateTime();
+      requestAnimationFrame(animateTime);
+    }
+
+    function renderNavLinks() {
+      const navContainer = document.querySelector('.nav-container');
+      if (!navContainer) return;
+
+      navContainer.innerHTML = '';
+      fetch('data/url.json')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(links => {
+          links.forEach(link => {
+            const aElement = document.createElement('a');
+            aElement.href = link.href;
+            const buttonElement = document.createElement('button');
+            buttonElement.className = 'glass-button';
+            buttonElement.textContent = link.text;
+            aElement.appendChild(buttonElement);
+            const brElement = document.createElement('br');
+            navContainer.appendChild(aElement);
+            navContainer.appendChild(brElement);
+          });
+        })
+        .catch(error => {
+          console.error('Failed to load navigation links:', error);
+          navContainer.innerHTML = '<p>Failed to load navigation links</p>';
+        });
+    }
+
+    let currentSpeed = Math.floor(Math.random() * 100) + 1;
+    function updateDataSpeed() {
+      const change = Math.floor(Math.random() * 10) + 1;
+      const isIncrease = Math.random() > 0.5;
+      currentSpeed = isIncrease ? currentSpeed + change : currentSpeed - change;
+      if (currentSpeed < 1) currentSpeed = 1;
+      document.querySelector('.data-speed').textContent = `${currentSpeed} kb/s`;
+    }
+
+    function setupCopyFunctionality() {
+      const copyText = document.getElementById('copyText');
+      if (copyText) {
+        copyText.addEventListener('click', function () {
+          const textToCopy = this.innerText;
+          const tempInput = document.createElement('input');
+          tempInput.value = textToCopy;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+
+          const successMessage = document.createElement('div');
+          successMessage.classList.add('success-popup');
+          successMessage.innerText = '复制成功';
+          document.body.appendChild(successMessage);
+
+          setTimeout(() => {
+            document.body.removeChild(successMessage);
+          }, 2000);
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavLinks();
+      animateTime();
+      setInterval(updateDataSpeed, 2000);
+      setupCopyFunctionality();
+    });
+  </script>
+</body>
+</html>
