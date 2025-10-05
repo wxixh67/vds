@@ -3,7 +3,7 @@ import glob
 
 def generate_image_list():
     # 图片目录路径
-    images_dir = r'C:\Users\l\Documents\GitHub\test\images'
+    images_dir = r'C:\Users\l\Documents\GitHub\vds\p\images'
     
     # 支持的图片格式
     image_extensions = ('*.png', '*.jpg', '*.jpeg', '*.gif', '*.webp', '*.svg', '*.bmp')
