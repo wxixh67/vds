@@ -1,76 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>我的图片分类网站</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        .img-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin: 0; /* 确保容器无外边距 */
+            padding: 0; /* 确保容器无内边距 */
+            width: 100%; /* 容器占满列宽 */
         }
-        .tabs {
-            text-align: center;
-            padding: 20px;
+        .img-thumbnail {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* 保持图片原比例 */
+            width: auto;
+            height: auto;
+            margin: 0; /* 确保图片无外边距 */
+            padding: 0; /* 确保图片无内边距 */
         }
-        .tabs button {
-            padding: 10px 20px;
-            margin: 0 5px;
-            border: none;
-            background-color: #f0f0f0;
-            cursor: pointer;
-            font-size: 16px;
+        .filter-btn { margin: 5px; }
+        .no-gutters {
+            --bs-gutter-x: 0; /* 移除水平间距 */
+            --bs-gutter-y: 0; /* 移除垂直间距 */
+            margin: 0; /* 确保 row 无外边距 */
+            padding: 0; /* 确保 row 无内边距 */
         }
-        .tabs button.active {
-            background-color: #007bff;
-            color: white;
-        }
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .gallery img {
-            width: 100%;
-            height: auto; /* Maintains original aspect ratio */
-            border-radius: 5px;
-        }
-        #loadMore {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        #loadMore:hover {
-            background-color: #0056b3;
-        }
-        #loadMore.hidden {
-            display: none;
+        .no-gutters > [class*="col-"] {
+            padding: 0; /* 移除列内边距 */
+            margin: 0; /* 移除列外边距 */
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">图片展示</h1>
-    <div class="tabs">
-        <button class="active" onclick="loadImages('all')">全部</button>
-        <button onclick="loadImages('1')">1</button>
-        <button onclick="loadImages('2')">2</button>
+    <div class="container mt-4">
+        <h1 class="text-center">图片分类图库</h1>
+        <div class="row mb-3">
+            <div class="col-12">
+                <button class="btn btn-primary filter-btn" data-category="all">全部</button>
+                <button class="btn btn-secondary filter-btn" data-category="1">分类1</button>
+                <!-- 根据你的分类添加更多按钮，例如 category: '2' -->
+            </div>
+        </div>
+        <div class="row no-gutters" id="gallery">
+            <!-- 图片将通过 JS 动态加载 -->
+        </div>
     </div>
-    <div class="gallery" id="gallery"></div>
-    <button id="loadMore" onclick="loadMoreImages()">Load More</button>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Image data in the specified format
-        const imageData = [
+        const images = [
 { src: './images/124332067_プラナ_1.png', category: '1' },
 { src: './images/124332067_プラナ_2.png', category: '1' },
 { src: './images/124365452_古関ウイ_1.png', category: '1' },
@@ -304,63 +287,35 @@
 { src: './images/135881723_花火_sparkle_1.png', category: '1' },
 { src: './images/135881723_花火_sparkle_2.png', category: '1' },
 { src: './images/135881723_花火_sparkle_3.png', category: '1' },
-
-
-            // Add more images here as needed
-            ...Array.from({ length: 50 }, (_, i) => ({
-                src: `https://via.placeholder.com/200?text=Image${i + 5}`,
-                category: i % 2 === 0 ? '1' : '2'
-            }))
+            // 添加更多图片，例如：{ src: './images/xxx.png', category: '2' }
         ];
 
-        let currentCategory = 'all';
-        let currentPage = 0;
-        const imagesPerPage = 20;
-
-        function loadImages(category) {
-            currentCategory = category;
-            currentPage = 0;
+        function loadGallery(category = 'all') {
             const gallery = document.getElementById('gallery');
-            gallery.innerHTML = ''; // Clear gallery
-            updateActiveTab(category);
-            appendImages();
-        }
-
-        function appendImages() {
-            const gallery = document.getElementById('gallery');
-            const filteredImages = currentCategory === 'all' 
-                ? imageData 
-                : imageData.filter(img => img.category === currentCategory);
-            const start = currentPage * imagesPerPage;
-            const end = start + imagesPerPage;
-            const currentImages = filteredImages.slice(start, end);
-
-            currentImages.forEach(img => {
-                const imgElement = document.createElement('img');
-                imgElement.src = img.src;
-                imgElement.alt = 'Gallery Image';
-                gallery.appendChild(imgElement);
-            });
-
-            // Toggle "Load More" button visibility
-            const loadMoreButton = document.getElementById('loadMore');
-            loadMoreButton.classList.toggle('hidden', end >= filteredImages.length);
-        }
-
-        function loadMoreImages() {
-            currentPage++;
-            appendImages();
-        }
-
-        function updateActiveTab(category) {
-            const buttons = document.querySelectorAll('.tabs button');
-            buttons.forEach(button => {
-                button.classList.toggle('active', button.textContent === (category === 'all' ? '全部' : category));
+            gallery.innerHTML = '';
+            images.forEach(img => {
+                if (category === 'all' || category === img.category) {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-3 col-sm-6';
+                    col.innerHTML = `
+                        <div class="img-container">
+                            <img src="${img.src}" class="img-thumbnail" alt="分类${img.category}图片">
+                        </div>`;
+                    gallery.appendChild(col);
+                }
             });
         }
 
-        // Load initial images
-        loadImages('all');
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('btn-primary'));
+                e.target.classList.add('btn-primary');
+                loadGallery(e.target.dataset.category);
+            });
+        });
+
+        // 初始加载全部
+        loadGallery();
     </script>
 </body>
 </html>
