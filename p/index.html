@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片浏览网站</title>
+    <title>头像库</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- 添加顶部信息栏 -->
+    <div class="header">
+        <h1>头像库</h1>
+        <div class="image-counter" id="imageCounter">图片总数: 加载中...</div>
+    </div>
+
     <div class="gallery" id="gallery"></div>
 
     <script>
         const images = [
-
-
+          
     { src: './images/135881723_花火_sparkle_3.png', alt: '图片描述 1' },
     { src: './images/135881723_花火_sparkle_2.png', alt: '图片描述 2' },
     { src: './images/135881723_花火_sparkle_1.png', alt: '图片描述 3' },
@@ -116,7 +121,135 @@
     { src: './images/134477541_p0-橘ノゾミ+橘ヒカリ.png', alt: '图片描述 101' },
     { src: './images/134439732_p2-百合園セイア／seia(ブルーアーカイブ).png', alt: '图片描述 102' },
     { src: './images/134439732_p1-百合園セイア／seia(ブルーアーカイブ).png', alt: '图片描述 103' },
-    { src: './images/134439732_p0-百合園セイア／seia(ブルーアーカイブ).png', alt: '图片描述 104' }
+    { src: './images/134439732_p0-百合園セイア／seia(ブルーアーカイブ).png', alt: '图片描述 104' },
+    { src: './images/125400314_nai4为什么是神_3.png', alt: '图片描述 105' },
+    { src: './images/125400314_nai4为什么是神_2.png', alt: '图片描述 106' },
+    { src: './images/125400314_nai4为什么是神_1.png', alt: '图片描述 107' },
+    { src: './images/125368208_長門_2.png', alt: '图片描述 108' },
+    { src: './images/125368208_長門_1.png', alt: '图片描述 109' },
+    { src: './images/125339741_neko初音ミク.png', alt: '图片描述 110' },
+    { src: './images/125311984_久田イズナ_2.png', alt: '图片描述 111' },
+    { src: './images/125311984_久田イズナ_1.png', alt: '图片描述 112' },
+    { src: './images/125283492_空崎ヒナ_2.png', alt: '图片描述 113' },
+    { src: './images/125283492_空崎ヒナ_1.png', alt: '图片描述 114' },
+    { src: './images/125255660_下江コハル_2.png', alt: '图片描述 115' },
+    { src: './images/125255660_下江コハル_1.png', alt: '图片描述 116' },
+    { src: './images/125226497_neko初音ミク_2.png', alt: '图片描述 117' },
+    { src: './images/125226497_neko初音ミク_1.png', alt: '图片描述 118' },
+    { src: './images/125191910_しぐれうい_2.png', alt: '图片描述 119' },
+    { src: './images/125191910_しぐれうい_1.png', alt: '图片描述 120' },
+    { src: './images/125191886_鷲見セリナ_2.png', alt: '图片描述 121' },
+    { src: './images/125191886_鷲見セリナ_1.png', alt: '图片描述 122' },
+    { src: './images/125160016_ライスシャワー_2.png', alt: '图片描述 123' },
+    { src: './images/125160016_ライスシャワー_1.png', alt: '图片描述 124' },
+    { src: './images/125160001_プラナ_2.png', alt: '图片描述 125' },
+    { src: './images/125160001_プラナ_1.png', alt: '图片描述 126' },
+    { src: './images/125131951_プラナ+アロナ_2.png', alt: '图片描述 127' },
+    { src: './images/125131951_プラナ+アロナ_1.png', alt: '图片描述 128' },
+    { src: './images/125131945_和泉紗霧_2.png', alt: '图片描述 129' },
+    { src: './images/125131945_和泉紗霧_1.png', alt: '图片描述 130' },
+    { src: './images/125104372_天童アリス_2.png', alt: '图片描述 131' },
+    { src: './images/125104372_天童アリス_1.png', alt: '图片描述 132' },
+    { src: './images/125104353_常闇トワ_2.png', alt: '图片描述 133' },
+    { src: './images/125104353_常闇トワ_1.png', alt: '图片描述 134' },
+    { src: './images/125077332_甘雨+胡桃_2.png', alt: '图片描述 135' },
+    { src: './images/125077332_甘雨+胡桃_1.png', alt: '图片描述 136' },
+    { src: './images/125077299_聖園ミカ_2.png', alt: '图片描述 137' },
+    { src: './images/125077299_聖園ミカ_1.png', alt: '图片描述 138' },
+    { src: './images/125049915_スズラン_2.png', alt: '图片描述 139' },
+    { src: './images/125049915_スズラン_1.png', alt: '图片描述 140' },
+    { src: './images/125022024_ナヒーダ_2.png', alt: '图片描述 141' },
+    { src: './images/125022024_ナヒーダ_1.png', alt: '图片描述 142' },
+    { src: './images/125021997_プラナ_2.png', alt: '图片描述 143' },
+    { src: './images/125021997_プラナ_1.png', alt: '图片描述 144' },
+    { src: './images/124988165_浅黄ムツキ_2.png', alt: '图片描述 145' },
+    { src: './images/124988165_浅黄ムツキ_1.png', alt: '图片描述 146' },
+    { src: './images/124988151_スズラン_2.png', alt: '图片描述 147' },
+    { src: './images/124988151_スズラン_1.png', alt: '图片描述 148' },
+    { src: './images/124956545_空崎ヒナ_2.png', alt: '图片描述 149' },
+    { src: './images/124956545_空崎ヒナ_1.png', alt: '图片描述 150' },
+    { src: './images/124956542_橘ノゾミ+橘ヒカリ_2.png', alt: '图片描述 151' },
+    { src: './images/124956542_橘ノゾミ+橘ヒカリ_1.png', alt: '图片描述 152' },
+    { src: './images/124929093_珊瑚宮心海_2.png', alt: '图片描述 153' },
+    { src: './images/124929093_珊瑚宮心海_1.png', alt: '图片描述 154' },
+    { src: './images/124929047_春原ココナ_2.png', alt: '图片描述 155' },
+    { src: './images/124929047_春原ココナ_1.png', alt: '图片描述 156' },
+    { src: './images/124901997_時崎狂三_3.png', alt: '图片描述 157' },
+    { src: './images/124901997_時崎狂三_2.png', alt: '图片描述 158' },
+    { src: './images/124901997_時崎狂三_1.png', alt: '图片描述 159' },
+    { src: './images/124901945_伊落マリー_2.png', alt: '图片描述 160' },
+    { src: './images/124901945_伊落マリー_1.png', alt: '图片描述 161' },
+    { src: './images/124874860_スズラン_2.png', alt: '图片描述 162' },
+    { src: './images/124874860_スズラン_1.png', alt: '图片描述 163' },
+    { src: './images/124874856_プラナ_2.png', alt: '图片描述 164' },
+    { src: './images/124874856_プラナ_1.png', alt: '图片描述 165' },
+    { src: './images/124847240_才羽ミドリ+才羽モモイ_2.png', alt: '图片描述 166' },
+    { src: './images/124847240_才羽ミドリ+才羽モモイ_1.png', alt: '图片描述 167' },
+    { src: './images/124847183_スズラン_2.png', alt: '图片描述 168' },
+    { src: './images/124847183_スズラン_1.png', alt: '图片描述 169' },
+    { src: './images/124818495_才羽ミドリ+才羽モモイ_2.png', alt: '图片描述 170' },
+    { src: './images/124818495_才羽ミドリ+才羽モモイ_1.png', alt: '图片描述 171' },
+    { src: './images/124818472_フリーナ_2.png', alt: '图片描述 172' },
+    { src: './images/124818472_フリーナ_1.png', alt: '图片描述 173' },
+    { src: './images/124782826_花岡ユズ_2.png', alt: '图片描述 174' },
+    { src: './images/124782826_花岡ユズ_1.png', alt: '图片描述 175' },
+    { src: './images/124748381_百合園セイア_2.png', alt: '图片描述 176' },
+    { src: './images/124748381_百合園セイア_1.png', alt: '图片描述 177' },
+    { src: './images/124748366_がうる・ぐら_2.png', alt: '图片描述 178' },
+    { src: './images/124748366_がうる・ぐら_1.png', alt: '图片描述 179' },
+    { src: './images/124719219_小鳥遊ホシノ_2.png', alt: '图片描述 180' },
+    { src: './images/124719219_小鳥遊ホシノ_1.png', alt: '图片描述 181' },
+    { src: './images/124691125_フリーレン_2.png', alt: '图片描述 182' },
+    { src: './images/124691125_フリーレン_1.png', alt: '图片描述 183' },
+    { src: './images/124691058_ラプラス・ダークネス_2.png', alt: '图片描述 184' },
+    { src: './images/124691058_ラプラス・ダークネス_1.png', alt: '图片描述 185' },
+    { src: './images/124662880_甘雨_2.png', alt: '图片描述 186' },
+    { src: './images/124662880_甘雨_1.png', alt: '图片描述 187' },
+    { src: './images/124662866_空崎ヒナ_2.png', alt: '图片描述 188' },
+    { src: './images/124662866_空崎ヒナ_1.png', alt: '图片描述 189' },
+    { src: './images/124635044_明星ヒマリ_2.png', alt: '图片描述 190' },
+    { src: './images/124635044_明星ヒマリ_1.png', alt: '图片描述 191' },
+    { src: './images/124635008_ラフィー_2.png', alt: '图片描述 192' },
+    { src: './images/124635008_ラフィー_1.png', alt: '图片描述 193' },
+    { src: './images/124607214_白上フブキ+大神ミオ_3.png', alt: '图片描述 194' },
+    { src: './images/124607214_白上フブキ+大神ミオ_2.png', alt: '图片描述 195' },
+    { src: './images/124607214_白上フブキ+大神ミオ_1.png', alt: '图片描述 196' },
+    { src: './images/124607179_胡桃_2.png', alt: '图片描述 197' },
+    { src: './images/124607179_胡桃_1.png', alt: '图片描述 198' },
+    { src: './images/124572099_白露(スターレイル)_2.png', alt: '图片描述 199' },
+    { src: './images/124572099_白露(スターレイル)_1.png', alt: '图片描述 200' },
+    { src: './images/124572084_丹花イブキ_2.png', alt: '图片描述 201' },
+    { src: './images/124572084_丹花イブキ_1.png', alt: '图片描述 202' },
+    { src: './images/124540074_スズラン+シャマレ_2.png', alt: '图片描述 203' },
+    { src: './images/124540074_スズラン+シャマレ_1.png', alt: '图片描述 204' },
+    { src: './images/124540066_ル・マラン_2.png', alt: '图片描述 205' },
+    { src: './images/124540066_ル・マラン_1.png', alt: '图片描述 206' },
+    { src: './images/124512057_スズラン+シャマレ_2.png', alt: '图片描述 207' },
+    { src: './images/124512057_スズラン+シャマレ_1.png', alt: '图片描述 208' },
+    { src: './images/124512054_竜華キサキ_2.png', alt: '图片描述 209' },
+    { src: './images/124512054_竜華キサキ_1.png', alt: '图片描述 210' },
+    { src: './images/124484833_聖園ミカ_2.png', alt: '图片描述 211' },
+    { src: './images/124484833_聖園ミカ_1.png', alt: '图片描述 212' },
+    { src: './images/124484825_白洲アズサ_2.png', alt: '图片描述 213' },
+    { src: './images/124484825_白洲アズサ_1.png', alt: '图片描述 214' },
+    { src: './images/124457203_がうる・ぐら_2.png', alt: '图片描述 215' },
+    { src: './images/124457203_がうる・ぐら_1.png', alt: '图片描述 216' },
+    { src: './images/124457176_プラナ_2.png', alt: '图片描述 217' },
+    { src: './images/124457176_プラナ_1.png', alt: '图片描述 218' },
+    { src: './images/124430047_竜華キサキ_2.png', alt: '图片描述 219' },
+    { src: './images/124430047_竜華キサキ_1.png', alt: '图片描述 220' },
+    { src: './images/124430038_丹花イブキ_2.png', alt: '图片描述 221' },
+    { src: './images/124430038_丹花イブキ_1.png', alt: '图片描述 222' },
+    { src: './images/124401307_这图上切片了？_2.png', alt: '图片描述 223' },
+    { src: './images/124401307_这图上切片了？_1.png', alt: '图片描述 224' },
+    { src: './images/124401294_伊落マリー_2.png', alt: '图片描述 225' },
+    { src: './images/124401294_伊落マリー_1.png', alt: '图片描述 226' },
+    { src: './images/124365493_百鬼あやめ_2.png', alt: '图片描述 227' },
+    { src: './images/124365493_百鬼あやめ_1.png', alt: '图片描述 228' },
+    { src: './images/124365452_古関ウイ_2.png', alt: '图片描述 229' },
+    { src: './images/124365452_古関ウイ_1.png', alt: '图片描述 230' },
+    { src: './images/124332067_プラナ_2.png', alt: '图片描述 231' },
+    { src: './images/124332067_プラナ_1.png', alt: '图片描述 232' }
 
 
 
@@ -130,26 +263,14 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		  // ... 你的图片数据保持不变 ...
         ];
 
         const gallery = document.getElementById('gallery');
+        const imageCounter = document.getElementById('imageCounter');
+
+        // 更新图片计数器
+        imageCounter.textContent = `图片总数: ${images.length}`;
 
         images.forEach(image => {
             const imgElement = document.createElement('img');

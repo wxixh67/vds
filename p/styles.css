@@ -9,10 +9,35 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* 改为纵向布局 */
+    justify-content: flex-start; /* 顶部对齐 */
     align-items: center;
     min-height: 100vh;
     margin: 0;
+}
+
+/* 顶部信息栏样式 */
+.header {
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header h1 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+}
+
+.image-counter {
+    font-size: 1rem;
+    color: #666;
+    font-weight: bold;
 }
 
 .gallery {
@@ -42,10 +67,22 @@ img {
     .gallery {
         grid-template-columns: 1fr 1fr;
     }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
     .gallery {
         grid-template-columns: 1fr;
+    }
+    
+    .header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .image-counter {
+        font-size: 0.9rem;
     }
 }
