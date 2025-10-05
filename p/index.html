@@ -1,94 +1,76 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片展示网站</title>
+    <title>Image Gallery</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+        }
+        .tabs {
+            text-align: center;
+            padding: 20px;
+        }
+        .tabs button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
             background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .tabs button.active {
+            background-color: #007bff;
+            color: white;
         }
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
             padding: 20px;
             max-width: 1200px;
-            width: 100%;
-            box-sizing: border-box;
+            margin: 0 auto;
         }
         .gallery img {
             width: 100%;
-            height: auto;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            height: auto; /* Maintains original aspect ratio */
+            border-radius: 5px;
         }
-        .gallery img:hover {
-            transform: scale(1.05);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin: 20px 0;
-        }
-        .filter-buttons {
-            margin: 20px 0;
-            text-align: center;
-        }
-        .filter-buttons button {
-            margin: 0 10px;
+        #loadMore {
+            display: block;
+            margin: 20px auto;
             padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+            background-color: #007bff;
+            color: white;
             border: none;
             border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            transition: background-color 0.3s;
+            cursor: pointer;
+            font-size: 16px;
         }
-        .filter-buttons button:hover {
+        #loadMore:hover {
             background-color: #0056b3;
         }
-        .filter-buttons button.active {
-            background-color: #28a745;
-        }
-        @media (max-width: 600px) {
-            .gallery {
-                grid-template-columns: 1fr;
-            }
-            .filter-buttons button {
-                padding: 8px 15px;
-                font-size: 14px;
-            }
+        #loadMore.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>图片展示</h1>
-    <div class="filter-buttons">
-        <button class="filter-btn active" data-category="all">全部</button>
-        <button class="filter-btn" data-category="1">1</button>
-	    <button class="filter-btn" data-category="2">2</button>
-
+    <h1 style="text-align: center;">图片展示</h1>
+    <div class="tabs">
+        <button class="active" onclick="loadImages('all')">全部</button>
+        <button onclick="loadImages('1')">1</button>
+        <button onclick="loadImages('2')">2</button>
     </div>
-    <div class="gallery" id="gallery">
-        <!-- 图片将通过 JavaScript 动态加载 -->
-    </div>
+    <div class="gallery" id="gallery"></div>
+    <button id="loadMore" onclick="loadMoreImages()">Load More</button>
 
     <script>
-        // 图片数据数组，添加分类字段
-        const images = [
-		
-		
+        // Image data in the specified format
+        const imageData = [
 { src: './images/124332067_プラナ_1.png', category: '1' },
 { src: './images/124332067_プラナ_2.png', category: '1' },
 { src: './images/124365452_古関ウイ_1.png', category: '1' },
@@ -324,40 +306,61 @@
 { src: './images/135881723_花火_sparkle_3.png', category: '1' },
 
 
- 	];
+            // Add more images here as needed
+            ...Array.from({ length: 50 }, (_, i) => ({
+                src: `https://via.placeholder.com/200?text=Image${i + 5}`,
+                category: i % 2 === 0 ? '1' : '2'
+            }))
+        ];
 
-        const gallery = document.getElementById('gallery');
-        const filterButtons = document.querySelectorAll('.filter-btn');
+        let currentCategory = 'all';
+        let currentPage = 0;
+        const imagesPerPage = 20;
 
-        // 显示图片的函数
-        function displayImages(category) {
-            gallery.innerHTML = ''; // 清空画廊
-            const filteredImages = category === 'all' 
-                ? images 
-                : images.filter(image => image.category === category);
-            
-            filteredImages.forEach(image => {
-                const img = document.createElement('img');
-                img.src = image.src;
-                img.alt = image.alt;
-                gallery.appendChild(img);
+        function loadImages(category) {
+            currentCategory = category;
+            currentPage = 0;
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = ''; // Clear gallery
+            updateActiveTab(category);
+            appendImages();
+        }
+
+        function appendImages() {
+            const gallery = document.getElementById('gallery');
+            const filteredImages = currentCategory === 'all' 
+                ? imageData 
+                : imageData.filter(img => img.category === currentCategory);
+            const start = currentPage * imagesPerPage;
+            const end = start + imagesPerPage;
+            const currentImages = filteredImages.slice(start, end);
+
+            currentImages.forEach(img => {
+                const imgElement = document.createElement('img');
+                imgElement.src = img.src;
+                imgElement.alt = 'Gallery Image';
+                gallery.appendChild(imgElement);
+            });
+
+            // Toggle "Load More" button visibility
+            const loadMoreButton = document.getElementById('loadMore');
+            loadMoreButton.classList.toggle('hidden', end >= filteredImages.length);
+        }
+
+        function loadMoreImages() {
+            currentPage++;
+            appendImages();
+        }
+
+        function updateActiveTab(category) {
+            const buttons = document.querySelectorAll('.tabs button');
+            buttons.forEach(button => {
+                button.classList.toggle('active', button.textContent === (category === 'all' ? '全部' : category));
             });
         }
 
-        // 初始化显示所有图片
-        displayImages('all');
-
-        // 过滤按钮事件监听
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // 移除所有按钮的 active 类
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                // 给当前按钮添加 active 类
-                button.classList.add('active');
-                // 显示对应分类的图片
-                displayImages(button.dataset.category);
-            });
-        });
+        // Load initial images
+        loadImages('all');
     </script>
 </body>
 </html>
