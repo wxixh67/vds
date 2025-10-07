@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图梦引导页系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+                            background-image: url('https://img.tumengwl.com/img/1000371666.jpg');
+                        background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            color: #fff;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            padding: 15px 20px;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            will-change: background-image;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.08);
+            z-index: -1;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .header, .nav-container, .support, .template-guide, .footer {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin: 10px 0 30px;
+            width: 100%;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 24px;
+        }
+
+        /* --- 彻底解决：头像框隐身（确保无任何样式） --- */
+        .avatar {
+            width: 75px;
+            height: 75px;
+            margin-right: 18px;
+            object-fit: cover;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: none !important;
+            outline: none !important;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #e0e0e0;
+            margin: 4px 0 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            padding: 20px;
+            border-radius: 20px;
+            width: 100%;
+            margin-bottom: 22px;
+        }
+
+        .nav-title {
+            font-size: 19px;
+            margin: 0 0 16px;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-button:hover, .nav-button:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            outline: none;
+            transform: translateY(-3px);
+        }
+
+        .nav-button:active {
+            transform: scale(0.97) translateY(-1px);
+            transition: transform 0.1s ease;
+        }
+
+        .support {
+            padding: 12px 20px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .support-text {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .support-link {
+            color: #64B5F6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .support-link:hover {
+            color: #81C7F5;
+            text-decoration: underline;
+        }
+
+        .template-guide {
+            padding: 12px 20px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .template-text {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .template-link {
+            color: #64B5F6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .template-link:hover {
+            color: #81C7F5;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 12px 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            border-radius: 12px;
+            width: 100%;
+        }
+
+        .notice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .notice-content {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .notice-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .notice-close:hover {
+            opacity: 1;
+        }
+
+        .notice-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .notice-body {
+            font-size: 15px;
+            color: #ffffff;
+            line-height: 1.8;
+            text-align: center;
+            white-space: pre-line;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .avatar {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .title {
+                font-size: 22px;
+            }
+            
+            .nav-container {
+                padding: 18px;
+                border-radius: 18px;
+            }
+            
+            .nav-button {
+                padding: 14px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+
+            .header {
+                padding: 10px 15px;
+                margin: 8px 0 25px;
+            }
+
+            .template-guide, .support {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+
+            .notice-content {
+                padding: 25px 20px;
+                border-radius: 16px;
+            }
+
+            .notice-title {
+                font-size: 16px;
+            }
+
+            .notice-body {
+                font-size: 14px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container > * {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .header { animation-delay: 0.1s; }
+        .nav-container { animation-delay: 0.2s; }
+        .support { animation-delay: 0.3s; }
+        .template-guide { animation-delay: 0.35s; }
+        .footer { animation-delay: 0.4s; }
+
+        @keyframes noticeFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .notice-modal.show {
+            display: flex;
+        }
+
+        .notice-modal.show .notice-content {
+            animation: noticeFadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- --- 彻底解决：头像框隐身（无头像时不输出任何元素） --- -->
+                            <img src="https://img.tumengwl.com/img/tmtb.png" alt="图梦引导页系统" class="avatar">
+                        <div>
+                <div class="title">图梦引导页系统</div>
+                <div class="subtitle">便捷导航，轻松访问</div>
+            </div>
+        </div>
+
+                <div class="nav-container">
+            <div class="nav-title">快速导航</div>
+            <div class="nav-buttons">
+                                <a href="https://dh.tumengwl.com/" class="nav-button">
+                    本站同款引导页带后台代托管托管9元/月                </a>
+                                <a href="https://dh.tumengwl.com/" class="nav-button">
+                    联系QQ：3292580166                </a>
+                                <a href="https://www.tumengwl.com/" class="nav-button">
+                    图梦科技官网                </a>
+                                <a href="https://dh.tumengwl.com/" class="nav-button">
+                    至今已为 2 名用户提供导航服务                </a>
+                            </div>
+        </div>
+        
+        <div class="support">
+            <div class="support-text">本站由<a href="https://www.tumengwl.com" class="support-link" target="_blank">图梦科技</a>提供技术支持</div>
+        </div>
+
+        <div class="template-guide">
+            <div class="template-text">想要使用同款导航页？<a href="https://dh.tumengwl.com/" class="template-link" target="_blank">点击获取</a></div>
+        </div>
+
+        <div class="footer">
+            © 2023 图梦科技 - 精心为您打造        </div>
+    </div>
+
+    <div class="notice-modal" id="noticeModal">
+        <div class="notice-content">
+            <button class="notice-close" id="noticeClose">&times;</button>
+            <div class="notice-title">公告</div>
+            <div class="notice-body" id="noticeBody">
+                图梦引导页系统
+带后台管理、公告、头像、引导页标题、简介、按钮等可更改账号密码
+代托管联系QQ：3292580166
+打造最好看的引导页            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.body.style.opacity = '1';
+            }, 300);
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId !== '#') {
+                        const targetElement = document.querySelector(targetId);
+                        if(targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+
+            // --- 彻底解决：公告每次都弹出（完全不使用localStorage） ---
+            const noticeModal = document.getElementById('noticeModal');
+            const noticeClose = document.getElementById('noticeClose');
+            const noticeIsShow = true;
+
+            // 每次加载页面都检查后台配置，决定是否显示
+            if (noticeIsShow) {
+                noticeModal.classList.add('show');
+            }
+
+            // 关闭按钮仅隐藏当前弹窗，不做任何存储
+            noticeClose.addEventListener('click', function() {
+                noticeModal.classList.remove('show');
+            });
+
+            // 点击遮罩层也关闭弹窗
+            noticeModal.addEventListener('click', function(e) {
+                if (e.target === noticeModal) {
+                    noticeModal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
