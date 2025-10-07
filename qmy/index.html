@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<!-- Mirrored from auth.qmyfk.cn/ydy.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Oct 2025 00:59:45 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小琰导航站</title>
+    <link href="../cdn.jsdelivr.net/npm/font-awesome%404.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 基础样式优化 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            background-image: url('https://picsum.photos/1920/1080');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            color: #fff;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            padding: 20px;
+            /* 滑动优化 */
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            /* 背景图优化 */
+            image-rendering: optimizeQuality;
+            will-change: background-image;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        /* 半透明遮罩，增强文字可读性 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.35);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 硬件加速优化 */
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 40px;
+            width: 100%;
+            justify-content: center;
+            /* 毛玻璃效果 */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px 20px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            /* 图片加载优化 */
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #ddd;
+            margin: 5px 0 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            /* 增强毛玻璃效果 */
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 25px;
+            /* 更圆润的边角 */
+            border-radius: 20px;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* 性能优化 */
+            will-change: box-shadow;
+        }
+
+        .nav-title {
+            font-size: 20px;
+            margin: 0 0 20px;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 18px;
+            /* 按钮毛玻璃效果 */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            border: none;
+            /* 圆润按钮 */
+            border-radius: 16px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            /* 优化过渡效果 */
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            /* 触摸反馈优化 */
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-button i {
+            margin-right: 12px;
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .nav-button:hover, .nav-button:focus {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+            border-color: rgba(255, 255, 255, 0.1);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        /* 触摸反馈效果 */
+        .nav-button:active {
+            transform: scale(0.98) translateY(-1px);
+            transition: transform 0.1s ease;
+        }
+
+        .support {
+            /* 支持信息区域毛玻璃 */
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .support-text {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .support-link {
+            color: #42a5f5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .support-link:hover {
+            color: #81d4fa;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 15px 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            /* 底部信息毛玻璃 */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 12px;
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* 小屏幕适配 */
+        @media (max-width: 480px) {
+            .avatar {
+                width: 65px;
+                height: 65px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .nav-container {
+                padding: 20px;
+                border-radius: 18px;
+            }
+            
+            .nav-button {
+                padding: 16px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+
+            .nav-button i {
+                width: 20px;
+                margin-right: 10px;
+            }
+
+            .header {
+                padding: 12px 15px;
+                border-radius: 20px;
+            }
+        }
+
+        /* 加载动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container > * {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .header { animation-delay: 0.1s; }
+        .nav-container { animation-delay: 0.2s; }
+        .support { animation-delay: 0.3s; }
+        .footer { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://picsum.photos/id/64/200/200" alt="小琰头像" class="avatar">
+            <div>
+                <div class="title">小琰导航站</div>
+                <div class="subtitle">便捷导航，轻松访问</div>
+            </div>
+        </div>
+
+        <div class="nav-container">
+            <div class="nav-title">快速导航</div>
+            <div class="nav-buttons">
+                <a href="https://example.com/shop" class="nav-button">
+                    <i class="fa fa-shopping-bag"></i>小琰总店铺链接
+                </a>
+                <a href="https://example.com/customer-service" class="nav-button">
+                    <i class="fa fa-headphones"></i>小琰客服
+                </a>
+                <a href="https://example.com/tg-download" class="nav-button">
+                    <i class="fa fa-download"></i>TG下载地址[必须挂梯子下载]
+                </a>
+                <a href="https://example.com/accelerator" class="nav-button">
+                    <i class="fa fa-rocket"></i>购买TG专属加速器[100%加速]
+                </a>
+                <a href="https://example.com/after-sales" class="nav-button">
+                    <i class="fa fa-comments"></i>小琰售后群
+                </a>
+            </div>
+        </div>
+
+        <div class="support">
+            <div class="support-text">本站由<a href="https://example.com/dream-space" class="support-link">造梦空间</a>提供技术支持</div>
+        </div>
+
+        <div class="footer">
+            © 2023 小琰导航站 - 精心为您打造
+        </div>
+    </div>
+
+    <script>
+        // 背景图加载优化 - 预加载完成后再显示
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查图片是否已缓存或加载完成
+            const bgImage = new Image();
+            bgImage.src = 'https://picsum.photos/1920/1080';
+            bgImage.onload = function() {
+                document.body.style.opacity = '1';
+            };
+            
+            // 平滑滚动效果
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId !== '#') {
+                        const targetElement = document.querySelector(targetId);
+                        if(targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+<!-- Mirrored from auth.qmyfk.cn/ydy.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Oct 2025 00:59:46 GMT -->
+</html>
