@@ -76,8 +76,8 @@
             padding: 60px 40px;
             text-align: center;
             transition: all 0.3s ease;
-            cursor: pointer;
             background: #fafafa;
+            position: relative;
         }
 
         .upload-area:hover {
@@ -109,7 +109,13 @@
         }
 
         input[type="file"] {
-            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
         }
 
         .config-grid {
@@ -255,6 +261,30 @@
             font-size: 0.85em;
         }
 
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #f44336;
+        }
+
         @media (max-width: 768px) {
             .config-grid {
                 grid-template-columns: 1fr;
@@ -275,21 +305,23 @@
     </style>
 </head>
 <body>
+    <div class="toast" id="toast"></div>
+
     <div class="container">
         <div class="header">
             <h1>📸 图片数据生成器</h1>
-            <p>批量导入图片,自动生成 imageData 数组</p>
+            <p>选择文件夹,自动生成 imageData 数组</p>
         </div>
 
         <div class="content">
             <!-- 上传区域 -->
             <div class="section">
-                <div class="section-title">1. 选择图片</div>
+                <div class="section-title">1. 选择文件夹</div>
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">📁</div>
-                    <div class="upload-text">点击或拖拽图片到这里</div>
-                    <div class="upload-hint">支持批量选择 JPG、PNG、GIF、WEBP 等格式</div>
-                    <input type="file" id="fileInput" multiple accept="image/*" webkitdirectory directory>
+                    <div class="upload-text">点击选择文件夹</div>
+                    <div class="upload-hint">支持 JPG、PNG、GIF、WEBP 等图片格式</div>
+                    <input type="file" id="fileInput" webkitdirectory directory multiple>
                 </div>
             </div>
 
@@ -368,11 +400,20 @@
         const categoryCount = document.getElementById('categoryCount');
         const totalSize = document.getElementById('totalSize');
         const categoryList = document.getElementById('categoryList');
+        const toast = document.getElementById('toast');
 
-        // 点击上传区域
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+        // 显示提示信息
+        function showToast(message, isError = false, duration = 2000) {
+            toast.textContent = message;
+            toast.classList.remove('error');
+            if (isError) {
+                toast.classList.add('error');
+            }
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
 
         // 文件选择
         fileInput.addEventListener('change', handleFiles);
@@ -410,9 +451,43 @@
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files);
-            processFiles(files);
+            const items = Array.from(e.dataTransfer.items);
+            processDroppedItems(items);
         });
+
+        // 处理拖拽的文件夹
+        async function processDroppedItems(items) {
+            const files = [];
+            for (const item of items) {
+                if (item.kind === 'file') {
+                    const entry = item.webkitGetAsEntry();
+                    if (entry) {
+                        await traverseFileTree(entry, files);
+                    }
+                }
+            }
+            processFiles(files);
+        }
+
+        // 遍历文件树
+        async function traverseFileTree(entry, files, path = '') {
+            if (entry.isFile) {
+                const file = await new Promise((resolve) => entry.file(resolve));
+                if (file.type.startsWith('image/')) {
+                    Object.defineProperty(file, 'webkitRelativePath', {
+                        value: path + file.name,
+                        writable: false
+                    });
+                    files.push(file);
+                }
+            } else if (entry.isDirectory) {
+                const reader = entry.createReader();
+                const entries = await new Promise((resolve) => reader.readEntries(resolve));
+                for (const childEntry of entries) {
+                    await traverseFileTree(childEntry, files, path + entry.name + '/');
+                }
+            }
+        }
 
         // 处理文件
         function handleFiles(e) {
@@ -425,7 +500,7 @@
             fileList = files.filter(file => file.type.startsWith('image/'));
             
             if (fileList.length === 0) {
-                alert('没有找到图片文件！');
+                showToast('❌ 没有找到图片文件！', true);
                 return;
             }
 
@@ -453,6 +528,8 @@
                     category = match ? match[1] : '未分类';
                 } else if (method === 'custom') {
                     category = customCategory.value.trim() || '自定义分类';
+                } else if (method === 'none') {
+                    category = '未分类';
                 }
 
                 imageDataArray.push({
@@ -496,16 +573,11 @@
 
         // 生成输出代码
         function generateOutput() {
-            // 手动构建紧凑格式的数组字符串，每行末尾都加逗号
             const items = imageDataArray.map(item => 
                 `{src:"${item.src}",category:"${item.category}"},`
             ).join('\n');
 
-            const code = `// 自动生成的图片数据
-// 生成时间: ${new Date().toLocaleString()}
-// 图片总数: ${imageDataArray.length}
-
-${items}`;
+            const code = items;
 
             outputArea.textContent = code;
             outputSection.classList.remove('hidden');
@@ -515,7 +587,7 @@ ${items}`;
         function copyToClipboard() {
             navigator.clipboard.writeText(outputArea.textContent)
                 .then(() => {
-                    alert('✅ 代码已复制到剪贴板！');
+                    showToast('✅ 代码已复制到剪贴板！');
                 })
                 .catch(() => {
                     // 降级方案
@@ -525,7 +597,7 @@ ${items}`;
                     textarea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textarea);
-                    alert('✅ 代码已复制到剪贴板！');
+                    showToast('✅ 代码已复制到剪贴板！');
                 });
         }
 
@@ -538,6 +610,7 @@ ${items}`;
             a.download = 'imageData.js';
             a.click();
             URL.revokeObjectURL(url);
+            showToast('✅ 文件已下载！');
         }
     </script>
 </body>
