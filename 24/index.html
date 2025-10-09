@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深空全息引导页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            cursor: default;
+            background: #050816;
+        }
+
+        /* 深空背景层 */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #0a0e27 0%, #050816 100%);
+            z-index: 1;
+        }
+
+        /* 星空画布 */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        /* 星云效果 */
+        .nebula {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(77, 166, 255, 0.08) 0%, transparent 70%);
+            filter: blur(60px);
+            animation: nebulaDrift 20s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        .nebula-1 {
+            top: -200px;
+            left: -200px;
+        }
+
+        .nebula-2 {
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+            background: radial-gradient(circle, rgba(181, 128, 255, 0.06) 0%, transparent 70%);
+        }
+
+        @keyframes nebulaDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 30px) scale(1.1); }
+        }
+
+        /* 扫描线 */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(0, 217, 255, 0.5), transparent);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+            animation: scan 8s linear infinite;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* 主容器 */
+        .container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        /* 全息卡片 */
+        .holographic-card {
+            background: rgba(10, 14, 39, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 
+                0 0 20px rgba(0, 217, 255, 0.2),
+                0 0 40px rgba(0, 217, 255, 0.1),
+                inset 0 0 20px rgba(0, 217, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            animation: cardBreath 4s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes cardBreath {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 20px rgba(0, 217, 255, 0.2),
+                    0 0 40px rgba(0, 217, 255, 0.1),
+                    inset 0 0 20px rgba(0, 217, 255, 0.05);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 30px rgba(0, 217, 255, 0.3),
+                    0 0 60px rgba(0, 217, 255, 0.15),
+                    inset 0 0 30px rgba(0, 217, 255, 0.08);
+            }
+        }
+
+        .holographic-card:hover {
+            border-color: rgba(0, 217, 255, 0.6);
+            box-shadow: 
+                0 8px 30px rgba(0, 217, 255, 0.3),
+                0 0 60px rgba(0, 217, 255, 0.2),
+                inset 0 0 30px rgba(0, 217, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        /* 个人标识 */
+        .identity {
+            text-align: center;
+            margin-bottom: 20px;
+            opacity: 0;
+        }
+
+        .name {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #00d9ff;
+            text-shadow: 
+                0 0 10px rgba(0, 217, 255, 0.5),
+                0 0 20px rgba(0, 217, 255, 0.3);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .slogan {
+            font-size: 1em;
+            color: rgba(0, 255, 242, 0.8);
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0;
+        }
+
+        /* 装饰线 */
+        .divider {
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 217, 255, 0.5), transparent);
+            margin: 30px auto;
+            opacity: 0;
+        }
+
+        /* 社交链接区 */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            opacity: 0;
+        }
+
+        .social-btn {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 
+                0 0 10px rgba(0, 217, 255, 0.2),
+                inset 0 0 10px rgba(0, 217, 255, 0.05);
+            text-decoration: none;
+        }
+
+        .social-btn svg {
+            width: 28px;
+            height: 28px;
+            fill: #00d9ff;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .social-btn:hover {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: rgba(0, 217, 255, 0.8);
+            box-shadow: 
+                0 0 20px rgba(0, 217, 255, 0.4),
+                0 0 40px rgba(0, 217, 255, 0.2),
+                inset 0 0 20px rgba(0, 217, 255, 0.1);
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        .social-btn:hover svg {
+            fill: #fff;
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .holographic-card {
+                padding: 40px 30px;
+            }
+
+            .name {
+                font-size: 2em;
+            }
+
+            .social-btn {
+                width: 50px;
+                height: 50px;
+            }
+
+            .social-btn svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        /* 淡入动画类 */
+        .fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 光标效果 */
+        .cursor-glow {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.4), transparent);
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease-out;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 深空背景 -->
+    <div class="space-background"></div>
+    
+    <!-- 星空画布 -->
+    <canvas id="starfield"></canvas>
+    
+    <!-- 星云效果 -->
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    
+    <!-- 扫描线 -->
+    <div class="scan-line"></div>
+
+    <!-- 光标光晕 -->
+    <div class="cursor-glow"></div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <div class="holographic-card">
+            <!-- 个人标识 -->
+            <div class="identity">
+                <div class="name">NOVA</div>
+            </div>
+
+            <!-- Slogan -->
+            <div class="slogan">Exploring The Digital Universe</div>
+
+            <!-- 装饰线 -->
+            <div class="divider"></div>
+
+            <!-- 社交链接 -->
+            <div class="social-links">
+                <!-- GitHub -->
+                <a href="#" class="social-btn" title="GitHub">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+                    </svg>
+                </a>
+
+                <!-- Twitter/X -->
+                <a href="#" class="social-btn" title="Twitter">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+
+                <!-- Email -->
+                <a href="#" class="social-btn" title="Email">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </a>
+
+                <!-- Telegram -->
+                <a href="#" class="social-btn" title="Telegram">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.95 1.24-5.51 3.64-.52.36-.99.53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.48 1.02-.73 4-1.74 6.68-2.88 8.03-3.43 3.82-1.59 4.62-1.87 5.14-1.88.11 0 .37.03.54.17.14.11.18.26.2.37.01.06.03.24.01.38z"/>
+                    </svg>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="#" class="social-btn" title="LinkedIn">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 星空背景生成 ==========
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 创建星星
+        const stars = [];
+        const starCount = 200;
+
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                opacity: Math.random(),
+                twinkleSpeed: Math.random() * 0.02 + 0.01,
+                direction: Math.random() > 0.5 ? 1 : -1
+            });
+        }
+
+        // 绘制星星
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(star => {
+                // 闪烁效果
+                star.opacity += star.twinkleSpeed * star.direction;
+                if (star.opacity > 1 || star.opacity < 0.3) {
+                    star.direction *= -1;
+                }
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                ctx.fill();
+
+                // 部分星星添加光晕
+                if (star.radius > 1) {
+                    const gradient = ctx.createRadialGradient(
+                        star.x, star.y, 0,
+                        star.x, star.y, star.radius * 3
+                    );
+                    gradient.addColorStop(0, `rgba(0, 217, 255, ${star.opacity * 0.3})`);
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(star.x - star.radius * 3, star.y - star.radius * 3, star.radius * 6, star.radius * 6);
+                }
+            });
+
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // ========== 页面加载动画 ==========
+        window.addEventListener('load', () => {
+            const card = document.querySelector('.holographic-card');
+            const identity = document.querySelector('.identity');
+            const slogan = document.querySelector('.slogan');
+            const divider = document.querySelector('.divider');
+            const socialLinks = document.querySelector('.social-links');
+
+            const elements = [card, identity, slogan, divider, socialLinks];
+
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.classList.add('fade-in');
+                }, index * 150);
+            });
+        });
+
+        // ========== 光标光晕效果 ==========
+        const cursorGlow = document.querySelector('.cursor-glow');
+        let mouseX = 0, mouseY = 0;
+        let glowX = 0, glowY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorGlow.style.opacity = '1';
+        });
+
+        document.addEventListener('mouseleave', () => {
+            cursorGlow.style.opacity = '0';
+        });
+
+        // 平滑跟随
+        function animateGlow() {
+            glowX += (mouseX - glowX) * 0.2;
+            glowY += (mouseY - glowY) * 0.2;
+            
+            cursorGlow.style.left = glowX - 10 + 'px';
+            cursorGlow.style.top = glowY - 10 + 'px';
+            
+            requestAnimationFrame(animateGlow);
+        }
+        animateGlow();
+
+        // ========== 社交按钮音效反馈(视觉) ==========
+        const socialBtns = document.querySelectorAll('.social-btn');
+        socialBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (btn.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    
+                    // 创建涟漪效果
+                    const ripple = document.createElement('div');
+                    ripple.style.position = 'absolute';
+                    ripple.style.width = '100%';
+                    ripple.style.height = '100%';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.border = '2px solid rgba(0, 217, 255, 0.6)';
+                    ripple.style.top = '0';
+                    ripple.style.left = '0';
+                    ripple.style.animation = 'ripple 0.6s ease-out';
+                    ripple.style.pointerEvents = 'none';
+                    
+                    btn.style.position = 'relative';
+                    btn.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                }
+            });
+        });
+
+        // 涟漪动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                0% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(2.5);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
