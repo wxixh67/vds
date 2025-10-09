@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人导航 | Cyber Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景网格 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部 */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-top: 40px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff 0%, #ff00ff 50%, #00f5ff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease infinite;
+            text-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            color: #8b9dc3;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+        }
+
+        /* 分类区域 */
+        .category {
+            margin-bottom: 50px;
+        }
+
+        .category-title {
+            font-size: 1.5em;
+            color: #00f5ff;
+            margin-bottom: 25px;
+            padding-left: 15px;
+            border-left: 4px solid #ff00ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* 导航网格 */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* 导航卡片 */
+        .nav-card {
+            position: relative;
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0, 245, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff, #00f5ff, #ff00ff);
+            background-size: 400% 400%;
+            border-radius: 15px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s;
+            animation: gradient-rotate 3s ease infinite;
+        }
+
+        @keyframes gradient-rotate {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-card:hover::before {
+            opacity: 1;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 245, 255, 0.3);
+        }
+
+        .nav-card:active {
+            transform: translateY(-5px) scale(0.98);
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .card-desc {
+            font-size: 0.9em;
+            color: #8b9dc3;
+            line-height: 1.5;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .nav-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .category-title {
+                font-size: 1.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 光标跟随效果 */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    
+    <div class="container">
+        <header>
+            <h1>CYBER PORTAL</h1>
+            <p class="subtitle">Your Digital Gateway</p>
+        </header>
+
+        <!-- 工作相关 -->
+        <section class="category">
+            <h2 class="category-title">💼 Work</h2>
+            <div class="nav-grid">
+                <a href="https://mail.google.com" class="nav-card">
+                    <span class="card-icon">📧</span>
+                    <h3 class="card-title">Gmail</h3>
+                    <p class="card-desc">电子邮件管理</p>
+                </a>
+                <a href="https://github.com" class="nav-card">
+                    <span class="card-icon">💻</span>
+                    <h3 class="card-title">GitHub</h3>
+                    <p class="card-desc">代码托管平台</p>
+                </a>
+                <a href="https://notion.so" class="nav-card">
+                    <span class="card-icon">📝</span>
+                    <h3 class="card-title">Notion</h3>
+                    <p class="card-desc">知识管理工具</p>
+                </a>
+                <a href="https://slack.com" class="nav-card">
+                    <span class="card-icon">💬</span>
+                    <h3 class="card-title">Slack</h3>
+                    <p class="card-desc">团队协作沟通</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- 开发工具 -->
+        <section class="category">
+            <h2 class="category-title">⚙️ Dev Tools</h2>
+            <div class="nav-grid">
+                <a href="https://stackoverflow.com" class="nav-card">
+                    <span class="card-icon">🔍</span>
+                    <h3 class="card-title">Stack Overflow</h3>
+                    <p class="card-desc">开发者问答社区</p>
+                </a>
+                <a href="https://developer.mozilla.org" class="nav-card">
+                    <span class="card-icon">📚</span>
+                    <h3 class="card-title">MDN Docs</h3>
+                    <p class="card-desc">Web 开发文档</p>
+                </a>
+                <a href="https://codepen.io" class="nav-card">
+                    <span class="card-icon">🎨</span>
+                    <h3 class="card-title">CodePen</h3>
+                    <p class="card-desc">前端代码实验场</p>
+                </a>
+                <a href="https://vercel.com" class="nav-card">
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">Vercel</h3>
+                    <p class="card-desc">网站部署平台</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- 社交媒体 -->
+        <section class="category">
+            <h2 class="category-title">🌐 Social</h2>
+            <div class="nav-grid">
+                <a href="https://twitter.com" class="nav-card">
+                    <span class="card-icon">🐦</span>
+                    <h3 class="card-title">Twitter</h3>
+                    <p class="card-desc">实时资讯动态</p>
+                </a>
+                <a href="https://youtube.com" class="nav-card">
+                    <span class="card-icon">📺</span>
+                    <h3 class="card-title">YouTube</h3>
+                    <p class="card-desc">视频内容平台</p>
+                </a>
+                <a href="https://reddit.com" class="nav-card">
+                    <span class="card-icon">🔥</span>
+                    <h3 class="card-title">Reddit</h3>
+                    <p class="card-desc">全球论坛社区</p>
+                </a>
+                <a href="https://linkedin.com" class="nav-card">
+                    <span class="card-icon">👔</span>
+                    <h3 class="card-title">LinkedIn</h3>
+                    <p class="card-desc">职业社交网络</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- 学习资源 -->
+        <section class="category">
+            <h2 class="category-title">📖 Learn</h2>
+            <div class="nav-grid">
+                <a href="https://coursera.org" class="nav-card">
+                    <span class="card-icon">🎓</span>
+                    <h3 class="card-title">Coursera</h3>
+                    <p class="card-desc">在线课程平台</p>
+                </a>
+                <a href="https://medium.com" class="nav-card">
+                    <span class="card-icon">✍️</span>
+                    <h3 class="card-title">Medium</h3>
+                    <p class="card-desc">优质文章阅读</p>
+                </a>
+                <a href="https://arxiv.org" class="nav-card">
+                    <span class="card-icon">📄</span>
+                    <h3 class="card-title">arXiv</h3>
+                    <p class="card-desc">学术论文预印本</p>
+                </a>
+                <a href="https://leetcode.com" class="nav-card">
+                    <span class="card-icon">🧩</span>
+                    <h3 class="card-title">LeetCode</h3>
+                    <p class="card-desc">算法刷题练习</p>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 光标跟随光效
+        const cursorGlow = document.getElementById('cursorGlow');
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animate() {
+            currentX += (mouseX - currentX) * 0.1;
+            currentY += (mouseY - currentY) * 0.1;
+            
+            cursorGlow.style.left = currentX + 'px';
+            cursorGlow.style.top = currentY + 'px';
+            
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // 卡片点击音效反馈（视觉）
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                this.style.transform = 'translateY(-5px) scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
