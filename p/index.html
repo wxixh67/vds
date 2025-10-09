@@ -14,19 +14,25 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f5f5f5;
-            padding: 20px;
+            padding: 0;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         /* 分类过滤器样式 */
         .filter-container {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             position: sticky;
             top: 0;
             background-color: #f5f5f5;
-            padding: 20px 0;
+            padding: 15px 10px;
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
         }
 
         .filter-btn {
@@ -56,22 +62,21 @@
 
         /* 瀑布流容器 */
         .waterfall-container {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            padding: 0 10px;
             position: relative;
         }
 
         /* 瀑布流列 */
         .waterfall-column {
             position: absolute;
-            width: calc(33.333% - 20px);
-            padding: 0 10px;
+            padding: 0 5px;
         }
 
         /* 图片项样式 */
         .waterfall-item {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background-color: #fff;
             border-radius: 8px;
             overflow: hidden;
@@ -102,7 +107,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: rgba(0,0,0,0.3);
+            background-color: rgba(0,0,0,0.6);
             color: white;
             padding: 4px 12px;
             border-radius: 15px;
@@ -120,9 +125,10 @@
         /* 加载状态 */
         .loading {
             text-align: center;
-            padding: 50px;
+            padding: 50px 20px;
             font-size: 18px;
             color: #666;
+            width: 100%;
         }
 
         /* 图片预览模态框 */
@@ -143,8 +149,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 95%;
+            max-height: 95%;
         }
 
         .modal-content img {
@@ -157,13 +163,14 @@
 
         .modal-close {
             position: absolute;
-            top: 20px;
-            right: 40px;
+            top: 10px;
+            right: 20px;
             color: white;
             font-size: 40px;
             font-weight: bold;
             cursor: pointer;
             transition: color 0.3s ease;
+            z-index: 1001;
         }
 
         .modal-close:hover {
@@ -172,20 +179,60 @@
 
         /* 响应式设计 */
         @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .filter-container {
+                padding: 10px 5px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+                margin: 0 3px;
+            }
+
+            .waterfall-container {
+                padding: 0 5px;
+            }
+
             .waterfall-column {
-                width: calc(50% - 20px);
+                padding: 0 3px;
+            }
+
+            .waterfall-item {
+                margin-bottom: 6px;
+            }
+
+            .waterfall-item .category-tag {
+                opacity: 1;
+                font-size: 10px;
+                padding: 3px 10px;
             }
         }
 
         @media screen and (max-width: 480px) {
-            .waterfall-column {
-                width: calc(100% - 20px);
+            .filter-container {
+                padding: 8px 3px;
             }
-            
+
             .filter-btn {
-                padding: 8px 15px;
+                padding: 6px 14px;
                 font-size: 12px;
-                margin: 2px;
+                margin: 0 2px;
+            }
+
+            .waterfall-container {
+                padding: 0 3px;
+            }
+
+            .waterfall-column {
+                padding: 0 2px;
+            }
+
+            .waterfall-item {
+                margin-bottom: 4px;
             }
         }
     </style>
@@ -1726,14 +1773,13 @@
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-1.png",category:"みどりかわ"},
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-2.png",category:"みどりかわ"},
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-3.png",category:"みどりかわ"},
-            // 这里可以添加更多图片
         ];
 
         // 瀑布流配置
         const config = {
             columnCount: 3,
-            columnGap: 20,
-            itemGap: 20
+            columnGap: 10,
+            itemGap: 10
         };
 
         // 当前筛选的分类
@@ -1791,10 +1837,16 @@
             const width = window.innerWidth;
             if (width <= 480) {
                 config.columnCount = 1;
+                config.columnGap = 6;
+                config.itemGap = 4;
             } else if (width <= 768) {
                 config.columnCount = 2;
+                config.columnGap = 8;
+                config.itemGap = 6;
             } else {
                 config.columnCount = 3;
+                config.columnGap = 10;
+                config.itemGap = 10;
             }
         }
 
@@ -1806,16 +1858,21 @@
             const columns = [];
             const columnHeights = [];
             
+            // 获取容器实际宽度
+            const containerWidth = container.offsetWidth;
+            const columnWidth = (containerWidth - (config.columnCount - 1) * config.columnGap) / config.columnCount;
+            
             for (let i = 0; i < config.columnCount; i++) {
                 const column = document.createElement('div');
                 column.className = 'waterfall-column';
-                column.style.left = `${i * (100 / config.columnCount)}%`;
+                column.style.width = `${columnWidth}px`;
+                column.style.left = `${i * (columnWidth + config.columnGap)}px`;
                 container.appendChild(column);
                 columns.push(column);
                 columnHeights.push(0);
             }
             
-            return { columns, columnHeights };
+            return { columns, columnHeights, columnWidth };
         }
 
         // 加载图片并获取尺寸
@@ -1831,7 +1888,7 @@
         // 初始化瀑布流
         async function initWaterfall() {
             updateColumnCount();
-            const { columns, columnHeights } = createColumns();
+            const { columns, columnHeights, columnWidth } = createColumns();
             const filteredImages = getFilteredImages();
             
             if (filteredImages.length === 0) {
@@ -1855,8 +1912,7 @@
                     const item = document.createElement('div');
                     item.className = 'waterfall-item';
                     
-                    // 计算图片在列中的实际宽度和高度
-                    const columnWidth = columns[columnIndex].offsetWidth - config.columnGap;
+                    // 计算图片在列中的实际高度
                     const aspectRatio = img.height / img.width;
                     const itemHeight = columnWidth * aspectRatio;
                     
@@ -1879,12 +1935,16 @@
                     // 显示动画
                     setTimeout(() => {
                         item.classList.add('show');
-                    }, i * 100);
+                    }, i * 50);
                     
                 } catch (error) {
                     console.error(`加载图片失败: ${imageData.src}`, error);
                 }
             }
+            
+            // 设置容器高度
+            const maxHeight = Math.max(...columnHeights);
+            document.getElementById('waterfallContainer').style.height = `${maxHeight}px`;
         }
 
         // 显示图片预览
@@ -1893,11 +1953,13 @@
             const modalImg = document.getElementById('modalImage');
             modal.style.display = 'block';
             modalImg.src = src;
+            document.body.style.overflow = 'hidden';
         }
 
         // 关闭图片预览
         function closeModal() {
             document.getElementById('imageModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         // 事件监听
