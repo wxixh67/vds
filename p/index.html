@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片画廊</title>
+    <title>瀑布流图片画廊</title>
     <style>
         * {
             margin: 0;
@@ -12,268 +12,206 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            overflow-x: hidden;
-        }
-
-        .header {
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
             padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .category-tabs {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 1400px;
-            margin: 0 auto;
+        /* 分类过滤器样式 */
+        .filter-container {
+            text-align: center;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            background-color: #f5f5f5;
+            padding: 20px 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .tab {
-            padding: 8px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+        .filter-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 14px;
-            white-space: nowrap;
+            font-weight: 500;
         }
 
-        .tab:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
+        .filter-btn:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        .tab.active {
-            background: #3b82f6;
-            border-color: #3b82f6;
+        .filter-btn.active {
+            background-color: #007bff;
             color: white;
+            border-color: #007bff;
         }
 
-        .tab-count {
-            opacity: 0.6;
-            margin-left: 5px;
-            font-size: 12px;
-        }
-
-        .gallery-container {
-            margin-top: 100px;
-            padding: 20px;
-            max-width: 1600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .waterfall {
+        /* 瀑布流容器 */
+        .waterfall-container {
+            max-width: 1200px;
+            margin: 0 auto;
             position: relative;
-            width: 100%;
         }
 
-        .waterfall-item {
+        /* 瀑布流列 */
+        .waterfall-column {
             position: absolute;
-            width: calc(25% - 15px);
-            cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            opacity: 0;
+            width: calc(33.333% - 20px);
+            padding: 0 10px;
         }
 
-        .waterfall-item.loaded {
+        /* 图片项样式 */
+        .waterfall-item {
+            position: relative;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .waterfall-item.show {
             opacity: 1;
+            transform: translateY(0);
         }
 
         .waterfall-item:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .waterfall-item img {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
         }
 
-        .item-overlay {
+        .waterfall-item .category-tag {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            padding: 15px;
-            border-radius: 0 0 8px 8px;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.3);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 400;
+            backdrop-filter: blur(3px);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        .waterfall-item:hover .item-overlay {
+        .waterfall-item:hover .category-tag {
             opacity: 1;
         }
 
-        .item-category {
-            font-size: 12px;
-            color: #3b82f6;
-            font-weight: 500;
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
         }
 
-        .lightbox {
+        /* 图片预览模态框 */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
             z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            cursor: pointer;
         }
 
-        .lightbox.active {
-            display: flex;
-        }
-
-        .lightbox-content {
-            position: relative;
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             max-width: 90%;
-            max-height: 90vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            max-height: 90%;
         }
 
-        .lightbox-image {
+        .modal-content img {
+            width: auto;
+            height: auto;
             max-width: 100%;
             max-height: 90vh;
             object-fit: contain;
-            border-radius: 8px;
         }
 
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 24px;
-        }
-
-        .lightbox-nav:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .lightbox-prev {
-            left: 20px;
-        }
-
-        .lightbox-next {
-            right: 20px;
-        }
-
-        .lightbox-close {
+        .modal-close {
             position: absolute;
             top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 24px;
-            transition: all 0.3s ease;
+            transition: color 0.3s ease;
         }
 
-        .lightbox-close:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .modal-close:hover {
+            color: #f44336;
         }
 
-        .lightbox-info {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-        }
-
-        @media (max-width: 1200px) {
-            .waterfall-item {
-                width: calc(33.333% - 13.333px);
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            .waterfall-column {
+                width: calc(50% - 20px);
             }
         }
 
-        @media (max-width: 768px) {
-            .waterfall-item {
-                width: calc(50% - 10px);
+        @media screen and (max-width: 480px) {
+            .waterfall-column {
+                width: calc(100% - 20px);
             }
-            .header {
-                padding: 15px;
-            }
-            .tab {
-                padding: 6px 15px;
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .waterfall-item {
-                width: 100%;
-            }
-            .gallery-container {
-                margin-top: 120px;
+            
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 12px;
+                margin: 2px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="category-tabs" id="categoryTabs"></div>
+    <!-- 分类过滤器 -->
+    <div class="filter-container">
+        <button class="filter-btn active" data-category="all">全部</button>
     </div>
 
-    <div class="gallery-container">
-        <div class="waterfall" id="waterfall"></div>
-        <div class="loading" id="loading">加载中...</div>
+    <!-- 瀑布流容器 -->
+    <div class="waterfall-container" id="waterfallContainer">
+        <div class="loading">加载图片中...</div>
     </div>
 
-    <div class="lightbox" id="lightbox">
-        <div class="lightbox-close" onclick="closeLightbox()">×</div>
-        <div class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</div>
-        <div class="lightbox-content">
-            <img class="lightbox-image" id="lightboxImage" src="" alt="">
+    <!-- 图片预览模态框 -->
+    <div class="modal" id="imageModal">
+        <span class="modal-close">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="">
         </div>
-        <div class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</div>
-        <div class="lightbox-info" id="lightboxInfo"></div>
     </div>
 
     <script>
-        // 图片数据（请替换为您的实际数据）
-        const imageData = [
+        // 图片数据
+        const images = [
 {src:"./[EmberNova]/001_00426_1594465318.png",category:"EmberNova"},
 {src:"./[EmberNova]/002_00427_1594465319.png",category:"EmberNova"},
 {src:"./[EmberNova]/003_00428_1594465320.png",category:"EmberNova"},
@@ -1788,270 +1726,209 @@
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-1.png",category:"みどりかわ"},
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-2.png",category:"みどりかわ"},
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-3.png",category:"みどりかわ"},
-            // ... 在这里添加您的5000张图片数据
+            // 这里可以添加更多图片
         ];
 
-        // 全局状态
+        // 瀑布流配置
+        const config = {
+            columnCount: 3,
+            columnGap: 20,
+            itemGap: 20
+        };
+
+        // 当前筛选的分类
         let currentCategory = 'all';
-        let filteredImages = [...imageData];
-        let displayedImages = [];
-        let columnHeights = [];
-        let columns = 4;
-        let currentLightboxIndex = 0;
-        let isLoading = false;
-        let hasMore = true;
 
-        // 初始化
-        function init() {
-            calculateColumns();
-            generateCategoryTabs();
-            loadMoreImages();
-            setupScrollListener();
-            setupResizeListener();
-            setupKeyboardNavigation();
+        // 获取唯一分类
+        function getCategories() {
+            const categories = new Set(['all']);
+            images.forEach(img => categories.add(img.category));
+            return Array.from(categories);
         }
 
-        // 计算列数
-        function calculateColumns() {
-            const width = window.innerWidth;
-            if (width < 480) columns = 1;
-            else if (width < 768) columns = 2;
-            else if (width < 1200) columns = 3;
-            else columns = 4;
+        // 创建分类过滤按钮
+        function createFilterButtons() {
+            const filterContainer = document.querySelector('.filter-container');
+            const categories = getCategories();
             
-            columnHeights = new Array(columns).fill(0);
+            filterContainer.innerHTML = '';
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.setAttribute('data-category', category);
+                btn.textContent = category === 'all' ? '全部' : category;
+                if (category === currentCategory) {
+                    btn.classList.add('active');
+                }
+                btn.addEventListener('click', () => filterImages(category));
+                filterContainer.appendChild(btn);
+            });
         }
 
-        // 生成分类标签
-        function generateCategoryTabs() {
-            const categories = {};
-            imageData.forEach(img => {
-                categories[img.category] = (categories[img.category] || 0) + 1;
-            });
-
-            const tabsContainer = document.getElementById('categoryTabs');
-            let html = `<div class="tab active" onclick="filterCategory('all')">
-                全部 <span class="tab-count">(${imageData.length})</span>
-            </div>`;
-
-            Object.entries(categories).sort().forEach(([cat, count]) => {
-                html += `<div class="tab" onclick="filterCategory('${cat}')">
-                    ${cat} <span class="tab-count">(${count})</span>
-                </div>`;
-            });
-
-            tabsContainer.innerHTML = html;
-        }
-
-        // 分类筛选
-        function filterCategory(category) {
+        // 筛选图片
+        function filterImages(category) {
             currentCategory = category;
-            filteredImages = category === 'all' 
-                ? [...imageData] 
-                : imageData.filter(img => img.category === category);
-
-            // 更新标签状态
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-category') === category);
             });
-            event.target.closest('.tab').classList.add('active');
-
-            // 重置画廊
-            displayedImages = [];
-            columnHeights = new Array(columns).fill(0);
-            document.getElementById('waterfall').innerHTML = '';
-            hasMore = true;
-            loadMoreImages();
+            
+            // 重新渲染瀑布流
+            initWaterfall();
         }
 
-        // 加载更多图片
-        function loadMoreImages() {
-            if (isLoading || !hasMore) return;
-            
-            isLoading = true;
-            const start = displayedImages.length;
-            const batchSize = start === 0 ? 50 : 30;
-            const end = Math.min(start + batchSize, filteredImages.length);
+        // 获取筛选后的图片
+        function getFilteredImages() {
+            if (currentCategory === 'all') {
+                return images;
+            }
+            return images.filter(img => img.category === currentCategory);
+        }
 
-            if (start >= filteredImages.length) {
-                hasMore = false;
-                document.getElementById('loading').style.display = 'none';
-                isLoading = false;
+        // 更新列数（响应式）
+        function updateColumnCount() {
+            const width = window.innerWidth;
+            if (width <= 480) {
+                config.columnCount = 1;
+            } else if (width <= 768) {
+                config.columnCount = 2;
+            } else {
+                config.columnCount = 3;
+            }
+        }
+
+        // 创建瀑布流列
+        function createColumns() {
+            const container = document.getElementById('waterfallContainer');
+            container.innerHTML = '';
+            
+            const columns = [];
+            const columnHeights = [];
+            
+            for (let i = 0; i < config.columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'waterfall-column';
+                column.style.left = `${i * (100 / config.columnCount)}%`;
+                container.appendChild(column);
+                columns.push(column);
+                columnHeights.push(0);
+            }
+            
+            return { columns, columnHeights };
+        }
+
+        // 加载图片并获取尺寸
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        // 初始化瀑布流
+        async function initWaterfall() {
+            updateColumnCount();
+            const { columns, columnHeights } = createColumns();
+            const filteredImages = getFilteredImages();
+            
+            if (filteredImages.length === 0) {
+                document.getElementById('waterfallContainer').innerHTML = 
+                    '<div class="loading">没有找到相关图片</div>';
                 return;
             }
-
-            const batch = filteredImages.slice(start, end);
-            displayedImages = displayedImages.concat(batch);
-
-            batch.forEach((img, index) => {
-                createWaterfallItem(img, start + index);
-            });
-
-            setTimeout(() => {
-                isLoading = false;
-                if (end >= filteredImages.length) {
-                    hasMore = false;
-                    document.getElementById('loading').style.display = 'none';
-                }
-            }, 300);
-        }
-
-        // 创建瀑布流项目
-        function createWaterfallItem(imageObj, index) {
-            const item = document.createElement('div');
-            item.className = 'waterfall-item';
             
-            const img = document.createElement('img');
-            img.src = imageObj.src;
-            img.alt = imageObj.category;
-
-            const overlay = document.createElement('div');
-            overlay.className = 'item-overlay';
-            overlay.innerHTML = `<div class="item-category">${imageObj.category}</div>`;
-
-            item.appendChild(img);
-            item.appendChild(overlay);
-            item.onclick = () => openLightbox(index);
-
-            img.onload = () => {
-                positionItem(item, img);
-                setTimeout(() => item.classList.add('loaded'), 50);
-            };
-
-            document.getElementById('waterfall').appendChild(item);
-        }
-
-        // 定位瀑布流项目
-        function positionItem(item, img) {
-            const gap = 20;
-            const containerWidth = document.getElementById('waterfall').offsetWidth;
-            const itemWidth = (containerWidth - gap * (columns - 1)) / columns;
-            
-            // 找到最短列
-            const minHeight = Math.min(...columnHeights);
-            const columnIndex = columnHeights.indexOf(minHeight);
-
-            const left = columnIndex * (itemWidth + gap);
-            const top = minHeight;
-
-            item.style.left = left + 'px';
-            item.style.top = top + 'px';
-            item.style.width = itemWidth + 'px';
-
-            // 更新列高度
-            const itemHeight = (img.naturalHeight / img.naturalWidth) * itemWidth;
-            columnHeights[columnIndex] = top + itemHeight + gap;
-
-            // 更新容器高度
-            const maxHeight = Math.max(...columnHeights);
-            document.getElementById('waterfall').style.height = maxHeight + 'px';
-        }
-
-        // 滚动监听
-        function setupScrollListener() {
-            let ticking = false;
-
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
-                        const scrollTop = window.scrollY;
-                        const windowHeight = window.innerHeight;
-                        const docHeight = document.documentElement.scrollHeight;
-
-                        // 加载更多图片
-                        if (scrollTop + windowHeight > docHeight - 500) {
-                            loadMoreImages();
-                        }
-                        ticking = false;
+            for (let i = 0; i < filteredImages.length; i++) {
+                const imageData = filteredImages[i];
+                
+                try {
+                    // 加载图片获取原始尺寸
+                    const img = await loadImage(imageData.src);
+                    
+                    // 找到最短的列
+                    const minHeight = Math.min(...columnHeights);
+                    const columnIndex = columnHeights.indexOf(minHeight);
+                    
+                    // 创建图片项
+                    const item = document.createElement('div');
+                    item.className = 'waterfall-item';
+                    
+                    // 计算图片在列中的实际宽度和高度
+                    const columnWidth = columns[columnIndex].offsetWidth - config.columnGap;
+                    const aspectRatio = img.height / img.width;
+                    const itemHeight = columnWidth * aspectRatio;
+                    
+                    item.innerHTML = `
+                        <img src="${imageData.src}" alt="${imageData.category}">
+                        <span class="category-tag">${imageData.category}</span>
+                    `;
+                    
+                    // 添加点击预览
+                    item.querySelector('img').addEventListener('click', () => {
+                        showModal(imageData.src);
                     });
-                    ticking = true;
-                }
-            });
-        }
-
-        // 窗口大小调整监听
-        function setupResizeListener() {
-            let resizeTimer;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(() => {
-                    const oldColumns = columns;
-                    calculateColumns();
-                    if (oldColumns !== columns) {
-                        columnHeights = new Array(columns).fill(0);
-                        const items = document.querySelectorAll('.waterfall-item');
-                        items.forEach((item, index) => {
-                            const img = item.querySelector('img');
-                            if (img.complete) {
-                                positionItem(item, img);
-                            }
-                        });
-                    }
-                }, 250);
-            });
-        }
-
-        // 打开灯箱
-        function openLightbox(index) {
-            currentLightboxIndex = index;
-            updateLightbox();
-            document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            preloadAdjacentImages();
-        }
-
-        // 关闭灯箱
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // 更新灯箱内容
-        function updateLightbox() {
-            const img = displayedImages[currentLightboxIndex];
-            document.getElementById('lightboxImage').src = img.src;
-            document.getElementById('lightboxInfo').textContent = 
-                `${currentLightboxIndex + 1} / ${displayedImages.length} - ${img.category}`;
-        }
-
-        // 灯箱导航
-        function navigateLightbox(direction) {
-            currentLightboxIndex += direction;
-            if (currentLightboxIndex < 0) currentLightboxIndex = displayedImages.length - 1;
-            if (currentLightboxIndex >= displayedImages.length) currentLightboxIndex = 0;
-            updateLightbox();
-            preloadAdjacentImages();
-        }
-
-        // 预加载相邻图片
-        function preloadAdjacentImages() {
-            for (let i = -3; i <= 3; i++) {
-                const index = currentLightboxIndex + i;
-                if (index >= 0 && index < displayedImages.length) {
-                    const img = new Image();
-                    img.src = displayedImages[index].src;
+                    
+                    // 添加到对应列
+                    columns[columnIndex].appendChild(item);
+                    
+                    // 更新列高度
+                    columnHeights[columnIndex] += itemHeight + config.itemGap;
+                    
+                    // 显示动画
+                    setTimeout(() => {
+                        item.classList.add('show');
+                    }, i * 100);
+                    
+                } catch (error) {
+                    console.error(`加载图片失败: ${imageData.src}`, error);
                 }
             }
         }
 
-        // 键盘导航
-        function setupKeyboardNavigation() {
-            document.addEventListener('keydown', (e) => {
-                if (!document.getElementById('lightbox').classList.contains('active')) return;
-                
-                if (e.key === 'Escape') closeLightbox();
-                else if (e.key === 'ArrowLeft') navigateLightbox(-1);
-                else if (e.key === 'ArrowRight') navigateLightbox(1);
-            });
+        // 显示图片预览
+        function showModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = src;
         }
 
-        // 点击背景关闭灯箱
-        document.getElementById('lightbox').addEventListener('click', (e) => {
-            if (e.target.id === 'lightbox') closeLightbox();
+        // 关闭图片预览
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // 事件监听
+        document.querySelector('.modal-close').addEventListener('click', closeModal);
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
         });
 
-        // 启动应用
-        init();
+        // 窗口大小改变时重新布局
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                initWaterfall();
+            }, 300);
+        });
+
+        // 键盘事件（ESC关闭预览）
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 初始化
+        window.addEventListener('load', () => {
+            createFilterButtons();
+            initWaterfall();
+        });
     </script>
 </body>
 </html>
