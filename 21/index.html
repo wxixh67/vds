@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人引导页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: float 8s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            position: relative;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .avatar::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            z-index: -1;
+            opacity: 0.5;
+            filter: blur(15px);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .avatar-text {
+            font-size: 60px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00f5ff, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #00f5ff, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #8b9dc3;
+            letter-spacing: 2px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            width: 100%;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .link-card:hover::before {
+            left: 100%;
+        }
+
+        .link-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 10px 40px rgba(0, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .link-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .link-card:hover .link-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .link-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #00f5ff;
+        }
+
+        .link-desc {
+            font-size: 14px;
+            color: #8b9dc3;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #4a5568;
+            font-size: 14px;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 36px; }
+            .subtitle { font-size: 16px; }
+            .links-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="grid"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <div class="container">
+        <div class="profile-section">
+            <div class="avatar">
+                <div class="avatar-text">AI</div>
+            </div>
+            <h1>欢迎来到我的空间</h1>
+            <p class="subtitle">EXPLORE • CREATE • INNOVATE</p>
+        </div>
+
+        <div class="links-grid">
+            <div class="link-card" onclick="window.open('#', '_blank')">
+                <div class="link-icon">💼</div>
+                <div class="link-title">作品集</div>
+                <div class="link-desc">查看我的项目和设计作品</div>
+            </div>
+
+            <div class="link-card" onclick="window.open('#', '_blank')">
+                <div class="link-icon">📝</div>
+                <div class="link-title">博客</div>
+                <div class="link-desc">分享技术见解与生活感悟</div>
+            </div>
+
+            <div class="link-card" onclick="window.open('#', '_blank')">
+                <div class="link-icon">🐙</div>
+                <div class="link-title">GitHub</div>
+                <div class="link-desc">开源项目与代码仓库</div>
+            </div>
+
+            <div class="link-card" onclick="window.open('#', '_blank')">
+                <div class="link-icon">📧</div>
+                <div class="link-title">联系我</div>
+                <div class="link-desc">通过邮件与我取得联系</div>
+            </div>
+
+            <div class="link-card" onclick="window.open('#', '_blank')">
+                <div class="link-icon">🎵</div>
+                <div class="link-title">音乐</div>
+                <div class="link-desc">我的音乐品味与歌单</div>
+            </div>
+
+            <div class="link-card" onclick="window.open('#', '_blank')">
+                <div class="link-icon">📷</div>
+                <div class="link-title">摄影</div>
+                <div class="link-desc">镜头下的世界与故事</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 · 用心创造 · 持续进化</p>
+        </div>
+    </div>
+
+    <script>
+        // 生成粒子效果
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // 鼠标跟随光效
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.createElement('div');
+            glow.style.position = 'fixed';
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+            glow.style.width = '5px';
+            glow.style.height = '5px';
+            glow.style.background = 'rgba(0, 255, 255, 0.5)';
+            glow.style.borderRadius = '50%';
+            glow.style.pointerEvents = 'none';
+            glow.style.filter = 'blur(3px)';
+            glow.style.zIndex = '9999';
+            document.body.appendChild(glow);
+
+            setTimeout(() => {
+                glow.style.transition = 'all 0.5s ease';
+                glow.style.opacity = '0';
+                glow.style.transform = 'scale(2)';
+                setTimeout(() => glow.remove(), 500);
+            }, 10);
+        });
+    </script>
+</body>
+</html>
