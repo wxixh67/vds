@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片库</title>
+    <title>图片画廊</title>
     <style>
         * {
             margin: 0;
@@ -13,188 +13,171 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
         }
 
-        .container {
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-weight: 300;
-            font-size: 2em;
-        }
-
-        /* 搜索栏 */
-        .search-bar {
-            max-width: 500px;
-            margin: 0 auto 30px;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #333;
-        }
-
-        /* 分类标签 */
-        .categories {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .category-btn {
-            padding: 10px 24px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 25px;
+        .tab {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 14px;
-            color: #666;
+            white-space: nowrap;
         }
 
-        .category-btn:hover {
-            border-color: #333;
-            color: #333;
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .category-btn.active {
-            background: #333;
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
             color: white;
-            border-color: #333;
         }
 
-        /* 统计信息 */
-        .stats {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #666;
-            font-size: 14px;
+        .tab-count {
+            opacity: 0.6;
+            margin-left: 5px;
+            font-size: 12px;
         }
 
-        /* 加载指示器 */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 16px;
+        .gallery-container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .gallery {
-            column-count: 4;
-            column-gap: 20px;
-        }
-
-        .gallery-item {
-            break-inside: avoid;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            display: block;
+        .waterfall {
             position: relative;
+            width: 100%;
         }
 
-        .gallery-item.hidden {
-            display: none;
+        .waterfall-item {
+            position: absolute;
+            width: calc(25% - 15px);
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
         }
 
-        .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        .waterfall-item.loaded {
+            opacity: 1;
         }
 
-        .gallery-item img {
+        .waterfall-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .waterfall-item img {
             width: 100%;
             height: auto;
             display: block;
-            background: #f0f0f0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        /* 图片占位符 */
-        .gallery-item img[data-src] {
-            min-height: 200px;
+        .item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 15px;
+            border-radius: 0 0 8px 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* 灯箱效果 */
+        .waterfall-item:hover .item-overlay {
+            opacity: 1;
+        }
+
+        .item-category {
+            font-size: 12px;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
         .lightbox {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
         }
 
         .lightbox.active {
             display: flex;
         }
 
-        .lightbox img {
+        .lightbox-content {
+            position: relative;
             max-width: 90%;
-            max-height: 90%;
+            max-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 90vh;
             object-fit: contain;
-            border-radius: 4px;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
-            line-height: 1;
-        }
-
-        .lightbox-close:hover {
-            opacity: 0.7;
+            border-radius: 8px;
         }
 
         .lightbox-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            font-size: 30px;
-            padding: 20px 15px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 24px;
         }
 
         .lightbox-nav:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .lightbox-prev {
@@ -205,77 +188,96 @@
             right: 20px;
         }
 
-        /* 响应式设计 */
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lightbox-info {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
         @media (max-width: 1200px) {
-            .gallery {
-                column-count: 3;
+            .waterfall-item {
+                width: calc(33.333% - 13.333px);
             }
         }
 
         @media (max-width: 768px) {
-            .gallery {
-                column-count: 2;
+            .waterfall-item {
+                width: calc(50% - 10px);
             }
-            
-            h1 {
-                font-size: 1.5em;
-                margin-bottom: 25px;
+            .header {
+                padding: 15px;
             }
-
-            .categories {
-                gap: 10px;
-            }
-
-            .category-btn {
-                padding: 8px 18px;
+            .tab {
+                padding: 6px 15px;
                 font-size: 13px;
-            }
-
-            .lightbox-nav {
-                font-size: 24px;
-                padding: 15px 10px;
             }
         }
 
         @media (max-width: 480px) {
-            .gallery {
-                column-count: 1;
+            .waterfall-item {
+                width: 100%;
             }
-            
-            body {
-                padding: 10px;
+            .gallery-container {
+                margin-top: 120px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>图片库</h1>
-        
-        <!-- 搜索栏 -->
-        <div class="search-bar">
-            <input type="text" class="search-input" id="searchInput" placeholder="搜索图片...">
-        </div>
-        
-        <!-- 分类按钮 -->
-        <div class="categories" id="categories"></div>
-        
-        <!-- 统计信息 -->
-        <div class="stats" id="stats">加载中...</div>
-        
-        <div class="gallery" id="gallery"></div>
+    <div class="header">
+        <div class="category-tabs" id="categoryTabs"></div>
     </div>
 
-    <!-- 灯箱 -->
+    <div class="gallery-container">
+        <div class="waterfall" id="waterfall"></div>
+        <div class="loading" id="loading">加载中...</div>
+    </div>
+
     <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
-        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
-        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-close" onclick="closeLightbox()">×</div>
+        <div class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</div>
+        <div class="lightbox-content">
+            <img class="lightbox-image" id="lightboxImage" src="" alt="">
+        </div>
+        <div class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</div>
+        <div class="lightbox-info" id="lightboxInfo"></div>
     </div>
 
     <script>
-        // 图片数据 - 替换为你的图片URL和分类
+        // 图片数据（请替换为您的实际数据）
         const imageData = [
 {src:"./[EmberNova]/001_00426_1594465318.png",category:"EmberNova"},
 {src:"./[EmberNova]/002_00427_1594465319.png",category:"EmberNova"},
@@ -1791,163 +1793,269 @@
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-1.png",category:"みどりかわ"},
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-2.png",category:"みどりかわ"},
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-3.png",category:"みどりかわ"},
+            // ... 在这里添加您的5000张图片数据
         ];
 
-        const gallery = document.getElementById('gallery');
-        const categoriesContainer = document.getElementById('categories');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const searchInput = document.getElementById('searchInput');
-        const statsDiv = document.getElementById('stats');
-
-        let currentCategory = '全部';
-        let currentSearchTerm = '';
-        let filteredData = [];
+        // 全局状态
+        let currentCategory = 'all';
+        let filteredImages = [...imageData];
+        let displayedImages = [];
+        let columnHeights = [];
+        let columns = 4;
         let currentLightboxIndex = 0;
+        let isLoading = false;
+        let hasMore = true;
 
-        // Intersection Observer 用于懒加载
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    const src = img.dataset.src;
-                    if (src) {
-                        img.src = src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
+        // 初始化
+        function init() {
+            calculateColumns();
+            generateCategoryTabs();
+            loadMoreImages();
+            setupScrollListener();
+            setupResizeListener();
+            setupKeyboardNavigation();
+        }
+
+        // 计算列数
+        function calculateColumns() {
+            const width = window.innerWidth;
+            if (width < 480) columns = 1;
+            else if (width < 768) columns = 2;
+            else if (width < 1200) columns = 3;
+            else columns = 4;
+            
+            columnHeights = new Array(columns).fill(0);
+        }
+
+        // 生成分类标签
+        function generateCategoryTabs() {
+            const categories = {};
+            imageData.forEach(img => {
+                categories[img.category] = (categories[img.category] || 0) + 1;
+            });
+
+            const tabsContainer = document.getElementById('categoryTabs');
+            let html = `<div class="tab active" onclick="filterCategory('all')">
+                全部 <span class="tab-count">(${imageData.length})</span>
+            </div>`;
+
+            Object.entries(categories).sort().forEach(([cat, count]) => {
+                html += `<div class="tab" onclick="filterCategory('${cat}')">
+                    ${cat} <span class="tab-count">(${count})</span>
+                </div>`;
+            });
+
+            tabsContainer.innerHTML = html;
+        }
+
+        // 分类筛选
+        function filterCategory(category) {
+            currentCategory = category;
+            filteredImages = category === 'all' 
+                ? [...imageData] 
+                : imageData.filter(img => img.category === category);
+
+            // 更新标签状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.closest('.tab').classList.add('active');
+
+            // 重置画廊
+            displayedImages = [];
+            columnHeights = new Array(columns).fill(0);
+            document.getElementById('waterfall').innerHTML = '';
+            hasMore = true;
+            loadMoreImages();
+        }
+
+        // 加载更多图片
+        function loadMoreImages() {
+            if (isLoading || !hasMore) return;
+            
+            isLoading = true;
+            const start = displayedImages.length;
+            const batchSize = start === 0 ? 50 : 30;
+            const end = Math.min(start + batchSize, filteredImages.length);
+
+            if (start >= filteredImages.length) {
+                hasMore = false;
+                document.getElementById('loading').style.display = 'none';
+                isLoading = false;
+                return;
+            }
+
+            const batch = filteredImages.slice(start, end);
+            displayedImages = displayedImages.concat(batch);
+
+            batch.forEach((img, index) => {
+                createWaterfallItem(img, start + index);
+            });
+
+            setTimeout(() => {
+                isLoading = false;
+                if (end >= filteredImages.length) {
+                    hasMore = false;
+                    document.getElementById('loading').style.display = 'none';
+                }
+            }, 300);
+        }
+
+        // 创建瀑布流项目
+        function createWaterfallItem(imageObj, index) {
+            const item = document.createElement('div');
+            item.className = 'waterfall-item';
+            
+            const img = document.createElement('img');
+            img.src = imageObj.src;
+            img.loading = 'lazy';
+            img.alt = imageObj.category;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'item-overlay';
+            overlay.innerHTML = `<div class="item-category">${imageObj.category}</div>`;
+
+            item.appendChild(img);
+            item.appendChild(overlay);
+            item.onclick = () => openLightbox(index);
+
+            img.onload = () => {
+                positionItem(item, img);
+                setTimeout(() => item.classList.add('loaded'), 50);
+            };
+
+            document.getElementById('waterfall').appendChild(item);
+        }
+
+        // 定位瀑布流项目
+        function positionItem(item, img) {
+            const gap = 20;
+            const containerWidth = document.getElementById('waterfall').offsetWidth;
+            const itemWidth = (containerWidth - gap * (columns - 1)) / columns;
+            
+            // 找到最短列
+            const minHeight = Math.min(...columnHeights);
+            const columnIndex = columnHeights.indexOf(minHeight);
+
+            const left = columnIndex * (itemWidth + gap);
+            const top = minHeight;
+
+            item.style.left = left + 'px';
+            item.style.top = top + 'px';
+            item.style.width = itemWidth + 'px';
+
+            // 更新列高度
+            const itemHeight = (img.naturalHeight / img.naturalWidth) * itemWidth;
+            columnHeights[columnIndex] = top + itemHeight + gap;
+
+            // 更新容器高度
+            const maxHeight = Math.max(...columnHeights);
+            document.getElementById('waterfall').style.height = maxHeight + 'px';
+        }
+
+        // 滚动监听
+        function setupScrollListener() {
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const scrollTop = window.scrollY;
+                        const windowHeight = window.innerHeight;
+                        const docHeight = document.documentElement.scrollHeight;
+
+                        if (scrollTop + windowHeight > docHeight - 500) {
+                            loadMoreImages();
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
                 }
             });
-        }, {
-            rootMargin: '50px'
-        });
-
-        // 获取所有分类
-        const categories = ['全部', ...new Set(imageData.map(item => item.category))];
-
-        // 渲染分类按钮
-        categories.forEach(category => {
-            const btn = document.createElement('button');
-            btn.className = 'category-btn';
-            btn.textContent = category;
-            if (category === '全部') btn.classList.add('active');
-            btn.onclick = () => filterImages(category, btn);
-            categoriesContainer.appendChild(btn);
-        });
-
-        // 渲染图片库（一次性加载全部）
-        function renderGallery() {
-            gallery.innerHTML = '';
-
-            filteredData.forEach((data, i) => {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.dataset.category = data.category;
-                
-                const img = document.createElement('img');
-                img.dataset.src = data.src;
-                img.dataset.imgIndex = i;
-                img.alt = `${data.category} ${i + 1}`;
-                
-                img.addEventListener('click', function(e) {
-                    const idx = parseInt(e.target.dataset.imgIndex);
-                    openLightbox(idx);
-                });
-                
-                item.appendChild(img);
-                gallery.appendChild(item);
-                
-                // 观察图片以实现懒加载
-                imageObserver.observe(img);
-            });
-
-            updateStats();
         }
 
-        // 更新统计信息
-        function updateStats() {
-            statsDiv.textContent = `显示 ${filteredData.length} 张图片`;
-        }
-
-        // 筛选图片
-        function filterImages(category, btn) {
-            currentCategory = category;
-            
-            // 更新按钮状态
-            document.querySelectorAll('.category-btn').forEach(b => {
-                b.classList.remove('active');
+        // 窗口大小调整监听
+        function setupResizeListener() {
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    const oldColumns = columns;
+                    calculateColumns();
+                    if (oldColumns !== columns) {
+                        columnHeights = new Array(columns).fill(0);
+                        const items = document.querySelectorAll('.waterfall-item');
+                        items.forEach((item, index) => {
+                            const img = item.querySelector('img');
+                            if (img.complete) {
+                                positionItem(item, img);
+                            }
+                        });
+                    }
+                }, 250);
             });
-            btn.classList.add('active');
-            
-            applyFilters();
-        }
-
-        // 搜索功能
-        searchInput.addEventListener('input', (e) => {
-            currentSearchTerm = e.target.value.toLowerCase();
-            applyFilters();
-        });
-
-        // 应用所有筛选条件
-        function applyFilters() {
-            filteredData = imageData.filter(item => {
-                const categoryMatch = currentCategory === '全部' || item.category === currentCategory;
-                const searchMatch = !currentSearchTerm || 
-                    item.src.toLowerCase().includes(currentSearchTerm) || 
-                    item.category.toLowerCase().includes(currentSearchTerm);
-                return categoryMatch && searchMatch;
-            });
-            
-            renderGallery();
         }
 
         // 打开灯箱
         function openLightbox(index) {
             currentLightboxIndex = index;
-            lightboxImg.src = filteredData[index].src;
-            lightbox.classList.add('active');
+            updateLightbox();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            preloadAdjacentImages();
         }
 
         // 关闭灯箱
         function closeLightbox() {
-            lightbox.classList.remove('active');
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 更新灯箱内容
+        function updateLightbox() {
+            const img = displayedImages[currentLightboxIndex];
+            document.getElementById('lightboxImage').src = img.src;
+            document.getElementById('lightboxInfo').textContent = 
+                `${currentLightboxIndex + 1} / ${displayedImages.length} - ${img.category}`;
         }
 
         // 灯箱导航
         function navigateLightbox(direction) {
             currentLightboxIndex += direction;
-            
-            if (currentLightboxIndex < 0) {
-                currentLightboxIndex = filteredData.length - 1;
-            } else if (currentLightboxIndex >= filteredData.length) {
-                currentLightboxIndex = 0;
+            if (currentLightboxIndex < 0) currentLightboxIndex = displayedImages.length - 1;
+            if (currentLightboxIndex >= displayedImages.length) currentLightboxIndex = 0;
+            updateLightbox();
+            preloadAdjacentImages();
+        }
+
+        // 预加载相邻图片
+        function preloadAdjacentImages() {
+            for (let i = -3; i <= 3; i++) {
+                const index = currentLightboxIndex + i;
+                if (index >= 0 && index < displayedImages.length) {
+                    const img = new Image();
+                    img.src = displayedImages[index].src;
+                }
             }
-            
-            lightboxImg.src = filteredData[currentLightboxIndex].src;
+        }
+
+        // 键盘导航
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                if (!document.getElementById('lightbox').classList.contains('active')) return;
+                
+                if (e.key === 'Escape') closeLightbox();
+                else if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                else if (e.key === 'ArrowRight') navigateLightbox(1);
+            });
         }
 
         // 点击背景关闭灯箱
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox') closeLightbox();
         });
 
-        // 键盘事件
-        document.addEventListener('keydown', (e) => {
-            if (lightbox.classList.contains('active')) {
-                if (e.key === 'Escape') {
-                    closeLightbox();
-                } else if (e.key === 'ArrowLeft') {
-                    navigateLightbox(-1);
-                } else if (e.key === 'ArrowRight') {
-                    navigateLightbox(1);
-                }
-            }
-        });
-
-        // 初始化
-        applyFilters();
+        // 启动应用
+        init();
     </script>
 </body>
 </html>
