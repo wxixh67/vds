@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14位数字提取工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-family: "Courier New", monospace;
+            font-size: 16px;
+            white-space: pre-line;
+            line-height: 1.8;
+        }
+        
+
+        
+        .no-result {
+            color: #999;
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+        }
+        
+        .count {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-all-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        
+        .copy-all-btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+        
+        .copy-all-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 14位数字提取工具</h1>
+        <p class="subtitle">输入文本，自动提取所有14位连续数字</p>
+        
+        <div>
+            <label for="inputText">输入文本：</label>
+            <div style="position: relative;">
+                <textarea id="inputText" placeholder="在这里粘贴或输入包含14位数字的文本...&#10;例如：订单号12345678901234，物流单号98765432109876"></textarea>
+                <button onclick="pasteText()" style="position: absolute; top: 10px; right: 10px; padding: 8px 16px; font-size: 14px; width: auto; margin: 0; background: #f3f4f6; color: #667eea; border: 1px solid #e5e7eb;">📋 粘贴</button>
+            </div>
+        </div>
+        
+        <button onclick="extractNumbers()">提取14位数字</button>
+        
+        <div class="result-section" id="resultSection" style="display: none;">
+            <label>提取结果：</label>
+            <div class="count" id="countText">
+                <span id="countSpan"></span>
+                <button class="copy-all-btn" onclick="copyAll()">📋 复制全部</button>
+            </div>
+            <div class="result-box" id="resultBox"></div>
+        </div>
+    </div>
+    
+    <script>
+        let extractedNumbers = [];
+        
+        function extractNumbers() {
+            const input = document.getElementById('inputText').value;
+            const resultSection = document.getElementById('resultSection');
+            const resultBox = document.getElementById('resultBox');
+            const countSpan = document.getElementById('countSpan');
+            
+            // 使用正则表达式提取14位连续数字
+            const regex = /\b\d{14}\b/g;
+            const matches = input.match(regex);
+            
+            if (matches && matches.length > 0) {
+                // 去重
+                const uniqueMatches = [...new Set(matches)];
+                extractedNumbers = uniqueMatches;
+                
+                countSpan.textContent = `找到 ${uniqueMatches.length} 个14位数字`;
+                
+                resultBox.innerHTML = `<div class="result-item">${uniqueMatches.join('\n')}</div>`;
+                
+                resultSection.style.display = 'block';
+            } else {
+                extractedNumbers = [];
+                countSpan.textContent = '未找到14位数字';
+                resultBox.innerHTML = '<div class="no-result">未找到任何14位连续数字</div>';
+                resultSection.style.display = 'block';
+            }
+        }
+        
+        
+        // 按Enter键（Ctrl/Cmd+Enter）提取
+        document.getElementById('inputText').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                extractNumbers();
+            }
+        });
+    </script>
+</body>
+</html>
