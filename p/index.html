@@ -19,7 +19,7 @@
             width: 100%;
         }
 
-        /* 分类过滤器样式 */
+        /* 分类过滤器样式 - 改为自动换行显示所有标签 */
         .filter-container {
             text-align: center;
             margin-bottom: 20px;
@@ -30,15 +30,17 @@
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             width: 100%;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-height: none;
+            overflow: visible;
         }
 
         .filter-btn {
             display: inline-block;
             padding: 10px 20px;
-            margin: 0 5px;
             background-color: #fff;
             border: 2px solid #ddd;
             border-radius: 25px;
@@ -46,6 +48,7 @@
             transition: all 0.3s ease;
             font-size: 14px;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .filter-btn:hover {
@@ -185,12 +188,12 @@
 
             .filter-container {
                 padding: 10px 5px;
+                gap: 6px;
             }
 
             .filter-btn {
                 padding: 8px 16px;
                 font-size: 13px;
-                margin: 0 3px;
             }
 
             .waterfall-container {
@@ -215,12 +218,12 @@
         @media screen and (max-width: 480px) {
             .filter-container {
                 padding: 8px 3px;
+                gap: 5px;
             }
 
             .filter-btn {
                 padding: 6px 14px;
                 font-size: 12px;
-                margin: 0 2px;
             }
 
             .waterfall-container {
