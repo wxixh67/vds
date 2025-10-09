@@ -205,34 +205,6 @@
             right: 20px;
         }
 
-        /* 按钮容器 */
-        .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 40px auto;
-        }
-
-        /* 加载更多按钮 */
-        .load-more {
-            padding: 12px 40px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .load-more:hover {
-            background: #555;
-        }
-
-        .load-more.hidden {
-            display: none;
-        }
-
         /* 响应式设计 */
         @media (max-width: 1200px) {
             .gallery {
@@ -263,15 +235,6 @@
                 font-size: 24px;
                 padding: 15px 10px;
             }
-
-            .button-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .load-more {
-                width: 200px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -301,11 +264,6 @@
         <div class="stats" id="stats">加载中...</div>
         
         <div class="gallery" id="gallery"></div>
-        
-        <!-- 加载按钮容器 -->
-        <div class="button-container">
-            <button class="load-more" id="loadMoreBtn">加载更多</button>
-        </div>
     </div>
 
     <!-- 灯箱 -->
@@ -1841,14 +1799,11 @@
         const lightboxImg = document.getElementById('lightbox-img');
         const searchInput = document.getElementById('searchInput');
         const statsDiv = document.getElementById('stats');
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
 
         let currentCategory = '全部';
         let currentSearchTerm = '';
         let filteredData = [];
-        let displayedCount = 0;
         let currentLightboxIndex = 0;
-        const ITEMS_PER_PAGE = 50; // 每次加载50张图片
 
         // Intersection Observer 用于懒加载
         const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -1880,28 +1835,20 @@
             categoriesContainer.appendChild(btn);
         });
 
-        // 渲染图片库（分批加载）
-        function renderGallery(append = false) {
-            if (!append) {
-                gallery.innerHTML = '';
-                displayedCount = 0;
-            }
+        // 渲染图片库（一次性加载全部）
+        function renderGallery() {
+            gallery.innerHTML = '';
 
-            const start = displayedCount;
-            const end = Math.min(start + ITEMS_PER_PAGE, filteredData.length);
-
-            for (let i = start; i < end; i++) {
-                const data = filteredData[i];
+            filteredData.forEach((data, i) => {
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
                 item.dataset.category = data.category;
                 
                 const img = document.createElement('img');
                 img.dataset.src = data.src;
-                img.dataset.imgIndex = i; // 存储索引在img元素上
+                img.dataset.imgIndex = i;
                 img.alt = `${data.category} ${i + 1}`;
                 
-                // 使用事件委托方式绑定点击事件
                 img.addEventListener('click', function(e) {
                     const idx = parseInt(e.target.dataset.imgIndex);
                     openLightbox(idx);
@@ -1912,25 +1859,14 @@
                 
                 // 观察图片以实现懒加载
                 imageObserver.observe(img);
-            }
+            });
 
-            displayedCount = end;
             updateStats();
-            updateLoadMoreButton();
         }
 
         // 更新统计信息
         function updateStats() {
-            statsDiv.textContent = `显示 ${displayedCount} / ${filteredData.length} 张图片`;
-        }
-
-        // 更新加载更多按钮
-        function updateLoadMoreButton() {
-            if (displayedCount >= filteredData.length) {
-                loadMoreBtn.classList.add('hidden');
-            } else {
-                loadMoreBtn.classList.remove('hidden');
-            }
+            statsDiv.textContent = `显示 ${filteredData.length} 张图片`;
         }
 
         // 筛选图片
@@ -1962,13 +1898,8 @@
                 return categoryMatch && searchMatch;
             });
             
-            renderGallery(false);
+            renderGallery();
         }
-
-        // 加载更多按钮事件
-        loadMoreBtn.addEventListener('click', () => {
-            renderGallery(true);
-        });
 
         // 打开灯箱
         function openLightbox(index) {
