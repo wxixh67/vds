@@ -205,10 +205,16 @@
             right: 20px;
         }
 
+        /* 按钮容器 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 40px auto;
+        }
+
         /* 加载更多按钮 */
         .load-more {
-            display: block;
-            margin: 40px auto;
             padding: 12px 40px;
             background: #333;
             color: white;
@@ -257,6 +263,15 @@
                 font-size: 24px;
                 padding: 15px 10px;
             }
+
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .load-more {
+                width: 200px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -287,8 +302,11 @@
         
         <div class="gallery" id="gallery"></div>
         
-        <!-- 加载更多按钮 -->
-        <button class="load-more" id="loadMoreBtn">加载更多</button>
+        <!-- 加载按钮容器 -->
+        <div class="button-container">
+            <button class="load-more" id="loadMoreBtn">加载更多</button>
+            <button class="load-more" id="loadAllBtn">加载全部</button>
+        </div>
     </div>
 
     <!-- 灯箱 -->
@@ -302,7 +320,6 @@
     <script>
         // 图片数据 - 替换为你的图片URL和分类
         const imageData = [
-
 {src:"./[EmberNova]/001_00426_1594465318.png",category:"EmberNova"},
 {src:"./[EmberNova]/002_00427_1594465319.png",category:"EmberNova"},
 {src:"./[EmberNova]/003_00428_1594465320.png",category:"EmberNova"},
@@ -1819,15 +1836,6 @@
 {src:"./みどりかわ/2025-10-04 配信友達に誘われてついて行ったらめちゃくちゃにされて中出しされちゃうしぐ⚪︎うい-3.png",category:"みどりかわ"},
 
 
-
-
-
-
-
-
-
-
-
         ];
 
         const gallery = document.getElementById('gallery');
@@ -1837,6 +1845,7 @@
         const searchInput = document.getElementById('searchInput');
         const statsDiv = document.getElementById('stats');
         const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadAllBtn = document.getElementById('loadAllBtn');
 
         let currentCategory = '全部';
         let currentSearchTerm = '';
@@ -1918,8 +1927,10 @@
         function updateLoadMoreButton() {
             if (displayedCount >= filteredData.length) {
                 loadMoreBtn.classList.add('hidden');
+                loadAllBtn.classList.add('hidden');
             } else {
                 loadMoreBtn.classList.remove('hidden');
+                loadAllBtn.classList.remove('hidden');
             }
         }
 
@@ -1958,6 +1969,35 @@
         // 加载更多按钮事件
         loadMoreBtn.addEventListener('click', () => {
             renderGallery(true);
+        });
+
+        // 加载全部按钮事件
+        loadAllBtn.addEventListener('click', () => {
+            // 一次性加载所有剩余图片
+            const start = displayedCount;
+            const end = filteredData.length;
+
+            for (let i = start; i < end; i++) {
+                const data = filteredData[i];
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.dataset.category = data.category;
+                item.dataset.index = i;
+                
+                const img = document.createElement('img');
+                img.dataset.src = data.src;
+                img.alt = `${data.category} ${i + 1}`;
+                img.onclick = () => openLightbox(i);
+                
+                item.appendChild(img);
+                gallery.appendChild(item);
+                
+                imageObserver.observe(img);
+            }
+
+            displayedCount = end;
+            updateStats();
+            updateLoadMoreButton();
         });
 
         // 打开灯箱
