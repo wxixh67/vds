@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的导航站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            margin: 30px auto;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 5px;
+        }
+
+        .search-box button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #5568d3;
+        }
+
+        .category {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .category-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .link-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .link-item:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+
+        .link-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .link-name {
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .links-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
+            }
+            
+            .link-item {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 我的导航站</h1>
+            <p>快速访问你的常用网站</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索网站或使用百度搜索...">
+            <button onclick="doSearch()">搜索</button>
+        </div>
+
+        <div class="category">
+            <div class="category-title">🔥 常用工具</div>
+            <div class="links-grid">
+                <a href="https://www.baidu.com" class="link-item" target="_blank">
+                    <div class="link-icon">🔍</div>
+                    <div class="link-name">百度</div>
+                </a>
+                <a href="https://www.google.com" class="link-item" target="_blank">
+                    <div class="link-icon">🌐</div>
+                    <div class="link-name">Google</div>
+                </a>
+                <a href="https://translate.google.com" class="link-item" target="_blank">
+                    <div class="link-icon">🌍</div>
+                    <div class="link-name">翻译</div>
+                </a>
+                <a href="https://mail.qq.com" class="link-item" target="_blank">
+                    <div class="link-icon">📧</div>
+                    <div class="link-name">邮箱</div>
+                </a>
+                <a href="https://pan.baidu.com" class="link-item" target="_blank">
+                    <div class="link-icon">☁️</div>
+                    <div class="link-name">网盘</div>
+                </a>
+                <a href="https://www.zhihu.com" class="link-item" target="_blank">
+                    <div class="link-icon">💡</div>
+                    <div class="link-name">知乎</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-title">📱 社交媒体</div>
+            <div class="links-grid">
+                <a href="https://weibo.com" class="link-item" target="_blank">
+                    <div class="link-icon">📣</div>
+                    <div class="link-name">微博</div>
+                </a>
+                <a href="https://www.douban.com" class="link-item" target="_blank">
+                    <div class="link-icon">📚</div>
+                    <div class="link-name">豆瓣</div>
+                </a>
+                <a href="https://www.xiaohongshu.com" class="link-item" target="_blank">
+                    <div class="link-icon">📖</div>
+                    <div class="link-name">小红书</div>
+                </a>
+                <a href="https://twitter.com" class="link-item" target="_blank">
+                    <div class="link-icon">🐦</div>
+                    <div class="link-name">Twitter</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-title">🎬 影音娱乐</div>
+            <div class="links-grid">
+                <a href="https://www.bilibili.com" class="link-item" target="_blank">
+                    <div class="link-icon">📺</div>
+                    <div class="link-name">哔哩哔哩</div>
+                </a>
+                <a href="https://www.youtube.com" class="link-item" target="_blank">
+                    <div class="link-icon">▶️</div>
+                    <div class="link-name">YouTube</div>
+                </a>
+                <a href="https://music.163.com" class="link-item" target="_blank">
+                    <div class="link-icon">🎵</div>
+                    <div class="link-name">网易云</div>
+                </a>
+                <a href="https://www.iqiyi.com" class="link-item" target="_blank">
+                    <div class="link-icon">🎬</div>
+                    <div class="link-name">爱奇艺</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-title">💻 开发学习</div>
+            <div class="links-grid">
+                <a href="https://github.com" class="link-item" target="_blank">
+                    <div class="link-icon">🐙</div>
+                    <div class="link-name">GitHub</div>
+                </a>
+                <a href="https://stackoverflow.com" class="link-item" target="_blank">
+                    <div class="link-icon">💬</div>
+                    <div class="link-name">Stack Overflow</div>
+                </a>
+                <a href="https://www.csdn.net" class="link-item" target="_blank">
+                    <div class="link-icon">👨‍💻</div>
+                    <div class="link-name">CSDN</div>
+                </a>
+                <a href="https://leetcode.cn" class="link-item" target="_blank">
+                    <div class="link-icon">🧩</div>
+                    <div class="link-name">力扣</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-title">🛒 购物网站</div>
+            <div class="links-grid">
+                <a href="https://www.taobao.com" class="link-item" target="_blank">
+                    <div class="link-icon">🛍️</div>
+                    <div class="link-name">淘宝</div>
+                </a>
+                <a href="https://www.jd.com" class="link-item" target="_blank">
+                    <div class="link-icon">🏪</div>
+                    <div class="link-name">京东</div>
+                </a>
+                <a href="https://www.amazon.cn" class="link-item" target="_blank">
+                    <div class="link-icon">📦</div>
+                    <div class="link-name">亚马逊</div>
+                </a>
+                <a href="https://www.pinduoduo.com" class="link-item" target="_blank">
+                    <div class="link-icon">🍊</div>
+                    <div class="link-name">拼多多</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function doSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(query), '_blank');
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                doSearch();
+            }
+        });
+    </script>
+</body>
+</html>
