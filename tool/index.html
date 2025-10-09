@@ -115,8 +115,6 @@
             line-height: 1.8;
         }
         
-
-        
         .no-result {
             color: #999;
             text-align: center;
@@ -153,6 +151,24 @@
         .copy-all-btn:active {
             transform: translateY(0);
         }
+        
+        .paste-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+            margin: 0;
+            background: #f3f4f6;
+            color: #667eea;
+            border: 1px solid #e5e7eb;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .paste-btn:active {
+            background: #e5e7eb;
+        }
     </style>
 </head>
 <body>
@@ -164,7 +180,7 @@
             <label for="inputText">输入文本：</label>
             <div style="position: relative;">
                 <textarea id="inputText" placeholder="在这里粘贴或输入包含14位数字的文本...&#10;例如：订单号12345678901234，物流单号98765432109876"></textarea>
-                <button onclick="pasteText()" style="position: absolute; top: 10px; right: 10px; padding: 8px 16px; font-size: 14px; width: auto; margin: 0; background: #f3f4f6; color: #667eea; border: 1px solid #e5e7eb;">📋 粘贴</button>
+                <button onclick="pasteText()" class="paste-btn">📋 粘贴</button>
             </div>
         </div>
         
@@ -182,6 +198,44 @@
     
     <script>
         let extractedNumbers = [];
+        
+        async function pasteText() {
+            const textarea = document.getElementById('inputText');
+            
+            // 移动端优先使用聚焦+选择的方式
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                textarea.focus();
+                textarea.select();
+                
+                // 尝试执行粘贴命令
+                try {
+                    const success = document.execCommand('paste');
+                    if (success) {
+                        // 等待粘贴内容更新
+                        setTimeout(() => {
+                            if (textarea.value.trim()) {
+                                extractNumbers();
+                            }
+                        }, 100);
+                    } else {
+                        alert('请长按文本框并选择"粘贴"');
+                    }
+                } catch (err) {
+                    alert('请长按文本框并选择"粘贴"');
+                }
+                return;
+            }
+            
+            // PC端使用 Clipboard API
+            try {
+                const text = await navigator.clipboard.readText();
+                textarea.value = text;
+                extractNumbers();
+            } catch (err) {
+                alert('无法访问剪贴板，请使用 Ctrl+V 手动粘贴');
+                textarea.focus();
+            }
+        }
         
         function extractNumbers() {
             const input = document.getElementById('inputText').value;
@@ -211,6 +265,82 @@
             }
         }
         
+        function copyAll() {
+            if (extractedNumbers.length === 0) {
+                alert('没有可复制的内容');
+                return;
+            }
+            
+            const textToCopy = extractedNumbers.join('\n');
+            const btn = event.target;
+            const originalText = btn.textContent;
+            
+            // 移动端优先使用传统方法
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                textarea.style.position = 'fixed';
+                textarea.style.top = '0';
+                textarea.style.left = '0';
+                textarea.style.width = '2em';
+                textarea.style.height = '2em';
+                textarea.style.padding = '0';
+                textarea.style.border = 'none';
+                textarea.style.outline = 'none';
+                textarea.style.boxShadow = 'none';
+                textarea.style.background = 'transparent';
+                document.body.appendChild(textarea);
+                
+                textarea.focus();
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+                
+                try {
+                    const success = document.execCommand('copy');
+                    if (success) {
+                        btn.textContent = '✓ 已复制';
+                        btn.style.background = '#10b981';
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.background = '#667eea';
+                        }, 2000);
+                    } else {
+                        alert('复制失败，请手动复制');
+                    }
+                } catch (err) {
+                    alert('复制失败，请手动复制');
+                }
+                
+                document.body.removeChild(textarea);
+                return;
+            }
+            
+            // PC端使用现代 API
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                btn.textContent = '✓ 已复制';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                // 降级方案
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('已复制到剪贴板');
+                } catch (err) {
+                    alert('复制失败，请手动复制');
+                }
+                document.body.removeChild(textarea);
+            });
+        }
         
         // 按Enter键（Ctrl/Cmd+Enter）提取
         document.getElementById('inputText').addEventListener('keydown', function(e) {
