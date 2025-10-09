@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Facebook - 官方导航</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -11,34 +11,40 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         html, body {
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100vh;
+            min-height: 100dvh;
         }
 
         body {
             font-family: 'Poppins', 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             position: relative;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -webkit-touch-callout: none;
+            overscroll-behavior: none;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         
-        /* 动态背景粒子效果 */
         body::before {
             content: '';
             position: fixed;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
             background-size: 50px 50px;
             animation: backgroundMove 20s linear infinite;
             z-index: 0;
             pointer-events: none;
+            will-change: transform;
         }
         
         @keyframes backgroundMove {
@@ -49,7 +55,7 @@
         .wrapper {
             position: relative;
             z-index: 1;
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             padding: 20px;
@@ -60,8 +66,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 100dvh;
             padding: 20px;
+            flex-shrink: 0;
         }
 
         .container {
@@ -73,6 +80,7 @@
             padding: 40px 35px;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 
                         0 0 0 1px rgba(255, 255, 255, 0.2) inset;
@@ -95,7 +103,6 @@
             position: relative;
         }
         
-        /* 脉动光环效果 */
         .avatar-container::before {
             content: '';
             position: absolute;
@@ -107,6 +114,7 @@
             background: radial-gradient(circle, rgba(24, 119, 242, 0.3), transparent 70%);
             border-radius: 50%;
             animation: pulse 2s ease-in-out infinite;
+            will-change: transform, opacity;
         }
         
         @keyframes pulse {
@@ -132,10 +140,12 @@
                         0 0 0 3px rgba(255, 255, 255, 0.3);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             object-fit: contain;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
-        .avatar:hover {
-            transform: scale(1.08) rotate(5deg);
+        .avatar:active {
+            transform: scale(1.05);
             box-shadow: 0 15px 40px rgba(24, 119, 242, 0.6),
                         0 0 0 3px rgba(255, 255, 255, 0.5);
         }
@@ -195,6 +205,10 @@
             font-size: 16px;
             font-weight: 700;
             font-kerning: auto;
+            min-height: 48px;
+            -webkit-user-select: none;
+            user-select: none;
+            cursor: pointer;
         }
         
         .nav-button:nth-child(1) { animation-delay: 0.3s; }
@@ -213,7 +227,6 @@
             }
         }
         
-        /* 悬浮光效 */
         .nav-button::before {
             content: '';
             position: absolute;
@@ -225,28 +238,21 @@
             transition: left 0.5s;
         }
         
-        .nav-button:hover::before {
-            left: 100%;
-        }
-        
-        .nav-button:hover {
+        .nav-button:active {
             background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-4px) scale(1.02);
+            transform: scale(0.98);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
             border-color: rgba(255, 255, 255, 0.4);
-        }
-        
-        .nav-button:active {
-            transform: translateY(-2px) scale(0.98);
         }
         
         .nav-button i {
             font-size: 20px;
             transition: transform 0.3s ease;
+            flex-shrink: 0;
         }
         
-        .nav-button:hover i {
-            transform: scale(1.15) rotate(5deg);
+        .nav-button:active i {
+            transform: scale(1.1);
         }
         
         .social-links {
@@ -270,10 +276,13 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-decoration: none;
+            -webkit-user-select: none;
+            user-select: none;
+            cursor: pointer;
         }
         
-        .social-icon:hover {
-            transform: translateY(-5px) rotate(10deg);
+        .social-icon:active {
+            transform: scale(0.95);
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
             color: #fff;
@@ -290,13 +299,13 @@
             animation: fadeIn 1s ease-out 0.8s both;
             font-family: 'Noto Sans SC', 'Poppins', sans-serif;
             font-weight: 500;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-
-        
         @media (max-width: 768px) {
             .section {
-                min-height: 100vh;
+                min-height: auto;
                 padding: 60px 20px 100px 20px;
             }
 
@@ -336,14 +345,12 @@
                 height: 44px;
                 font-size: 20px;
             }
-
-
         }
 
         @media (max-width: 480px) {
             .section {
-                min-height: 100vh;
-                padding: 50px 15px 80px 15px;
+                min-height: auto;
+                padding: 40px 15px 60px 15px;
             }
 
             .container {
@@ -390,8 +397,6 @@
             .copyright {
                 font-size: 12px;
             }
-
-
         }
         
         @media (prefers-reduced-motion: reduce) {
@@ -411,7 +416,9 @@
         <div class="section">
             <div class="container">
                 <div class="avatar-container">
-                    <img src="头像/2023_Facebook_icon.svg" alt="Facebook Logo" class="avatar">
+                    <svg class="avatar" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
                 </div>
                 
                 <h1 class="name">
@@ -458,10 +465,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
-
 </body>
 </html>
