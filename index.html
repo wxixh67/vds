@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facebook - 官方导航</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +14,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Poppins', 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             min-height: 100vh;
             display: flex;
@@ -118,7 +120,7 @@
         
         .name {
             font-size: 32px;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 35px;
             text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
             color: #ffffff;
@@ -127,6 +129,8 @@
             justify-content: center;
             gap: 12px;
             animation: fadeIn 0.8s ease-out 0.2s both;
+            letter-spacing: -0.5px;
+            font-family: 'Poppins', sans-serif;
         }
         
         @keyframes fadeIn {
@@ -165,6 +169,8 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
             overflow: hidden;
             animation: slideInLeft 0.5s ease-out both;
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            letter-spacing: 0.3px;
         }
         
         .nav-button:nth-child(1) { animation-delay: 0.3s; }
@@ -256,8 +262,10 @@
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             padding-top: 18px;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
             animation: fadeIn 1s ease-out 0.8s both;
+            font-family: 'Noto Sans SC', 'Poppins', sans-serif;
+            font-weight: 500;
         }
         
         @media (max-width: 480px) {
