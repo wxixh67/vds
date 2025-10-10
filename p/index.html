@@ -100,6 +100,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .gallery-item:hover {
@@ -112,6 +113,32 @@
             height: auto;
             display: block;
             object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item img.loaded {
+            opacity: 1;
+        }
+
+        .gallery-item .placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .gallery-item.hidden {
@@ -164,6 +191,67 @@
             cursor: pointer;
             background: none;
             border: none;
+            z-index: 1001;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 48px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            padding: 20px;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .lightbox-prev {
+            left: 20px;
+        }
+
+        .lightbox-next {
+            right: 20px;
+        }
+
+        .load-more {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .load-more-btn {
+            padding: 12px 32px;
+            background: #e60023;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(230, 0, 35, 0.3);
+        }
+
+        .load-more-btn:hover {
+            background: #d50020;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 0, 35, 0.4);
+        }
+
+        .load-more-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
     </style>
 </head>
@@ -178,15 +266,19 @@
 
     <div class="gallery" id="gallery"></div>
     
-    <div class="loading" id="loading">加载中...</div>
+    <div class="load-more" id="loadMore" style="display: none;">
+        <button class="load-more-btn" onclick="loadMoreImages()">加载更多</button>
+    </div>
 
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-        <img id="lightboxImg" src="/placeholder.svg" alt="">
+        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
+        <img id="lightboxImg" src="" alt="">
     </div>
 
     <script>
-        // 示例图片数据 - 请替换为你的实际数据
+        // 示例图片数据
         const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
@@ -1995,14 +2087,72 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 在这里添加更多图片数据...
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},
+            // 添加更多图片数据...
         ];
 
         let currentFilter = 'all';
+        let loadedCount = 0;
+        let currentLightboxIndex = 0;
+        let filteredImages = [];
+        const BATCH_SIZE = 20; // 每次加载20张图片
         const gallery = document.getElementById('gallery');
         const filterContainer = document.getElementById('filterContainer');
         const imageCount = document.getElementById('imageCount');
-        const loading = document.getElementById('loading');
+        const loadMoreBtn = document.getElementById('loadMore');
+
+        // 图片预加载缓存
+        const imageCache = new Map();
+
+        // 使用 Intersection Observer 实现懒加载
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    loadImage(img);
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px' // 提前50px开始加载
+        });
+
+        // 预加载图片
+        function preloadImage(src) {
+            if (imageCache.has(src)) {
+                return imageCache.get(src);
+            }
+            
+            const promise = new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+            
+            imageCache.set(src, promise);
+            return promise;
+        }
+
+        // 加载单张图片
+        function loadImage(img) {
+            const src = img.dataset.src;
+            if (!src) return;
+
+            const placeholder = img.previousElementSibling;
+            
+            preloadImage(src)
+                .then(() => {
+                    img.src = src;
+                    img.classList.add('loaded');
+                    if (placeholder) {
+                        setTimeout(() => placeholder.remove(), 300);
+                    }
+                })
+                .catch(() => {
+                    img.parentElement.style.display = 'none';
+                });
+        }
 
         // 获取所有唯一的分类
         function getCategories() {
@@ -2031,53 +2181,58 @@
             item.className = 'gallery-item';
             item.dataset.category = imageData.category;
             
-            const img = document.createElement('img');
-            img.src = imageData.src;
-            img.alt = imageData.category;
-            img.loading = 'lazy'; // 懒加载
-            img.onclick = () => openLightbox(imageData.src);
+            // 创建占位符
+            const placeholder = document.createElement('div');
+            placeholder.className = 'placeholder';
+            item.appendChild(placeholder);
             
-            // 图片加载错误处理
-            img.onerror = () => {
-                item.style.display = 'none';
-            };
+            const img = document.createElement('img');
+            img.dataset.src = imageData.src;
+            img.alt = imageData.category;
+            img.dataset.index = index;
+            img.onclick = () => openLightbox(index);
             
             item.appendChild(img);
+            
+            // 使用 Intersection Observer 观察图片
+            imageObserver.observe(img);
+            
             return item;
         }
 
-        // 渲染图片
-        function renderImages() {
-            gallery.innerHTML = '';
-            loading.style.display = 'block';
+        // 渲染图片批次
+        function renderImageBatch() {
+            const start = loadedCount;
+            const end = Math.min(start + BATCH_SIZE, filteredImages.length);
             
-            // 使用 requestAnimationFrame 来优化渲染性能
-            let index = 0;
-            const batchSize = 50; // 每批渲染50张图片
+            if (start >= filteredImages.length) {
+                loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
             
-            function renderBatch() {
-                const fragment = document.createDocumentFragment();
-                const end = Math.min(index + batchSize, images.length);
-                
-                for (let i = index; i < end; i++) {
-                    const item = createImageElement(images[i], i);
-                    if (currentFilter === 'all' || images[i].category === currentFilter) {
-                        fragment.appendChild(item);
-                    }
-                }
-                
-                gallery.appendChild(fragment);
-                index = end;
-                
-                if (index < images.length) {
-                    requestAnimationFrame(renderBatch);
-                } else {
-                    loading.style.display = 'none';
-                    updateImageCount();
-                }
+            for (let i = start; i < end; i++) {
+                const item = createImageElement(filteredImages[i], i);
+                fragment.appendChild(item);
             }
             
-            renderBatch();
+            gallery.appendChild(fragment);
+            loadedCount = end;
+            
+            // 显示/隐藏"加载更多"按钮
+            if (loadedCount < filteredImages.length) {
+                loadMoreBtn.style.display = 'block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+            
+            updateImageCount();
+        }
+
+        // 加载更多图片
+        function loadMoreImages() {
+            renderImageBatch();
         }
 
         // 筛选图片
@@ -2089,38 +2244,62 @@
                 btn.classList.toggle('active', btn.dataset.category === category);
             });
             
-            // 显示/隐藏图片
-            const items = document.querySelectorAll('.gallery-item');
-            items.forEach(item => {
-                if (category === 'all' || item.dataset.category === category) {
-                    item.classList.remove('hidden');
-                } else {
-                    item.classList.add('hidden');
-                }
-            });
+            // 过滤图片
+            filteredImages = category === 'all' 
+                ? [...images] 
+                : images.filter(img => img.category === category);
             
-            updateImageCount();
+            // 重置并重新渲染
+            gallery.innerHTML = '';
+            loadedCount = 0;
+            renderImageBatch();
         }
 
         // 更新图片计数
         function updateImageCount() {
-            const visibleCount = document.querySelectorAll('.gallery-item:not(.hidden)').length;
-            const totalCount = images.length;
             imageCount.textContent = currentFilter === 'all' 
-                ? `共 ${totalCount} 张图片` 
-                : `显示 ${visibleCount} / ${totalCount} 张图片`;
+                ? `共 ${images.length} 张图片 (已加载 ${loadedCount} 张)` 
+                : `显示 ${filteredImages.length} / ${images.length} 张图片 (已加载 ${loadedCount} 张)`;
         }
 
         // 灯箱功能
-        function openLightbox(src) {
+        function openLightbox(index) {
+            currentLightboxIndex = index;
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightboxImg');
-            lightboxImg.src = src;
+            lightboxImg.src = filteredImages[index].src;
             lightbox.classList.add('active');
+            
+            // 预加载相邻图片
+            if (index > 0) {
+                preloadImage(filteredImages[index - 1].src);
+            }
+            if (index < filteredImages.length - 1) {
+                preloadImage(filteredImages[index + 1].src);
+            }
         }
 
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
+        }
+
+        function navigateLightbox(direction) {
+            currentLightboxIndex += direction;
+            
+            if (currentLightboxIndex < 0) {
+                currentLightboxIndex = filteredImages.length - 1;
+            } else if (currentLightboxIndex >= filteredImages.length) {
+                currentLightboxIndex = 0;
+            }
+            
+            const lightboxImg = document.getElementById('lightboxImg');
+            lightboxImg.src = filteredImages[currentLightboxIndex].src;
+            
+            // 预加载相邻图片
+            const prevIndex = (currentLightboxIndex - 1 + filteredImages.length) % filteredImages.length;
+            const nextIndex = (currentLightboxIndex + 1) % filteredImages.length;
+            preloadImage(filteredImages[prevIndex].src);
+            preloadImage(filteredImages[nextIndex].src);
         }
 
         // 点击背景关闭灯箱
@@ -2130,16 +2309,45 @@
             }
         });
 
-        // ESC键关闭灯箱
+        // 键盘控制
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeLightbox();
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox.classList.contains('active')) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                } else if (e.key === 'ArrowLeft') {
+                    navigateLightbox(-1);
+                } else if (e.key === 'ArrowRight') {
+                    navigateLightbox(1);
+                }
+            }
+        });
+
+        // 自动加载 - 滚动到底部时自动加载更多
+        let isAutoLoading = false;
+        window.addEventListener('scroll', () => {
+            if (isAutoLoading) return;
+            
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // 距离底部200px时开始加载
+            if (scrollTop + windowHeight >= documentHeight - 200) {
+                if (loadedCount < filteredImages.length) {
+                    isAutoLoading = true;
+                    renderImageBatch();
+                    setTimeout(() => {
+                        isAutoLoading = false;
+                    }, 500);
+                }
             }
         });
 
         // 初始化
         createFilterButtons();
-        renderImages();
+        filteredImages = [...images];
+        renderImageBatch();
     </script>
 </body>
 </html>
