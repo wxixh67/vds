@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片瀑布流</title>
+    <title>瀑布流图片画廊</title>
     <style>
         * {
             margin: 0;
@@ -12,80 +12,87 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .filter-bar {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            font-weight: 600;
-        }
-
-        .filter-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .filter-btn.active {
-            background: white;
-            color: #667eea;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .waterfall {
-            position: relative;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 0;
+            overflow-x: hidden;
             width: 100%;
         }
 
-        .waterfall-item {
-            position: absolute;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            opacity: 0;
+        /* 分类过滤器样式 - 改为自动换行显示所有标签 */
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            padding: 15px 10px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-height: none;
+            overflow: visible;
         }
 
-        .waterfall-item.loaded {
+        .filter-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* 瀑布流容器 */
+        .waterfall-container {
+            width: 100%;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        /* 瀑布流列 */
+        .waterfall-column {
+            position: absolute;
+            padding: 0 5px;
+        }
+
+        /* 图片项样式 */
+        .waterfall-item {
+            position: relative;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .waterfall-item.show {
             opacity: 1;
+            transform: translateY(0);
         }
 
         .waterfall-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .waterfall-item img {
@@ -95,79 +102,158 @@
             cursor: pointer;
         }
 
-        .lightbox {
+        .waterfall-item .category-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.3);
+            color: rgba(255,255,255,0.7);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 400;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .waterfall-item:hover .category-tag {
+            opacity: 0.8;
+            background-color: rgba(0,0,0,0.5);
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 18px;
+            color: #666;
+            width: 100%;
+        }
+
+        /* 图片预览模态框 */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background-color: rgba(0,0,0,0.9);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            cursor: pointer;
         }
 
-        .lightbox.active {
-            display: flex;
-        }
-
-        .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 0 50px rgba(255,255,255,0.3);
-        }
-
-        .lightbox-close {
+        .modal-content {
             position: absolute;
-            top: 30px;
-            right: 30px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 95%;
+            max-height: 95%;
+        }
+
+        .modal-content img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
             color: white;
             font-size: 40px;
+            font-weight: bold;
             cursor: pointer;
-            background: rgba(255,255,255,0.2);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+            transition: color 0.3s ease;
+            z-index: 1001;
         }
 
-        .lightbox-close:hover {
-            background: rgba(255,255,255,0.3);
-            transform: rotate(90deg);
+        .modal-close:hover {
+            color: #f44336;
         }
 
-        .no-results {
-            text-align: center;
-            color: white;
-            font-size: 24px;
-            margin-top: 50px;
-            display: none;
+        /* 响应式设计 */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .filter-container {
+                padding: 10px 5px;
+                gap: 6px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .waterfall-container {
+                padding: 0 5px;
+            }
+
+            .waterfall-column {
+                padding: 0 3px;
+            }
+
+            .waterfall-item {
+                margin-bottom: 6px;
+            }
+
+            .waterfall-item .category-tag {
+                font-size: 9px;
+                padding: 2px 8px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .filter-container {
+                padding: 8px 3px;
+                gap: 5px;
+            }
+
+            .filter-btn {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+
+            .waterfall-container {
+                padding: 0 3px;
+            }
+
+            .waterfall-column {
+                padding: 0 2px;
+            }
+
+            .waterfall-item {
+                margin-bottom: 4px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🖼️ 图片瀑布流画廊</h1>
-        
-        <div class="filter-bar" id="filterBar">
-            <button class="filter-btn active" data-category="all">全部</button>
-        </div>
-
-        <div class="waterfall" id="waterfall"></div>
-        
-        <div class="no-results" id="noResults">暂无该分类的图片</div>
+    <!-- 分类过滤器 -->
+    <div class="filter-container">
+        <button class="filter-btn active" data-category="all">全部</button>
     </div>
 
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" id="closeLightbox">&times;</span>
-        <img id="lightboxImg" src="" alt="">
+    <!-- 瀑布流容器 -->
+    <div class="waterfall-container" id="waterfallContainer">
+        <div class="loading">加载图片中...</div>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div class="modal" id="imageModal">
+        <span class="modal-close">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="">
+        </div>
     </div>
 
     <script>
@@ -1980,131 +2066,201 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 添加更多图片数据...
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},
         ];
 
-        const waterfall = document.getElementById('waterfall');
-        const filterBar = document.getElementById('filterBar');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const closeLightbox = document.getElementById('closeLightbox');
-        const noResults = document.getElementById('noResults');
+        // 瀑布流配置
+        const config = {
+            columnCount: 3,
+            columnGap: 10,
+            itemGap: 10
+        };
 
-        let columnHeights = [];
-        let columnCount = 4;
-        let columnWidth = 0;
-        const gap = 20;
+        // 当前筛选的分类
+        let currentCategory = 'all';
 
-        // 获取所有唯一分类
-        const categories = ['all', ...new Set(images.map(img => img.category))];
-
-        // 生成分类按钮
-        filterBar.innerHTML = categories.map(cat => 
-            `<button class="filter-btn ${cat === 'all' ? 'active' : ''}" data-category="${cat}">
-                ${cat === 'all' ? '全部' : cat}
-            </button>`
-        ).join('');
-
-        // 计算列数
-        function calculateColumns() {
-            const width = waterfall.offsetWidth;
-            if (width <= 480) {
-                columnCount = 1;
-            } else if (width <= 768) {
-                columnCount = 2;
-            } else if (width <= 1200) {
-                columnCount = 3;
-            } else {
-                columnCount = 4;
-            }
-            columnWidth = (width - (columnCount - 1) * gap) / columnCount;
+        // 获取唯一分类
+        function getCategories() {
+            const categories = new Set(['all']);
+            images.forEach(img => categories.add(img.category));
+            return Array.from(categories);
         }
 
-        // 获取最短列的索引
-        function getMinHeightColumn() {
-            let minIndex = 0;
-            let minHeight = columnHeights[0];
-            for (let i = 1; i < columnHeights.length; i++) {
-                if (columnHeights[i] < minHeight) {
-                    minHeight = columnHeights[i];
-                    minIndex = i;
+        // 创建分类过滤按钮
+        function createFilterButtons() {
+            const filterContainer = document.querySelector('.filter-container');
+            const categories = getCategories();
+            
+            filterContainer.innerHTML = '';
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.setAttribute('data-category', category);
+                btn.textContent = category === 'all' ? '全部' : category;
+                if (category === currentCategory) {
+                    btn.classList.add('active');
                 }
-            }
-            return minIndex;
-        }
-
-        // 渲染图片
-        function renderImages(filter = 'all') {
-            waterfall.innerHTML = '';
-            calculateColumns();
-            columnHeights = new Array(columnCount).fill(0);
-
-            const filteredImages = filter === 'all' 
-                ? images 
-                : images.filter(img => img.category === filter);
-
-            if (filteredImages.length === 0) {
-                noResults.style.display = 'block';
-                waterfall.style.height = '0px';
-                return;
-            }
-
-            noResults.style.display = 'none';
-
-            filteredImages.forEach((imgData, index) => {
-                const item = document.createElement('div');
-                item.className = 'waterfall-item';
-                
-                const img = document.createElement('img');
-                img.src = imgData.src;
-                img.alt = imgData.category;
-                
-                img.onload = function() {
-                    const colIndex = getMinHeightColumn();
-                    const imgHeight = (this.naturalHeight / this.naturalWidth) * columnWidth;
-                    
-                    item.style.width = columnWidth + 'px';
-                    item.style.left = (colIndex * (columnWidth + gap)) + 'px';
-                    item.style.top = columnHeights[colIndex] + 'px';
-                    
-                    columnHeights[colIndex] += imgHeight + gap;
-                    
-                    waterfall.style.height = Math.max(...columnHeights) + 'px';
-                    
-                    setTimeout(() => {
-                        item.classList.add('loaded');
-                    }, index * 50);
-                };
-                
-                img.addEventListener('click', () => {
-                    lightboxImg.src = imgData.src;
-                    lightbox.classList.add('active');
-                });
-                
-                item.appendChild(img);
-                waterfall.appendChild(item);
+                btn.addEventListener('click', () => filterImages(category));
+                filterContainer.appendChild(btn);
             });
         }
 
-        // 分类筛选
-        filterBar.addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                document.querySelectorAll('.filter-btn').forEach(btn => 
-                    btn.classList.remove('active')
-                );
-                e.target.classList.add('active');
-                renderImages(e.target.dataset.category);
+        // 筛选图片
+        function filterImages(category) {
+            currentCategory = category;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-category') === category);
+            });
+            
+            // 重新渲染瀑布流
+            initWaterfall();
+        }
+
+        // 获取筛选后的图片
+        function getFilteredImages() {
+            if (currentCategory === 'all') {
+                return images;
             }
-        });
+            return images.filter(img => img.category === currentCategory);
+        }
 
-        // 关闭灯箱
-        closeLightbox.addEventListener('click', () => {
-            lightbox.classList.remove('active');
-        });
+        // 更新列数（响应式）
+        function updateColumnCount() {
+            const width = window.innerWidth;
+            if (width <= 480) {
+                config.columnCount = 1;
+                config.columnGap = 6;
+                config.itemGap = 4;
+            } else if (width <= 768) {
+                config.columnCount = 2;
+                config.columnGap = 8;
+                config.itemGap = 6;
+            } else {
+                config.columnCount = 3;
+                config.columnGap = 10;
+                config.itemGap = 10;
+            }
+        }
 
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.classList.remove('active');
+        // 创建瀑布流列
+        function createColumns() {
+            const container = document.getElementById('waterfallContainer');
+            container.innerHTML = '';
+            
+            const columns = [];
+            const columnHeights = [];
+            
+            // 获取容器实际宽度
+            const containerWidth = container.offsetWidth;
+            const columnWidth = (containerWidth - (config.columnCount - 1) * config.columnGap) / config.columnCount;
+            
+            for (let i = 0; i < config.columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'waterfall-column';
+                column.style.width = `${columnWidth}px`;
+                column.style.left = `${i * (columnWidth + config.columnGap)}px`;
+                container.appendChild(column);
+                columns.push(column);
+                columnHeights.push(0);
+            }
+            
+            return { columns, columnHeights, columnWidth };
+        }
+
+        // 加载图片并获取尺寸
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        // 初始化瀑布流
+        async function initWaterfall() {
+            updateColumnCount();
+            const { columns, columnHeights, columnWidth } = createColumns();
+            const filteredImages = getFilteredImages();
+            
+            if (filteredImages.length === 0) {
+                document.getElementById('waterfallContainer').innerHTML = 
+                    '<div class="loading">没有找到相关图片</div>';
+                return;
+            }
+            
+            for (let i = 0; i < filteredImages.length; i++) {
+                const imageData = filteredImages[i];
+                
+                try {
+                    // 加载图片获取原始尺寸
+                    const img = await loadImage(imageData.src);
+                    
+                    // 找到最短的列
+                    const minHeight = Math.min(...columnHeights);
+                    const columnIndex = columnHeights.indexOf(minHeight);
+                    
+                    // 创建图片项
+                    const item = document.createElement('div');
+                    item.className = 'waterfall-item';
+                    
+                    // 计算图片在列中的实际高度
+                    const aspectRatio = img.height / img.width;
+                    const itemHeight = columnWidth * aspectRatio;
+                    
+                    item.innerHTML = `
+                        <img src="${imageData.src}" alt="${imageData.category}">
+                        <span class="category-tag">${imageData.category}</span>
+                    `;
+                    
+                    // 添加点击预览
+                    item.querySelector('img').addEventListener('click', () => {
+                        showModal(imageData.src);
+                    });
+                    
+                    // 添加到对应列
+                    columns[columnIndex].appendChild(item);
+                    
+                    // 更新列高度
+                    columnHeights[columnIndex] += itemHeight + config.itemGap;
+                    
+                    // 显示动画
+                    setTimeout(() => {
+                        item.classList.add('show');
+                    }, i * 50);
+                    
+                } catch (error) {
+                    console.error(`加载图片失败: ${imageData.src}`, error);
+                }
+            }
+            
+            // 设置容器高度
+            const maxHeight = Math.max(...columnHeights);
+            document.getElementById('waterfallContainer').style.height = `${maxHeight}px`;
+        }
+
+        // 显示图片预览
+        function showModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = src;
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭图片预览
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 事件监听
+        document.querySelector('.modal-close').addEventListener('click', closeModal);
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
             }
         });
 
@@ -2113,13 +2269,22 @@
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
-                const activeBtn = document.querySelector('.filter-btn.active');
-                renderImages(activeBtn.dataset.category);
-            }, 250);
+                initWaterfall();
+            }, 300);
+        });
+
+        // 键盘事件（ESC关闭预览）
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
         });
 
         // 初始化
-        renderImages();
+        window.addEventListener('load', () => {
+            createFilterButtons();
+            initWaterfall();
+        });
     </script>
 </body>
 </html>
