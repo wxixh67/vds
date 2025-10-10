@@ -261,8 +261,7 @@
     </div>
 
     <script>
-        // ========== 你的图片数据数组 ==========
-        // 在这里替换成你实际的图片数据
+        // ========== 在这里替换成你实际的图片数据数组 ==========
         const allImages = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
@@ -2071,25 +2070,7 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 继续添加更多图片...
-            // 示例: 为了演示，生成一些示例数据
-            ...generateSampleData()
-        ];
-
-        function generateSampleData() {
-            const categories = ['Durandal', 'Anime', 'Nature', 'Urban', 'Abstract', 'Portrait'];
-            const data = [];
-            
-            // 生成9997条示例数据（加上上面的2条共9999条）
-            for (let i = 18; i < 10000; i++) {
-                const category = categories[Math.floor(Math.random() * categories.length)];
-                data.push({
-                    src: `./${category}/${String(i).padStart(5, '0')}_${4161595835 + i}.png`,
-                    category: category
-                });
-            }
-            return data;
-        }
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},        ];
 
         let filteredImages = [...allImages];
         let currentCategory = 'all';
