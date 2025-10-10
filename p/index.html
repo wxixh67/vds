@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>瀑布流图片画廊</title>
     <style>
         * {
             margin: 0;
@@ -12,225 +12,137 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
         }
 
         .header {
-            position: sticky;
-            top: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem 2rem;
-            z-index: 100;
+            max-width: 1400px;
+            margin: 0 auto 30px;
+            text-align: center;
         }
 
-        .header-content {
-            max-width: 1600px;
-            margin: 0 auto;
+        h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .filter-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .logo {
-            font-size: 1.75rem;
-            font-weight: 300;
-            letter-spacing: 0.05em;
-        }
-
-        .filters {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .filter-btn {
-            padding: 0.5rem 1.25rem;
-            background: transparent;
-            color: #999;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            color: #333;
             border-radius: 24px;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 14px;
             transition: all 0.3s ease;
-            font-weight: 400;
-            letter-spacing: 0.02em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .filter-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.3);
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .filter-btn.active {
-            background: #fff;
-            color: #0a0a0a;
-            border-color: #fff;
+            background: #e60023;
+            color: white;
         }
 
-        .image-count {
-            color: #666;
-            font-size: 0.875rem;
-            font-weight: 300;
-        }
-
-        .container {
-            max-width: 1600px;
+        .gallery {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .masonry {
             column-count: 5;
-            column-gap: 1rem;
+            column-gap: 16px;
         }
 
-        @media (max-width: 1400px) {
-            .masonry {
+        @media (max-width: 1200px) {
+            .gallery {
                 column-count: 4;
             }
         }
 
-        @media (max-width: 1024px) {
-            .masonry {
+        @media (max-width: 900px) {
+            .gallery {
                 column-count: 3;
             }
         }
 
-        @media (max-width: 768px) {
-            .masonry {
+        @media (max-width: 600px) {
+            .gallery {
                 column-count: 2;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
             }
         }
 
-        @media (max-width: 480px) {
-            .masonry {
+        @media (max-width: 400px) {
+            .gallery {
                 column-count: 1;
             }
         }
 
-        .masonry-item {
+        .gallery-item {
             break-inside: avoid;
-            margin-bottom: 1rem;
-            opacity: 0;
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-
-        .image-wrapper {
-            position: relative;
+            margin-bottom: 16px;
+            background: white;
+            border-radius: 16px;
             overflow: hidden;
-            border-radius: 8px;
-            background: #1a1a1a;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .image-wrapper:hover {
+        .gallery-item:hover {
             transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
 
-        .image-wrapper img {
+        .gallery-item img {
             width: 100%;
             height: auto;
             display: block;
-            transition: transform 0.3s ease;
+            object-fit: cover;
         }
 
-        .image-wrapper:hover img {
-            transform: scale(1.05);
-        }
-
-        .image-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.7));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            align-items: flex-end;
-            padding: 1rem;
-        }
-
-        .image-wrapper:hover .image-overlay {
-            opacity: 1;
-        }
-
-        .category-tag {
-            font-size: 0.75rem;
-            color: #fff;
-            font-weight: 500;
-            letter-spacing: 0.05em;
+        .gallery-item.hidden {
+            display: none;
         }
 
         .loading {
             text-align: center;
-            padding: 3rem;
+            padding: 40px;
             color: #666;
-            font-size: 0.875rem;
+            font-size: 16px;
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .no-results {
+        .image-count {
             text-align: center;
-            padding: 4rem 2rem;
             color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
 
-        .no-results h2 {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Lightbox */
         .lightbox {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
             z-index: 1000;
-            align-items: center;
             justify-content: center;
-            padding: 2rem;
+            align-items: center;
         }
 
         .lightbox.active {
@@ -239,61 +151,43 @@
 
         .lightbox img {
             max-width: 90%;
-            max-height: 90vh;
+            max-height: 90%;
             object-fit: contain;
-            border-radius: 4px;
         }
 
         .lightbox-close {
             position: absolute;
-            top: 2rem;
-            right: 2rem;
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            background: transparent;
-            color: #fff;
-            font-size: 1.5rem;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .lightbox-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #fff;
+            background: none;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">Gallery</div>
-            <div class="filters" id="filters">
-                <button class="filter-btn active" data-category="all">All</button>
-            </div>
-            <div class="image-count" id="imageCount">0 images</div>
+    <div class="header">
+        <h1>图片画廊</h1>
+        <div class="filter-container" id="filterContainer">
+            <button class="filter-btn active" data-category="all">全部</button>
         </div>
-    </header>
-
-    <div class="container">
-        <div class="masonry" id="gallery"></div>
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-        </div>
+        <div class="image-count" id="imageCount"></div>
     </div>
+
+    <div class="gallery" id="gallery"></div>
+    
+    <div class="loading" id="loading">加载中...</div>
 
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-        <img id="lightboxImage" src="/placeholder.svg" alt="">
+        <img id="lightboxImg" src="/placeholder.svg" alt="">
     </div>
 
     <script>
-        // Sample data structure - replace with your actual 9999 images
-        const imageData = [
+        // 示例图片数据 - 请替换为你的实际数据
+        const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
 {src:"./Durandal/03_00002_2523256412.png",category:"Durandal"},
@@ -2101,137 +1995,151 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // Add your 9999 images here following the same format
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 在这里添加更多图片数据...
         ];
 
         let currentFilter = 'all';
-        let displayedImages = 0;
-        const imagesPerLoad = 50;
-        let isLoading = false;
+        const gallery = document.getElementById('gallery');
+        const filterContainer = document.getElementById('filterContainer');
+        const imageCount = document.getElementById('imageCount');
+        const loading = document.getElementById('loading');
 
-        // Extract unique categories
-        const categories = ['all', ...new Set(imageData.map(img => img.category))];
-        
-        // Initialize filters
-        const filtersContainer = document.getElementById('filters');
-        filtersContainer.innerHTML = categories.map(cat => 
-            `<button class="filter-btn ${cat === 'all' ? 'active' : ''}" data-category="${cat}">${cat}</button>`
-        ).join('');
-
-        // Filter button click handlers
-        filtersContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                currentFilter = e.target.dataset.category;
-                resetGallery();
-            }
-        });
-
-        function resetGallery() {
-            displayedImages = 0;
-            document.getElementById('gallery').innerHTML = '';
-            loadMoreImages();
+        // 获取所有唯一的分类
+        function getCategories() {
+            const categories = new Set(images.map(img => img.category));
+            return ['all', ...Array.from(categories).sort()];
         }
 
-        function getFilteredImages() {
-            return currentFilter === 'all' 
-                ? imageData 
-                : imageData.filter(img => img.category === currentFilter);
-        }
-
-        function loadMoreImages() {
-            if (isLoading) return;
-            isLoading = true;
-
-            const filteredImages = getFilteredImages();
-            const imagesToLoad = filteredImages.slice(displayedImages, displayedImages + imagesPerLoad);
+        // 创建分类按钮
+        function createFilterButtons() {
+            const categories = getCategories();
+            filterContainer.innerHTML = '';
             
-            if (imagesToLoad.length === 0) {
-                document.getElementById('loading').style.display = 'none';
-                isLoading = false;
-                return;
-            }
-
-            const gallery = document.getElementById('gallery');
-            
-            imagesToLoad.forEach((imgData, index) => {
-                setTimeout(() => {
-                    const item = document.createElement('div');
-                    item.className = 'masonry-item';
-                    item.style.animationDelay = `${index * 0.05}s`;
-                    
-                    item.innerHTML = `
-                        <div class="image-wrapper" onclick="openLightbox('${imgData.src}')">
-                            <img src="${imgData.src}" alt="${imgData.category}" loading="lazy" onerror="this.parentElement.parentElement.style.display='none'">
-                            <div class="image-overlay">
-                                <span class="category-tag">${imgData.category}</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    gallery.appendChild(item);
-                }, index * 20);
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn' + (category === 'all' ? ' active' : '');
+                btn.textContent = category === 'all' ? '全部' : category;
+                btn.dataset.category = category;
+                btn.onclick = () => filterImages(category);
+                filterContainer.appendChild(btn);
             });
+        }
 
-            displayedImages += imagesToLoad.length;
-            updateImageCount();
+        // 创建图片元素
+        function createImageElement(imageData, index) {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.dataset.category = imageData.category;
             
-            setTimeout(() => {
-                isLoading = false;
-                if (displayedImages < filteredImages.length) {
-                    document.getElementById('loading').style.display = 'block';
+            const img = document.createElement('img');
+            img.src = imageData.src;
+            img.alt = imageData.category;
+            img.loading = 'lazy'; // 懒加载
+            img.onclick = () => openLightbox(imageData.src);
+            
+            // 图片加载错误处理
+            img.onerror = () => {
+                item.style.display = 'none';
+            };
+            
+            item.appendChild(img);
+            return item;
+        }
+
+        // 渲染图片
+        function renderImages() {
+            gallery.innerHTML = '';
+            loading.style.display = 'block';
+            
+            // 使用 requestAnimationFrame 来优化渲染性能
+            let index = 0;
+            const batchSize = 50; // 每批渲染50张图片
+            
+            function renderBatch() {
+                const fragment = document.createDocumentFragment();
+                const end = Math.min(index + batchSize, images.length);
+                
+                for (let i = index; i < end; i++) {
+                    const item = createImageElement(images[i], i);
+                    if (currentFilter === 'all' || images[i].category === currentFilter) {
+                        fragment.appendChild(item);
+                    }
+                }
+                
+                gallery.appendChild(fragment);
+                index = end;
+                
+                if (index < images.length) {
+                    requestAnimationFrame(renderBatch);
                 } else {
-                    document.getElementById('loading').style.display = 'none';
+                    loading.style.display = 'none';
+                    updateImageCount();
                 }
-            }, imagesToLoad.length * 20 + 100);
+            }
+            
+            renderBatch();
         }
 
+        // 筛选图片
+        function filterImages(category) {
+            currentFilter = category;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            
+            // 显示/隐藏图片
+            const items = document.querySelectorAll('.gallery-item');
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+            
+            updateImageCount();
+        }
+
+        // 更新图片计数
         function updateImageCount() {
-            const filteredImages = getFilteredImages();
-            document.getElementById('imageCount').textContent = 
-                `${displayedImages} / ${filteredImages.length} images`;
+            const visibleCount = document.querySelectorAll('.gallery-item:not(.hidden)').length;
+            const totalCount = images.length;
+            imageCount.textContent = currentFilter === 'all' 
+                ? `共 ${totalCount} 张图片` 
+                : `显示 ${visibleCount} / ${totalCount} 张图片`;
         }
 
-        // Infinite scroll
-        let scrollTimeout;
-        window.addEventListener('scroll', () => {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
-                    loadMoreImages();
-                }
-            }, 100);
-        });
-
-        // Lightbox functions
+        // 灯箱功能
         function openLightbox(src) {
-            document.getElementById('lightboxImage').src = src;
-            document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
         }
 
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = 'auto';
         }
 
-        // Close lightbox on background click
+        // 点击背景关闭灯箱
         document.getElementById('lightbox').addEventListener('click', (e) => {
             if (e.target.id === 'lightbox') {
                 closeLightbox();
             }
         });
 
-        // Close lightbox with Escape key
+        // ESC键关闭灯箱
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeLightbox();
             }
         });
 
-        // Initial load
-        loadMoreImages();
+        // 初始化
+        createFilterButtons();
+        renderImages();
     </script>
 </body>
 </html>
