@@ -278,6 +278,8 @@
             max-width: 90%;
             max-height: 90%;
             animation: zoomIn 0.3s ease;
+            z-index: 1001;
+            pointer-events: none;
         }
 
         @keyframes zoomIn {
@@ -297,6 +299,7 @@
             object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            pointer-events: auto;
         }
 
         .lightbox-close {
@@ -343,6 +346,7 @@
             justify-content: center;
             transition: all 0.3s ease;
             user-select: none;
+            z-index: 1002;
         }
 
         .lightbox-nav:hover {
@@ -352,6 +356,31 @@
 
         .lightbox-prev { left: 20px; }
         .lightbox-next { right: 20px; }
+
+        /* 手机端优化 */
+        @media (max-width: 768px) {
+            .lightbox-nav {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+                padding: 10px 15px;
+                background: rgba(255,255,255,0.2);
+                border: 2px solid rgba(255,255,255,0.4);
+            }
+            
+            .lightbox-prev { left: 10px; }
+            .lightbox-next { right: 10px; }
+            
+            .lightbox-close {
+                width: 45px;
+                height: 45px;
+                font-size: 32px;
+                top: 15px;
+                right: 15px;
+                background: rgba(255,255,255,0.2);
+                border: 2px solid rgba(255,255,255,0.4);
+            }
+        }
 
         .lightbox-counter {
             position: absolute;
