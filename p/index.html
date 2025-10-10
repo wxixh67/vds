@@ -454,10 +454,6 @@
                 <span>总图片</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number" id="loadedCount">0</span>
-                <span>已加载</span>
-            </div>
-            <div class="stat-item">
                 <span class="stat-number" id="categoryCount">0</span>
                 <span>当前分类</span>
             </div>
@@ -2477,7 +2473,6 @@
         // 更新统计
         function updateStats() {
             document.getElementById('totalCount').textContent = images.length;
-            document.getElementById('loadedCount').textContent = loadedCount;
             document.getElementById('categoryCount').textContent = filteredImages.length;
         }
 
