@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片瀑布流</title>
+    <title>图片瀑布流画廊</title>
     <style>
         * {
             margin: 0;
@@ -12,164 +12,131 @@
         }
 
         body {
-            background: #f5f5f5;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .header {
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f7f7f7;
             padding: 20px;
         }
 
-        @media (min-width: 1024px) {
-            .header {
-                position: sticky;
-                top: 0;
-                z-index: 100;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            color: #333;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn:hover {
+            background: #e60023;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .filter-btn.active {
+            background: #e60023;
+            color: white;
+        }
+
+        .masonry-container {
+            column-count: 5;
+            column-gap: 16px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1200px) {
+            .masonry-container {
+                column-count: 4;
             }
         }
 
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+        @media (max-width: 900px) {
+            .masonry-container {
+                column-count: 3;
+            }
         }
 
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
+        @media (max-width: 600px) {
+            .masonry-container {
+                column-count: 2;
+            }
         }
 
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+        @media (max-width: 400px) {
+            .masonry-container {
+                column-count: 1;
+            }
         }
 
-        .category-btn {
-            padding: 8px 16px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 16px;
             background: white;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .category-btn:hover {
-            border-color: #e74c3c;
-            color: #e74c3c;
-        }
-
-        .category-btn.active {
-            background: #e74c3c;
-            color: white;
-            border-color: #e74c3c;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .waterfall {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            grid-auto-rows: auto;
-        }
-
-        .image-item {
-            position: relative;
-            border-radius: 8px;
+            border-radius: 16px;
             overflow: hidden;
-            background: #e0e0e0;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeIn 0.5s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .image-item:hover {
+        .masonry-item:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
 
-        .image-item img {
+        .masonry-item.hidden {
+            display: none;
+        }
+
+        .masonry-item img {
             width: 100%;
             height: auto;
             display: block;
-            object-fit: cover;
         }
 
-        .image-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-            color: white;
+        .item-info {
             padding: 12px;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
-        .image-item:hover .image-overlay {
-            opacity: 1;
-        }
-
-        .category-tag {
+        .item-category {
             display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
+            padding: 4px 12px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
         }
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: #999;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #e74c3c;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .stats {
             color: #666;
-            font-size: 14px;
+            font-size: 18px;
         }
 
         .modal {
@@ -181,96 +148,52 @@
             height: 100%;
             background: rgba(0,0,0,0.9);
             z-index: 1000;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
 
         .modal.active {
             display: flex;
         }
 
-        .modal-content {
-            max-width: 90vw;
-            max-height: 90vh;
-            position: relative;
-        }
-
-        .modal-content img {
-            max-width: 100%;
-            max-height: 100%;
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
             object-fit: contain;
         }
 
         .modal-close {
-            position: fixed;
+            position: absolute;
             top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            color: #333;
-            font-size: 28px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
             cursor: pointer;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             z-index: 1001;
-        }
-
-        .modal-close:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 768px) {
-            .waterfall {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="header-content">
-            <div class="title">图片瀑布流</div>
-            <div class="filter-container">
-                <button class="category-btn active" data-category="all">全部</button>
-                <div id="categoryButtons"></div>
-            </div>
-            <div class="stats">
-                已加载: <span id="loadedCount">0</span> / <span id="totalCount">0</span>
-            </div>
-        </div>
+        <h1>📌 图片瀑布流画廊</h1>
     </div>
 
-    <div class="container">
-        <div class="waterfall" id="waterfall"></div>
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>加载中...</p>
-        </div>
+    <div class="filter-buttons" id="filterButtons">
+        <button class="filter-btn active" data-category="all">全部</button>
+    </div>
+
+    <div class="masonry-container" id="masonryContainer">
+        <div class="loading">加载中...</div>
     </div>
 
     <div class="modal" id="modal">
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-        <div class="modal-content">
-            <img id="modalImg" src="" alt="">
-        </div>
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img id="modalImg" src="/placeholder.svg" alt="">
     </div>
 
     <script>
-        // ========== 在这里替换成你实际的图片数据数组 ==========
-        const allImages = [
+        // 示例图片数据 - 替换为你的1000张图片数据
+        const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
 {src:"./Durandal/03_00002_2523256412.png",category:"Durandal"},
@@ -2078,113 +2001,122 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},    ];
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // ... 在这里添加你的1000张图片数据
+            // 为了演示，我会生成一些示例数据
+        ];
 
-        let filteredImages = [...allImages];
-        let currentCategory = 'all';
-        let loadedCount = 0;
-        const batchSize = 50;
-        const visibleThreshold = 100;
-
-        function getCategories() {
-            const categories = new Set(allImages.map(img => img.category));
-            return Array.from(categories).sort();
-        }
-
-        function initCategoryButtons() {
-            const container = document.getElementById('categoryButtons');
-            getCategories().forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'category-btn';
-                btn.textContent = cat;
-                btn.dataset.category = cat;
-                btn.addEventListener('click', () => filterByCategory(cat, btn));
-                container.appendChild(btn);
+        // 生成更多示例数据（模拟1000张图片）
+        const categories = ["Durandal", "Character", "Landscape", "Portrait", "Abstract", "Nature", "Urban", "Art"];
+        for (let i = images.length; i < 1000; i++) {
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            images.push({
+                src: `./${category}/${String(i).padStart(5, '0')}_${Date.now() + i}.png`,
+                category: category
             });
         }
 
-        function filterByCategory(category, btn) {
-            currentCategory = category;
-            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-            
-            if (category === 'all') {
-                document.querySelector('[data-category="all"]').classList.add('active');
-                filteredImages = [...allImages];
-            } else {
-                btn.classList.add('active');
-                filteredImages = allImages.filter(img => img.category === category);
-            }
+        // 获取所有唯一分类
+        const allCategories = [...new Set(images.map(img => img.category))];
 
-            loadedCount = 0;
-            document.getElementById('waterfall').innerHTML = '';
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('totalCount').textContent = filteredImages.length;
-            document.getElementById('loadedCount').textContent = '0';
+        // 生成分类按钮
+        function generateFilterButtons() {
+            const filterButtons = document.getElementById('filterButtons');
+            filterButtons.innerHTML = '<button class="filter-btn active" data-category="all">全部</button>';
             
-            loadNextBatch();
+            allCategories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.setAttribute('data-category', category);
+                btn.textContent = category;
+                filterButtons.appendChild(btn);
+            });
+
+            // 添加点击事件
+            filterButtons.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterImages(this.getAttribute('data-category'));
+                });
+            });
         }
 
-        function loadNextBatch() {
-            const startIndex = loadedCount;
-            const endIndex = Math.min(loadedCount + batchSize, filteredImages.length);
-            
-            for (let i = startIndex; i < endIndex; i++) {
-                const img = filteredImages[i];
+        // 生成图片网格
+        function generateMasonry() {
+            const container = document.getElementById('masonryContainer');
+            container.innerHTML = '';
+
+            images.forEach((img, index) => {
                 const item = document.createElement('div');
-                item.className = 'image-item';
+                item.className = 'masonry-item';
+                item.setAttribute('data-category', img.category);
                 
-                const imgEl = document.createElement('img');
-                imgEl.src = img.src;
-                imgEl.alt = img.category;
-                imgEl.loading = 'lazy';
+                const image = document.createElement('img');
+                image.src = img.src;
+                image.alt = img.category;
+                image.loading = 'lazy'; // 懒加载优化性能
+                image.onerror = function() {
+                    // 如果图片加载失败，使用占位图
+                    this.src = `https://placehold.co/400x${Math.floor(Math.random() * 300 + 300)}?text=${img.category}`;
+                };
                 
-                const overlay = document.createElement('div');
-                overlay.className = 'image-overlay';
-                overlay.innerHTML = `<span class="category-tag">${img.category}</span>`;
+                const info = document.createElement('div');
+                info.className = 'item-info';
+                info.innerHTML = `<span class="item-category">${img.category}</span>`;
                 
-                item.appendChild(imgEl);
-                item.appendChild(overlay);
+                item.appendChild(image);
+                item.appendChild(info);
                 
+                // 点击图片放大查看
                 item.addEventListener('click', () => openModal(img.src));
                 
-                document.getElementById('waterfall').appendChild(item);
-            }
-            
-            loadedCount = endIndex;
-            document.getElementById('loadedCount').textContent = loadedCount;
-            
-            if (loadedCount >= filteredImages.length) {
-                document.getElementById('loading').style.display = 'none';
-            }
+                container.appendChild(item);
+            });
         }
 
-        function openModal(src) {
-            document.getElementById('modal').classList.add('active');
-            document.getElementById('modalImg').src = src;
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
-        // 无限滚动加载
-        window.addEventListener('scroll', () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - visibleThreshold) {
-                if (loadedCount < filteredImages.length) {
-                    loadNextBatch();
+        // 筛选图片
+        function filterImages(category) {
+            const items = document.querySelectorAll('.masonry-item');
+            items.forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
                 }
+            });
+        }
+
+        // 打开模态框
+        function openModal(src) {
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = src;
+            modal.classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
             }
         });
 
         // 初始化
-        document.getElementById('totalCount').textContent = allImages.length;
-        initCategoryButtons();
-        loadNextBatch();
-
-        // 关闭模态框
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') closeModal();
-        });
+        generateFilterButtons();
+        generateMasonry();
     </script>
 </body>
 </html>
