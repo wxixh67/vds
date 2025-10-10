@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>14位数字提取工具</title>
+    <title>数字提取</title>
     <style>
         * {
             margin: 0;
@@ -12,204 +12,179 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #fafafa;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
         }
         
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid #eeeeee;
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-            color: white;
-            padding: 32px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid #eeeeee;
+            padding: 24px;
             text-align: center;
         }
         
-        .header-icon {
-            font-size: 56px;
-            margin-bottom: 12px;
-            display: block;
-        }
-        
         h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 4px;
         }
         
         .subtitle {
-            font-size: 14px;
-            opacity: 0.95;
-            font-weight: 400;
+            font-size: 13px;
+            color: #999999;
         }
         
-        .content {
-            padding: 28px 24px;
+        .main {
+            padding: 24px;
         }
         
-        .input-group {
-            margin-bottom: 24px;
+        .field {
+            margin-bottom: 20px;
         }
         
-        .label {
+        label {
             display: block;
+            font-size: 13px;
             font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 10px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #666666;
+            margin-bottom: 8px;
         }
         
         textarea {
             width: 100%;
-            height: 160px;
-            padding: 14px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid #eeeeee;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: monospace;
             resize: none;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s;
             line-height: 1.6;
-            color: #1f2937;
+            color: #333333;
         }
         
         textarea:focus {
             outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            background: #f9fafb;
+            border-color: #333333;
         }
         
         textarea::placeholder {
-            color: #9ca3af;
+            color: #cccccc;
         }
         
-        .button-group {
+        .actions {
             display: flex;
-            gap: 12px;
-            margin-top: 24px;
+            gap: 8px;
+            margin-top: 16px;
         }
         
         button {
             flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            padding: 10px 16px;
+            border: 1px solid #333333;
+            background: white;
+            color: #333333;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            transition: all 0.2s;
         }
         
-        .btn-extract {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        button:hover {
+            background: #f5f5f5;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background: #333333;
             color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            border-color: #333333;
         }
         
-        .btn-extract:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        .btn-primary:hover {
+            background: #555555;
         }
         
-        .btn-extract:active {
-            transform: translateY(0);
+        .btn-primary.success {
+            background: #4caf50;
+            border-color: #4caf50;
         }
         
-        .btn-copy {
-            background: #f3f4f6;
-            color: #1f2937;
-            border: 2px solid #e5e7eb;
-            font-weight: 600;
-        }
-        
-        .btn-copy:hover {
-            background: #eff6ff;
-            border-color: #6366f1;
-            color: #6366f1;
-        }
-        
-        .btn-copy.success {
-            background: #d1fae5;
-            border-color: #10b981;
-            color: #065f46;
-        }
-        
-        .result-section {
-            display: none;
-            margin-top: 28px;
+        .result {
+            margin-top: 24px;
             padding-top: 24px;
-            border-top: 2px solid #f3f4f6;
-            animation: slideDown 0.3s ease-out;
+            border-top: 1px solid #eeeeee;
+            display: none;
         }
         
-        .result-section.show {
+        .result.show {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
         
-        @keyframes slideDown {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
         
-        .result-header {
+        .result-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666666;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
-            gap: 12px;
         }
         
-        .result-title {
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .count-badge {
-            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
+        .count {
             font-size: 12px;
-            font-weight: 700;
+            color: #999999;
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 4px;
         }
         
         .result-box {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            min-height: 100px;
-            max-height: 240px;
+            background: #f9f9f9;
+            border: 1px solid #eeeeee;
+            border-radius: 6px;
+            padding: 0;
+            max-height: 200px;
             overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
+            color: #333333;
+        }
+        
+        .result-item {
+            padding: 0 12px;
+            line-height: 1.4;
+            word-break: break-all;
         }
         
         .result-box::-webkit-scrollbar {
@@ -217,81 +192,54 @@
         }
         
         .result-box::-webkit-scrollbar-track {
-            background: #f3f4f6;
-            border-radius: 3px;
+            background: #f5f5f5;
         }
         
         .result-box::-webkit-scrollbar-thumb {
-            background: #d1d5db;
+            background: #ddd;
             border-radius: 3px;
         }
         
         .result-box::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
+            background: #bbb;
         }
         
-        .result-item {
-            background: white;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border-left: 4px solid #6366f1;
-            font-family: 'Courier New', monospace;
+        .empty {
+            text-align: center;
+            color: #cccccc;
+            padding: 20px 12px;
             font-size: 13px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 2;
-            color: #1f2937;
-            letter-spacing: 1px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
         
-        .no-result {
-            text-align: center;
-            padding: 32px 16px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-        
-        .no-result-icon {
-            font-size: 44px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-        
-        .shortcut-hint {
+        .tips {
             font-size: 12px;
-            color: #9ca3af;
+            color: #999999;
+            margin-top: 12px;
             text-align: center;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #f3f4f6;
         }
         
         @media (max-width: 480px) {
             .container {
-                border-radius: 12px;
+                border-radius: 6px;
             }
             
             h1 {
-                font-size: 24px;
+                font-size: 20px;
             }
             
-            .header {
-                padding: 24px 20px;
-            }
-            
-            .content {
-                padding: 20px;
+            .header,
+            .main {
+                padding: 16px;
             }
             
             textarea {
                 height: 140px;
-                font-size: 13px;
+                font-size: 12px;
             }
             
             button {
-                padding: 11px 16px;
-                font-size: 13px;
+                font-size: 12px;
+                padding: 9px 12px;
             }
         }
     </style>
@@ -299,107 +247,89 @@
 <body>
     <div class="container">
         <div class="header">
-            <span class="header-icon">🎯</span>
-            <h1>提取工具</h1>
-            <p class="subtitle">快速提取14位数字</p>
+            <h1>数字提取</h1>
+            <p class="subtitle">提取文本中的14位数字</p>
         </div>
         
-        <div class="content">
-            <div class="input-group">
-                <label for="inputText">输入内容</label>
-                <textarea id="inputText" placeholder="粘贴或输入文本...&#10;&#10;如：订单12345678901234"></textarea>
+        <div class="main">
+            <div class="field">
+                <label>输入</label>
+                <textarea id="input" placeholder="输入或粘贴文本..."></textarea>
             </div>
             
-            <div class="button-group">
-                <button class="btn-extract" onclick="extractNumbers()">
-                    <span>✨</span>
-                    <span>提取</span>
-                </button>
-                <button class="btn-copy" onclick="copyAll()" id="copyBtn">
-                    <span>📋</span>
-                    <span>复制</span>
-                </button>
+            <div class="actions">
+                <button class="btn-primary" onclick="extract()">提取</button>
+                <button onclick="copyResult()" id="copyBtn">复制</button>
             </div>
             
-            <div class="result-section" id="resultSection">
-                <div class="result-header">
-                    <span class="result-title">结果</span>
-                    <span class="count-badge" id="countBadge">0 个</span>
+            <div class="result" id="result">
+                <div class="result-label">
+                    <span>结果</span>
+                    <span class="count"><span id="count">0</span> 个</span>
                 </div>
                 <div class="result-box" id="resultBox"></div>
             </div>
             
-            <div class="shortcut-hint">💡 快捷键：Ctrl/Cmd + Enter</div>
+            <div class="tips">⌘ + Enter 快速提取</div>
         </div>
     </div>
     
     <script>
-        let extractedNumbers = [];
+        let data = [];
         
-        function extractNumbers() {
-            const input = document.getElementById('inputText').value;
-            const resultSection = document.getElementById('resultSection');
-            const resultBox = document.getElementById('resultBox');
-            const countBadge = document.getElementById('countBadge');
-            
+        function extract() {
+            const text = document.getElementById('input').value;
             const regex = /\b\d{14}\b/g;
-            const matches = input.match(regex);
+            const matches = text.match(regex) || [];
             
-            if (matches && matches.length > 0) {
-                const uniqueMatches = [...new Set(matches)];
-                extractedNumbers = uniqueMatches;
-                
-                countBadge.textContent = `${uniqueMatches.length} 个`;
-                resultBox.innerHTML = `<div class="result-item">${uniqueMatches.join('\n')}</div>`;
-                
-                resultSection.classList.add('show');
+            data = [...new Set(matches)];
+            
+            const result = document.getElementById('result');
+            const resultBox = document.getElementById('resultBox');
+            const count = document.getElementById('count');
+            
+            if (data.length > 0) {
+                count.textContent = data.length;
+                resultBox.innerHTML = data.map(item => `<div class="result-item">${item}</div>`).join('');
             } else {
-                extractedNumbers = [];
-                countBadge.textContent = '0 个';
-                resultBox.innerHTML = '<div class="no-result"><div class="no-result-icon">📭</div>未找到14位数字</div>';
-                resultSection.classList.add('show');
+                count.textContent = 0;
+                resultBox.innerHTML = '<div class="empty">未找到14位数字</div>';
             }
+            
+            result.classList.add('show');
         }
         
-        function copyAll() {
-            if (extractedNumbers.length === 0) {
-                alert('没有可复制的内容');
+        function copyResult() {
+            if (data.length === 0) {
+                alert('没有内容可复制');
                 return;
             }
             
-            const textToCopy = extractedNumbers.join('\n');
+            const text = data.join('\n');
             const btn = document.getElementById('copyBtn');
-            const originalHTML = btn.innerHTML;
             
-            navigator.clipboard.writeText(textToCopy).then(() => {
+            navigator.clipboard.writeText(text).then(() => {
                 btn.classList.add('success');
-                btn.innerHTML = '<span>✓</span><span>已复制</span>';
+                btn.textContent = '已复制';
                 
                 setTimeout(() => {
                     btn.classList.remove('success');
-                    btn.innerHTML = originalHTML;
+                    btn.textContent = '复制';
                 }, 2000);
-            }).catch(err => {
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    alert('已复制到剪贴板');
-                } catch (err) {
-                    alert('复制失败');
-                }
-                document.body.removeChild(textarea);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('已复制');
             });
         }
         
-        document.getElementById('inputText').addEventListener('keydown', function(e) {
+        document.getElementById('input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                extractNumbers();
+                extract();
             }
         });
     </script>
