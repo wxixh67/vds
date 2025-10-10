@@ -371,39 +371,28 @@
             padding: 40px;
         }
 
-        .load-more-btn {
-            padding: 14px 40px;
-            background: white;
-            color: #667eea;
-            border: none;
+        .auto-loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 32px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 30px;
+            color: white;
             font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-        }
-
-        .load-more-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255,255,255,0.4);
-        }
-
-        .load-more-btn:disabled {
-            background: rgba(255,255,255,0.3);
-            cursor: not-allowed;
-            transform: none;
+            font-weight: 500;
         }
 
         .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(102, 126, 234, 0.3);
-            border-top-color: #667eea;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-left: 10px;
         }
 
         @keyframes spin {
@@ -486,10 +475,10 @@
     </div>
     
     <div class="load-more" id="loadMore" style="display: none;">
-        <button class="load-more-btn" onclick="loadMoreImages()">
-            加载更多
-            <span class="loading-spinner" style="display: none;"></span>
-        </button>
+        <div class="auto-loading">
+            <span class="loading-spinner"></span>
+            <span>正在加载更多...</span>
+        </div>
     </div>
 
     <div class="lightbox" id="lightbox">
@@ -2457,23 +2446,9 @@
                 preloadImage(filteredImages[i].src);
             }
             
+            // 如果还有更多图片，显示加载提示
             loadMoreBtn.style.display = loadedCount < filteredImages.length ? 'block' : 'none';
             updateStats();
-        }
-
-        // 加载更多
-        function loadMoreImages() {
-            const btn = loadMoreBtn.querySelector('.load-more-btn');
-            const spinner = btn.querySelector('.loading-spinner');
-            
-            btn.disabled = true;
-            spinner.style.display = 'inline-block';
-            
-            setTimeout(() => {
-                renderImageBatch();
-                btn.disabled = false;
-                spinner.style.display = 'none';
-            }, 300);
         }
 
         // 筛选图片
@@ -2577,23 +2552,32 @@
 
         // 滚动监听
         let isAutoLoading = false;
+        let autoLoadTimeout = null;
+        
         window.addEventListener('scroll', () => {
             // 显示/隐藏回到顶部按钮
             scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
             
             // 自动加载
-            if (isAutoLoading) return;
+            if (isAutoLoading || loadedCount >= filteredImages.length) return;
             
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
             
-            if (scrollTop + windowHeight >= documentHeight - 300) {
-                if (loadedCount < filteredImages.length) {
-                    isAutoLoading = true;
+            // 距离底部400px时开始加载
+            if (scrollTop + windowHeight >= documentHeight - 400) {
+                isAutoLoading = true;
+                
+                // 显示加载提示
+                loadMoreBtn.style.display = 'block';
+                
+                // 延迟加载，让用户看到加载动画
+                clearTimeout(autoLoadTimeout);
+                autoLoadTimeout = setTimeout(() => {
                     renderImageBatch();
-                    setTimeout(() => isAutoLoading = false, 500);
-                }
+                    isAutoLoading = false;
+                }, 600);
             }
         });
 
