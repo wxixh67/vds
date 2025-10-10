@@ -194,7 +194,7 @@
     </div>
 
     <script>
-        // 图片数据 - 这里放置你的1000张图片数据
+        // 图片数据 - 这里放置你的5000张图片数据
         const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
@@ -2003,16 +2003,14 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},
-
-            // 在这里添加更多图片...
-            // 示例：生成一些测试数据
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 在这里添加更多图片...
+            // 示例：生成一些测试数据用于演示
         ];
 
         // 如果图片数据较少,生成一些示例数据用于演示
         if (images.length < 10) {
             const categories = ["Durandal", "Landscape", "Portrait", "Nature", "Architecture"];
-            for (let i = 1; i <= 100; i++) {
+            for (let i = 1; i <= 1000; i++) {
                 const randomCategory = categories[Math.floor(Math.random() * categories.length)];
                 images.push({
                     src: `https://picsum.photos/400/${Math.floor(Math.random() * 300) + 300}?random=${i}`,
@@ -2022,6 +2020,11 @@
         }
 
         let currentFilter = 'all';
+        let displayedCount = 0;
+        const BATCH_SIZE = 50; // 每次加载50张图片
+        let filteredImages = [];
+        let isLoading = false;
+        
         const gallery = document.getElementById('gallery');
         const filterButtonsContainer = document.getElementById('filterButtons');
         const statsEl = document.getElementById('stats');
@@ -2059,18 +2062,32 @@
                 }
             });
             
-            renderGallery();
-        }
-
-        // 渲染画廊
-        function renderGallery() {
-            const filteredImages = currentFilter === 'all' 
+            // 重置显示计数
+            displayedCount = 0;
+            gallery.innerHTML = '';
+            
+            // 过滤图片
+            filteredImages = currentFilter === 'all' 
                 ? images 
                 : images.filter(img => img.category === currentFilter);
             
-            gallery.innerHTML = '';
+            // 更新统计
+            statsEl.textContent = `正在加载...`;
             
-            filteredImages.forEach((img, index) => {
+            // 开始分批加载
+            loadMoreImages();
+        }
+
+        // 分批加载图片
+        function loadMoreImages() {
+            if (isLoading || displayedCount >= filteredImages.length) return;
+            
+            isLoading = true;
+            const fragment = document.createDocumentFragment();
+            const endIndex = Math.min(displayedCount + BATCH_SIZE, filteredImages.length);
+            
+            for (let i = displayedCount; i < endIndex; i++) {
+                const img = filteredImages[i];
                 const item = document.createElement('div');
                 item.className = 'masonry-item';
                 item.onclick = () => openModal(img.src);
@@ -2084,12 +2101,38 @@
                 };
                 
                 item.appendChild(image);
-                gallery.appendChild(item);
-            });
+                fragment.appendChild(item);
+            }
+            
+            gallery.appendChild(fragment);
+            displayedCount = endIndex;
             
             // 更新统计
-            statsEl.textContent = `显示 ${filteredImages.length} 张图片 / 共 ${images.length} 张`;
+            statsEl.textContent = `显示 ${displayedCount} / ${filteredImages.length} 张图片 (共 ${images.length} 张)`;
+            
+            isLoading = false;
+            
+            // 如果还没加载完，继续加载
+            if (displayedCount < filteredImages.length) {
+                requestAnimationFrame(() => loadMoreImages());
+            }
         }
+
+        // 渲染画廊（已被filterImages替代）
+        function renderGallery() {
+            filterImages(currentFilter);
+        }
+
+        // 滚动加载更多
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                    loadMoreImages();
+                }
+            }, 100);
+        });
 
         // 打开模态框
         function openModal(src) {
