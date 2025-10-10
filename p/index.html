@@ -193,19 +193,18 @@
             max-width: 90vw;
             max-height: 90vh;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
         }
 
         .modal-content img {
-            max-width: 90vw;
-            max-height: 85vh;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
         }
 
         .modal-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             background: rgba(255,255,255,0.9);
             border: none;
             color: #333;
@@ -219,6 +218,7 @@
             justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 1001;
         }
 
         .modal-close:hover {
@@ -262,9 +262,9 @@
     </div>
 
     <div class="modal" id="modal">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
         <div class="modal-content">
             <img id="modalImg" src="" alt="">
-            <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
     </div>
 
@@ -2078,8 +2078,7 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},
-  ];
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},    ];
 
         let filteredImages = [...allImages];
         let currentCategory = 'all';
