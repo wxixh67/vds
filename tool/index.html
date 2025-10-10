@@ -13,28 +13,47 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to bottom right, #0f172a 0%, #1a1f3a 50%, #16213e 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 15px;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
         
         .container {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 32px 28px;
-            max-width: 680px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 40px;
+            max-width: 900px;
             width: 100%;
-            animation: slideUp 0.4s ease-out;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(148, 163, 184, 0.1);
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        @keyframes slideUp {
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -43,247 +62,213 @@
         }
         
         .header {
+            margin-bottom: 40px;
             text-align: center;
-            margin-bottom: 32px;
         }
         
-        .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+        .header-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
             display: inline-block;
-            animation: bounce 2s infinite;
+            animation: float 3s ease-in-out infinite;
         }
         
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
         }
         
         h1 {
-            color: #1a202c;
-            margin-bottom: 8px;
-            font-size: 26px;
-            font-weight: 700;
+            color: #f1f5f9;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .subtitle {
-            color: #718096;
-            font-size: 14px;
+            color: #94a3b8;
+            font-size: 15px;
             line-height: 1.6;
         }
         
-        .input-section {
-            margin-bottom: 20px;
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            color: #e2e8f0;
+            font-weight: 700;
+            margin-bottom: 16px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title span {
+            font-size: 20px;
         }
         
         label {
             display: block;
-            color: #2d3748;
-            font-weight: 600;
-            margin-bottom: 12px;
-            font-size: 15px;
+            color: #cbd5e0;
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
         
         textarea {
             width: 100%;
-            min-height: 140px;
+            height: 280px;
             padding: 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid rgba(148, 163, 184, 0.2);
             border-radius: 12px;
-            font-size: 15px;
-            resize: vertical;
+            font-size: 14px;
+            resize: none;
+            background: rgba(15, 23, 42, 0.5);
+            color: #f1f5f9;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
             transition: all 0.3s ease;
-            font-family: inherit;
-            line-height: 1.6;
+            flex: 1;
         }
         
         textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1), inset 0 0 0 1px rgba(96, 165, 250, 0.2);
         }
         
         textarea::placeholder {
-            color: #a0aec0;
+            color: #475569;
         }
         
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
+        .button-container {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
-            margin-bottom: 8px;
+            justify-content: flex-start;
         }
         
         button {
             border: none;
-            padding: 16px 24px;
-            border-radius: 12px;
+            padding: 14px 28px;
+            border-radius: 10px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
         
-        .btn-paste {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-        
-        .btn-paste:hover {
-            background: #f7fafc;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-        
-        .btn-paste:active {
-            transform: translateY(0);
-        }
-        
         .btn-extract {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
             color: white;
+            padding: 16px 32px;
+            font-size: 16px;
         }
         
         .btn-extract:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 12px 24px rgba(96, 165, 250, 0.4);
         }
         
         .btn-extract:active {
             transform: translateY(0);
         }
         
-        .shortcut-hint {
-            text-align: center;
-            font-size: 12px;
-            color: #a0aec0;
-            margin-top: 8px;
-        }
-        
-        .result-section {
-            margin-top: 32px;
-            padding-top: 32px;
-            border-top: 2px solid #f7fafc;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
-        .result-title {
-            color: #2d3748;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        
-        .count-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
+        .hint {
             font-size: 13px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            color: #64748b;
+            margin-top: 12px;
+            text-align: center;
         }
         
         .result-box {
-            background: #f7fafc;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px solid rgba(148, 163, 184, 0.2);
             border-radius: 12px;
             padding: 20px;
-            min-height: 100px;
-            max-height: 320px;
+            height: 280px;
             overflow-y: auto;
-            border: 2px solid #e2e8f0;
+            flex: 1;
         }
         
         .result-box::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         
         .result-box::-webkit-scrollbar-track {
-            background: #edf2f7;
-            border-radius: 4px;
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 3px;
         }
         
         .result-box::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
-            border-radius: 4px;
+            background: rgba(96, 165, 250, 0.3);
+            border-radius: 3px;
         }
         
         .result-box::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0;
+            background: rgba(96, 165, 250, 0.5);
         }
         
         .result-item {
-            background: white;
-            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+            padding: 16px;
             border-radius: 10px;
-            border-left: 4px solid #667eea;
-            font-family: "Courier New", Consolas, monospace;
-            font-size: 15px;
-            white-space: pre-line;
-            line-height: 1.9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            color: #2d3748;
-            letter-spacing: 0.5px;
+            border-left: 4px solid #60a5fa;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 2;
+            color: #e2e8f0;
+            letter-spacing: 1px;
         }
         
         .no-result {
-            color: #a0aec0;
+            color: #64748b;
             text-align: center;
-            padding: 40px 20px;
-            font-size: 14px;
+            padding: 60px 20px;
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
         
         .no-result-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
+            font-size: 56px;
+            margin-bottom: 16px;
+            opacity: 0.4;
         }
         
         .btn-copy {
-            background: #667eea;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 12px 24px;
             font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
         
         .btn-copy:hover {
-            background: #5568d3;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(167, 139, 250, 0.4);
         }
         
         .btn-copy:active {
@@ -291,52 +276,51 @@
         }
         
         .btn-copy.success {
-            background: #48bb78;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
         
-        @media (max-width: 640px) {
-            body {
-                padding: 10px;
-            }
-            
+        .stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-badge {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            color: #93c5fd;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
             .container {
-                padding: 24px 20px;
-                border-radius: 20px;
+                padding: 24px;
             }
             
             h1 {
-                font-size: 22px;
+                font-size: 26px;
             }
             
-            .icon {
-                font-size: 40px;
+            .header-icon {
+                font-size: 48px;
             }
             
-            .button-group {
+            .content-wrapper {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
             
-            .btn-paste {
-                order: 2;
-            }
-            
-            .btn-extract {
-                order: 1;
-            }
-            
-            textarea {
-                min-height: 120px;
-                font-size: 14px;
+            textarea, .result-box {
+                height: 240px;
             }
             
             button {
-                padding: 14px 20px;
+                padding: 12px 20px;
                 font-size: 14px;
-            }
-            
-            .result-header {
-                flex-direction: column;
-                align-items: flex-start;
             }
         }
     </style>
@@ -344,115 +328,76 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="icon">🔍</div>
-            <h1>14位数字提取工具</h1>
-            <p class="subtitle">快速提取文本中的14位连续数字，自动去重整理</p>
+            <div class="header-icon">🔍</div>
+            <h1>数字提取器</h1>
+            <p class="subtitle">智能识别和提取文本中的14位数字</p>
         </div>
         
-        <div class="input-section">
-            <label for="inputText">📝 输入文本</label>
-            <textarea id="inputText" placeholder="粘贴或输入包含14位数字的文本...&#10;&#10;例如：&#10;订单号：12345678901234&#10;物流单号：98765432109876"></textarea>
-        </div>
-        
-        <div class="button-group">
-            <button class="btn-paste" onclick="pasteText()">
-                <span>📋</span>
-                <span>粘贴</span>
-            </button>
-            <button class="btn-extract" onclick="extractNumbers()">
-                <span>🔍</span>
-                <span>提取14位数字</span>
-            </button>
-        </div>
-        
-        <div class="shortcut-hint">💡 提示：Ctrl/Cmd + Enter 快速提取</div>
-        
-        <div class="result-section" id="resultSection" style="display: none;">
-            <div class="result-header">
-                <div>
-                    <div class="result-title">✨ 提取结果</div>
+        <div class="content-wrapper">
+            <div class="section">
+                <div class="section-title">
+                    <span>📝</span>
+                    <span>输入数据</span>
                 </div>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <span class="count-badge" id="countBadge">
-                        <span>📊</span>
-                        <span id="countText">0 个</span>
-                    </span>
-                    <button class="btn-copy" onclick="copyAll()">
-                        <span>📋</span>
-                        <span id="copyBtnText">复制全部</span>
+                <textarea id="inputText" placeholder="在此输入文本...&#10;&#10;例如：&#10;订单：12345678901234&#10;单号：98765432109876&#10;号码：11111111111111"></textarea>
+                <div class="button-container" style="margin-top: 16px;">
+                    <button class="btn-extract" onclick="extractNumbers()">
+                        <span>✨</span>
+                        <span>提取14位数字</span>
                     </button>
+                    <div class="hint">💡 快捷键：Ctrl/Cmd + Enter</div>
                 </div>
             </div>
-            <div class="result-box" id="resultBox"></div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <span>📊</span>
+                    <span>提取结果</span>
+                </div>
+                <div class="result-box" id="resultBox">
+                    <div class="no-result">
+                        <div class="no-result-icon">↓</div>
+                        <div>输入文本后点击提取</div>
+                    </div>
+                </div>
+                <div class="stats" id="stats" style="display: none;">
+                    <span class="stat-badge">
+                        <span id="countText">0</span> 个数字
+                    </span>
+                </div>
+                <button class="btn-copy" onclick="copyAll()" style="margin-top: 12px;">
+                    <span>📋</span>
+                    <span id="copyBtnText">复制结果</span>
+                </button>
+            </div>
         </div>
     </div>
     
     <script>
         let extractedNumbers = [];
         
-        async function pasteText() {
-            const textarea = document.getElementById('inputText');
-            
-            // 移动端优先使用聚焦+选择的方式
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                textarea.focus();
-                textarea.select();
-                
-                // 尝试执行粘贴命令
-                try {
-                    const success = document.execCommand('paste');
-                    if (success) {
-                        // 等待粘贴内容更新
-                        setTimeout(() => {
-                            if (textarea.value.trim()) {
-                                extractNumbers();
-                            }
-                        }, 100);
-                    } else {
-                        alert('请长按文本框并选择"粘贴"');
-                    }
-                } catch (err) {
-                    alert('请长按文本框并选择"粘贴"');
-                }
-                return;
-            }
-            
-            // PC端使用 Clipboard API
-            try {
-                const text = await navigator.clipboard.readText();
-                textarea.value = text;
-                extractNumbers();
-            } catch (err) {
-                alert('无法访问剪贴板，请使用 Ctrl+V 手动粘贴');
-                textarea.focus();
-            }
-        }
-        
         function extractNumbers() {
             const input = document.getElementById('inputText').value;
-            const resultSection = document.getElementById('resultSection');
             const resultBox = document.getElementById('resultBox');
             const countText = document.getElementById('countText');
+            const stats = document.getElementById('stats');
             
-            // 使用正则表达式提取14位连续数字
             const regex = /\b\d{14}\b/g;
             const matches = input.match(regex);
             
             if (matches && matches.length > 0) {
-                // 去重
                 const uniqueMatches = [...new Set(matches)];
                 extractedNumbers = uniqueMatches;
                 
-                countText.textContent = `${uniqueMatches.length} 个`;
+                countText.textContent = uniqueMatches.length;
+                stats.style.display = 'flex';
                 
                 resultBox.innerHTML = `<div class="result-item">${uniqueMatches.join('\n')}</div>`;
-                
-                resultSection.style.display = 'block';
             } else {
                 extractedNumbers = [];
-                countText.textContent = '0 个';
-                resultBox.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div>未找到任何14位连续数字<br>请检查输入内容</div>';
-                resultSection.style.display = 'block';
+                countText.textContent = '0';
+                stats.style.display = 'none';
+                resultBox.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div><div>未找到14位数字</div></div>';
             }
         }
         
@@ -467,49 +412,8 @@
             const btnText = document.getElementById('copyBtnText');
             const originalText = btnText.textContent;
             
-            // 移动端优先使用传统方法
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                textarea.style.position = 'fixed';
-                textarea.style.top = '0';
-                textarea.style.left = '0';
-                textarea.style.width = '2em';
-                textarea.style.height = '2em';
-                textarea.style.padding = '0';
-                textarea.style.border = 'none';
-                textarea.style.outline = 'none';
-                textarea.style.boxShadow = 'none';
-                textarea.style.background = 'transparent';
-                document.body.appendChild(textarea);
-                
-                textarea.focus();
-                textarea.select();
-                textarea.setSelectionRange(0, textarea.value.length);
-                
-                try {
-                    const success = document.execCommand('copy');
-                    if (success) {
-                        btnText.textContent = '已复制';
-                        btn.classList.add('success');
-                        setTimeout(() => {
-                            btnText.textContent = originalText;
-                            btn.classList.remove('success');
-                        }, 2000);
-                    } else {
-                        alert('复制失败，请手动复制');
-                    }
-                } catch (err) {
-                    alert('复制失败，请手动复制');
-                }
-                
-                document.body.removeChild(textarea);
-                return;
-            }
-            
-            // PC端使用现代 API
             navigator.clipboard.writeText(textToCopy).then(() => {
-                btnText.textContent = '已复制';
+                btnText.textContent = '已复制！';
                 btn.classList.add('success');
                 
                 setTimeout(() => {
@@ -517,7 +421,6 @@
                     btn.classList.remove('success');
                 }, 2000);
             }).catch(err => {
-                // 降级方案
                 const textarea = document.createElement('textarea');
                 textarea.value = textToCopy;
                 textarea.style.position = 'fixed';
@@ -534,7 +437,6 @@
             });
         }
         
-        // 按Enter键（Ctrl/Cmd+Enter）提取
         document.getElementById('inputText').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault();
