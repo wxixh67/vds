@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片瀑布流</title>
+    <title>瀑布流图片展示</title>
     <style>
         * {
             margin: 0;
@@ -12,95 +12,125 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
             padding: 20px;
-            overflow-y: auto;
         }
 
-        body.loading {
-            overflow: hidden;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #333;
+            margin-bottom: 20px;
         }
 
-        .filter-bar {
+        .filter-buttons {
             display: flex;
+            gap: 10px;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
             flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
         .filter-btn {
-            padding: 12px 30px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.2);
-            color: white;
+            border-radius: 24px;
+            background: white;
+            color: #333;
             cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            font-size: 14px;
             font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .filter-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: #e60023;
+            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .filter-btn.active {
-            background: white;
-            color: #667eea;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: #e60023;
+            color: white;
         }
 
-        .waterfall {
-            position: relative;
-            width: 100%;
+        .stats {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
 
-        .waterfall-item {
-            position: absolute;
+        .masonry-container {
+            column-count: 5;
+            column-gap: 15px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 15px;
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            opacity: 0;
+            cursor: pointer;
+            position: relative;
         }
 
-        .waterfall-item.loaded {
-            opacity: 1;
+        .masonry-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
 
-        .waterfall-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .waterfall-item img {
+        .masonry-item img {
             width: 100%;
             height: auto;
             display: block;
-            cursor: pointer;
         }
 
-        .lightbox {
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1400px) {
+            .masonry-container {
+                column-count: 4;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .masonry-container {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .masonry-container {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .masonry-container {
+                column-count: 1;
+            }
+        }
+
+        /* 模态框样式 */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
@@ -111,72 +141,60 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            padding: 20px;
         }
 
-        .lightbox.active {
+        .modal.active {
             display: flex;
         }
 
-        .lightbox img {
+        .modal-content {
             max-width: 90%;
             max-height: 90%;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 0 50px rgba(255,255,255,0.3);
+            position: relative;
         }
 
-        .lightbox-close {
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+
+        .close-modal {
             position: absolute;
-            top: 30px;
-            right: 30px;
+            top: 20px;
+            right: 20px;
             color: white;
             font-size: 40px;
             cursor: pointer;
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5);
             width: 50px;
             height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .lightbox-close:hover {
-            background: rgba(255,255,255,0.3);
-            transform: rotate(90deg);
-        }
-
-        .no-results {
-            text-align: center;
-            color: white;
-            font-size: 24px;
-            margin-top: 50px;
-            display: none;
+            line-height: 1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🖼️ 图片瀑布流画廊</h1>
-        
-        <div class="filter-bar" id="filterBar">
-            <button class="filter-btn active" data-category="all">全部</button>
-        </div>
-
-        <div class="waterfall" id="waterfall"></div>
-        
-        <div class="no-results" id="noResults">暂无该分类的图片</div>
+    <div class="header">
+        <h1>🖼️ 图片瀑布流展示</h1>
+        <div class="filter-buttons" id="filterButtons"></div>
+        <div class="stats" id="stats">正在加载...</div>
     </div>
 
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" id="closeLightbox">&times;</span>
-        <img id="lightboxImg" src="" alt="">
+    <div class="masonry-container" id="gallery"></div>
+
+    <div class="modal" id="modal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImg" src="" alt="">
+        </div>
     </div>
 
     <script>
-        // 图片数据
+        // 图片数据 - 这里放置你的1000张图片数据
         const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
@@ -1985,154 +2003,115 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 添加更多图片数据...
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 在这里添加更多图片...
+            // 示例：生成一些测试数据
         ];
 
-        const waterfall = document.getElementById('waterfall');
-        const filterBar = document.getElementById('filterBar');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const closeLightbox = document.getElementById('closeLightbox');
-        const noResults = document.getElementById('noResults');
-
-        let columnHeights = [];
-        let columnCount = 4;
-        let columnWidth = 0;
-        const gap = 20;
-
-        // 获取所有唯一分类
-        const categories = ['all', ...new Set(images.map(img => img.category))];
-
-        // 生成分类按钮
-        filterBar.innerHTML = categories.map(cat => 
-            `<button class="filter-btn ${cat === 'all' ? 'active' : ''}" data-category="${cat}">
-                ${cat === 'all' ? '全部' : cat}
-            </button>`
-        ).join('');
-
-        // 计算列数
-        function calculateColumns() {
-            const width = waterfall.offsetWidth;
-            if (width <= 480) {
-                columnCount = 1;
-            } else if (width <= 768) {
-                columnCount = 2;
-            } else if (width <= 1200) {
-                columnCount = 3;
-            } else {
-                columnCount = 4;
-            }
-            columnWidth = (width - (columnCount - 1) * gap) / columnCount;
-        }
-
-        // 获取最短列的索引
-        function getMinHeightColumn() {
-            let minIndex = 0;
-            let minHeight = columnHeights[0];
-            for (let i = 1; i < columnHeights.length; i++) {
-                if (columnHeights[i] < minHeight) {
-                    minHeight = columnHeights[i];
-                    minIndex = i;
-                }
-            }
-            return minIndex;
-        }
-
-        // 渲染图片
-        function renderImages(filter = 'all') {
-            waterfall.innerHTML = '';
-            calculateColumns();
-            columnHeights = new Array(columnCount).fill(0);
-            document.body.classList.add('loading');
-
-            const filteredImages = filter === 'all' 
-                ? images 
-                : images.filter(img => img.category === filter);
-
-            if (filteredImages.length === 0) {
-                noResults.style.display = 'block';
-                waterfall.style.height = '0px';
-                document.body.classList.remove('loading');
-                return;
-            }
-
-            noResults.style.display = 'none';
-            let loadedCount = 0;
-
-            filteredImages.forEach((imgData, index) => {
-                const item = document.createElement('div');
-                item.className = 'waterfall-item';
-                
-                const img = document.createElement('img');
-                img.src = imgData.src;
-                img.alt = imgData.category;
-                
-                img.onload = function() {
-                    const colIndex = getMinHeightColumn();
-                    const imgHeight = (this.naturalHeight / this.naturalWidth) * columnWidth;
-                    
-                    item.style.width = columnWidth + 'px';
-                    item.style.left = (colIndex * (columnWidth + gap)) + 'px';
-                    item.style.top = columnHeights[colIndex] + 'px';
-                    
-                    columnHeights[colIndex] += imgHeight + gap;
-                    
-                    waterfall.style.height = Math.max(...columnHeights) + 'px';
-                    
-                    setTimeout(() => {
-                        item.classList.add('loaded');
-                    }, index * 50);
-
-                    loadedCount++;
-                    if (loadedCount === filteredImages.length) {
-                        document.body.classList.remove('loading');
-                    }
-                };
-                
-                img.addEventListener('click', () => {
-                    lightboxImg.src = imgData.src;
-                    lightbox.classList.add('active');
+        // 如果图片数据较少,生成一些示例数据用于演示
+        if (images.length < 10) {
+            const categories = ["Durandal", "Landscape", "Portrait", "Nature", "Architecture"];
+            for (let i = 1; i <= 100; i++) {
+                const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                images.push({
+                    src: `https://picsum.photos/400/${Math.floor(Math.random() * 300) + 300}?random=${i}`,
+                    category: randomCategory
                 });
-                
-                item.appendChild(img);
-                waterfall.appendChild(item);
+            }
+        }
+
+        let currentFilter = 'all';
+        const gallery = document.getElementById('gallery');
+        const filterButtonsContainer = document.getElementById('filterButtons');
+        const statsEl = document.getElementById('stats');
+
+        // 获取所有分类
+        function getCategories() {
+            const categories = new Set(images.map(img => img.category));
+            return ['all', ...Array.from(categories)];
+        }
+
+        // 创建筛选按钮
+        function createFilterButtons() {
+            const categories = getCategories();
+            filterButtonsContainer.innerHTML = '';
+            
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn' + (cat === 'all' ? ' active' : '');
+                btn.textContent = cat === 'all' ? '全部' : cat;
+                btn.onclick = () => filterImages(cat);
+                filterButtonsContainer.appendChild(btn);
             });
         }
 
-        // 分类筛选
-        filterBar.addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                document.querySelectorAll('.filter-btn').forEach(btn => 
-                    btn.classList.remove('active')
-                );
-                e.target.classList.add('active');
-                renderImages(e.target.dataset.category);
+        // 筛选图片
+        function filterImages(category) {
+            currentFilter = category;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if ((category === 'all' && btn.textContent === '全部') || 
+                    btn.textContent === category) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderGallery();
+        }
+
+        // 渲染画廊
+        function renderGallery() {
+            const filteredImages = currentFilter === 'all' 
+                ? images 
+                : images.filter(img => img.category === currentFilter);
+            
+            gallery.innerHTML = '';
+            
+            filteredImages.forEach((img, index) => {
+                const item = document.createElement('div');
+                item.className = 'masonry-item';
+                item.onclick = () => openModal(img.src);
+                
+                item.innerHTML = `
+                    <img src="${img.src}" alt="${img.category}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+                `;
+                
+                gallery.appendChild(item);
+            });
+            
+            // 更新统计
+            statsEl.textContent = `显示 ${filteredImages.length} 张图片 / 共 ${images.length} 张`;
+        }
+
+        // 打开模态框
+        function openModal(src) {
+            document.getElementById('modalImg').src = src;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('modal').onclick = function(e) {
+            if (e.target === this) {
+                closeModal();
             }
-        });
+        };
 
-        // 关闭灯箱
-        closeLightbox.addEventListener('click', () => {
-            lightbox.classList.remove('active');
-        });
-
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.classList.remove('active');
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
             }
-        });
-
-        // 窗口大小改变时重新布局
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                const activeBtn = document.querySelector('.filter-btn.active');
-                renderImages(activeBtn.dataset.category);
-            }, 250);
         });
 
         // 初始化
-        renderImages();
+        createFilterButtons();
+        renderGallery();
     </script>
 </body>
 </html>
