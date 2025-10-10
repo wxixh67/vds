@@ -16,6 +16,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            overflow-y: auto;
+        }
+
+        body.loading {
+            overflow: hidden;
         }
 
         .container {
@@ -2038,6 +2043,7 @@
             waterfall.innerHTML = '';
             calculateColumns();
             columnHeights = new Array(columnCount).fill(0);
+            document.body.classList.add('loading');
 
             const filteredImages = filter === 'all' 
                 ? images 
@@ -2046,10 +2052,12 @@
             if (filteredImages.length === 0) {
                 noResults.style.display = 'block';
                 waterfall.style.height = '0px';
+                document.body.classList.remove('loading');
                 return;
             }
 
             noResults.style.display = 'none';
+            let loadedCount = 0;
 
             filteredImages.forEach((imgData, index) => {
                 const item = document.createElement('div');
@@ -2074,6 +2082,11 @@
                     setTimeout(() => {
                         item.classList.add('loaded');
                     }, index * 50);
+
+                    loadedCount++;
+                    if (loadedCount === filteredImages.length) {
+                        document.body.classList.remove('loading');
+                    }
                 };
                 
                 img.addEventListener('click', () => {
