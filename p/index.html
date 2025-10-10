@@ -2003,7 +2003,9 @@
 {src:"./ほむら/46_0_46.jpg",category:"ほむら"},
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
-{src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // 在这里添加更多图片...
+{src:"./ほむら/49_0_49.jpg",category:"ほむら"},
+
+            // 在这里添加更多图片...
             // 示例：生成一些测试数据
         ];
 
@@ -2073,9 +2075,6 @@
                 item.className = 'masonry-item';
                 item.onclick = () => openModal(img.src);
                 
-                item.innerHTML = `
-                    <img src="${img.src}" alt="${img.category}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
-                `;
                 const image = document.createElement('img');
                 image.src = img.src;
                 image.alt = img.category;
