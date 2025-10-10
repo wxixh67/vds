@@ -118,20 +118,6 @@
             display: block;
         }
 
-        .item-info {
-            padding: 12px;
-        }
-
-        .item-category {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #f0f0f0;
-            border-radius: 12px;
-            font-size: 12px;
-            color: #666;
-            font-weight: 500;
-        }
-
         .loading {
             text-align: center;
             padding: 40px;
@@ -2002,7 +1988,7 @@
 {src:"./ほむら/47_0_47.jpg",category:"ほむら"},
 {src:"./ほむら/48_0_48.jpg",category:"ほむら"},
 {src:"./ほむら/49_0_49.jpg",category:"ほむら"},            // ... 在这里添加你的1000张图片数据
-            // 为了演示，我会生成一些示例数据
+            // 为了演示,我会生成一些示例数据
         ];
 
         // 生成更多示例数据（模拟1000张图片）
@@ -2056,16 +2042,11 @@
                 image.alt = img.category;
                 image.loading = 'lazy'; // 懒加载优化性能
                 image.onerror = function() {
-                    // 如果图片加载失败，使用占位图
+                    // 如果图片加载失败,使用占位图
                     this.src = `https://placehold.co/400x${Math.floor(Math.random() * 300 + 300)}?text=${img.category}`;
                 };
                 
-                const info = document.createElement('div');
-                info.className = 'item-info';
-                info.innerHTML = `<span class="item-category">${img.category}</span>`;
-                
                 item.appendChild(image);
-                item.appendChild(info);
                 
                 // 点击图片放大查看
                 item.addEventListener('click', () => openModal(img.src));
