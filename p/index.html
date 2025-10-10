@@ -2076,7 +2076,15 @@
                 item.innerHTML = `
                     <img src="${img.src}" alt="${img.category}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
                 `;
+                const image = document.createElement('img');
+                image.src = img.src;
+                image.alt = img.category;
+                image.loading = 'lazy';
+                image.onerror = function() {
+                    this.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                };
                 
+                item.appendChild(image);
                 gallery.appendChild(item);
             });
             
