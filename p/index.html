@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>瀑布流图片画廊</title>
+    <title>瀑布流图片画廊 - 优化版</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
         }
 
@@ -21,12 +22,32 @@
             max-width: 1400px;
             margin: 0 auto 30px;
             text-align: center;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 20px;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            margin-bottom: 25px;
         }
 
         .filter-container {
@@ -38,57 +59,105 @@
         }
 
         .filter-btn {
-            padding: 10px 20px;
-            border: none;
-            background: white;
-            color: #333;
-            border-radius: 24px;
+            padding: 10px 24px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .filter-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .filter-btn:hover {
-            background: #e0e0e0;
+            border-color: rgba(255,255,255,0.6);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .filter-btn.active {
-            background: #e60023;
+            background: white;
+            color: #667eea;
+            border-color: white;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.3);
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 20px;
             color: white;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            margin-right: 5px;
+        }
+
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
 
         .gallery {
-            max-width: 1400px;
-            margin: 0 auto;
             column-count: 5;
             column-gap: 16px;
         }
 
         @media (max-width: 1200px) {
-            .gallery {
-                column-count: 4;
-            }
+            .gallery { column-count: 4; }
         }
 
         @media (max-width: 900px) {
-            .gallery {
-                column-count: 3;
-            }
+            .gallery { column-count: 3; }
         }
 
         @media (max-width: 600px) {
-            .gallery {
-                column-count: 2;
-            }
+            .gallery { column-count: 2; }
+            h1 { font-size: 1.8rem; }
         }
 
         @media (max-width: 400px) {
-            .gallery {
-                column-count: 1;
-            }
+            .gallery { column-count: 1; }
         }
 
         .gallery-item {
@@ -98,14 +167,28 @@
             border-radius: 16px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+            z-index: 10;
         }
 
         .gallery-item img {
@@ -114,7 +197,11 @@
             display: block;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
         }
 
         .gallery-item img.loaded {
@@ -127,36 +214,43 @@
             left: 0;
             width: 100%;
             height: 200px;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background: linear-gradient(
+                90deg,
+                #f0f0f0 0%,
+                #f8f8f8 20%,
+                #f0f0f0 40%,
+                #f0f0f0 100%
+            );
             background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+            animation: shimmer 1.5s infinite linear;
         }
 
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .gallery-item.hidden {
-            display: none;
+        .gallery-item .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 16px;
+        .gallery-item:hover .image-overlay {
+            transform: translateY(0);
         }
 
-        .image-count {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
+        .image-category {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .lightbox {
@@ -166,32 +260,68 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .lightbox.active {
             display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 90vh;
             object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
         .lightbox-close {
             position: absolute;
             top: 20px;
-            right: 30px;
+            right: 20px;
             color: white;
             font-size: 40px;
             cursor: pointer;
-            background: none;
-            border: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
             z-index: 1001;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
         }
 
         .lightbox-nav {
@@ -199,30 +329,41 @@
             top: 50%;
             transform: translateY(-50%);
             color: white;
-            font-size: 48px;
+            font-size: 36px;
             cursor: pointer;
-            background: rgba(0,0,0,0.5);
-            border: none;
-            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            padding: 15px 20px;
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            user-select: none;
         }
 
         .lightbox-nav:hover {
-            background: rgba(0,0,0,0.8);
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-50%) scale(1.1);
         }
 
-        .lightbox-prev {
-            left: 20px;
-        }
+        .lightbox-prev { left: 20px; }
+        .lightbox-next { right: 20px; }
 
-        .lightbox-next {
-            right: 20px;
+        .lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
         }
 
         .load-more {
@@ -231,51 +372,137 @@
         }
 
         .load-more-btn {
-            padding: 12px 32px;
-            background: #e60023;
-            color: white;
+            padding: 14px 40px;
+            background: white;
+            color: #667eea;
             border: none;
-            border-radius: 24px;
+            border-radius: 30px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(230, 0, 35, 0.3);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
         }
 
         .load-more-btn:hover {
-            background: #d50020;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(230, 0, 35, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255,255,255,0.4);
         }
 
         .load-more-btn:disabled {
-            background: #ccc;
+            background: rgba(255,255,255,0.3);
             cursor: not-allowed;
             transform: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>图片画廊</h1>
-        <div class="filter-container" id="filterContainer">
-            <button class="filter-btn active" data-category="all">全部</button>
+        <h1>✨ 精美图片画廊</h1>
+        <p class="subtitle">探索精彩瞬间，享受视觉盛宴</p>
+        
+        <div class="filter-container" id="filterContainer"></div>
+        
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number" id="totalCount">0</span>
+                <span>总图片</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="loadedCount">0</span>
+                <span>已加载</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="categoryCount">0</span>
+                <span>当前分类</span>
+            </div>
         </div>
-        <div class="image-count" id="imageCount"></div>
     </div>
 
-    <div class="gallery" id="gallery"></div>
+    <div class="gallery-container">
+        <div class="gallery" id="gallery"></div>
+        
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-icon">🖼️</div>
+            <h2>暂无图片</h2>
+            <p>当前分类下没有图片</p>
+        </div>
+    </div>
     
     <div class="load-more" id="loadMore" style="display: none;">
-        <button class="load-more-btn" onclick="loadMoreImages()">加载更多</button>
+        <button class="load-more-btn" onclick="loadMoreImages()">
+            加载更多
+            <span class="loading-spinner" style="display: none;"></span>
+        </button>
     </div>
 
     <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
         <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
         <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
-        <img id="lightboxImg" src="" alt="">
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="">
+        </div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
     </div>
+
+    <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">↑</button>
 
     <script>
         // 示例图片数据
@@ -2095,26 +2322,28 @@
         let loadedCount = 0;
         let currentLightboxIndex = 0;
         let filteredImages = [];
-        const BATCH_SIZE = 20; // 每次加载20张图片
+        const BATCH_SIZE = 20;
+        const PRELOAD_AHEAD = 3;
+        
         const gallery = document.getElementById('gallery');
         const filterContainer = document.getElementById('filterContainer');
-        const imageCount = document.getElementById('imageCount');
         const loadMoreBtn = document.getElementById('loadMore');
+        const emptyState = document.getElementById('emptyState');
+        const scrollToTopBtn = document.getElementById('scrollToTop');
 
-        // 图片预加载缓存
         const imageCache = new Map();
 
-        // 使用 Intersection Observer 实现懒加载
-        const imageObserver = new IntersectionObserver((entries, observer) => {
+        // Intersection Observer 配置
+        const imageObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
                     loadImage(img);
-                    observer.unobserve(img);
+                    imageObserver.unobserve(img);
                 }
             });
         }, {
-            rootMargin: '50px' // 提前50px开始加载
+            rootMargin: '100px'
         });
 
         // 预加载图片
@@ -2144,9 +2373,9 @@
             preloadImage(src)
                 .then(() => {
                     img.src = src;
-                    img.classList.add('loaded');
+                    setTimeout(() => img.classList.add('loaded'), 50);
                     if (placeholder) {
-                        setTimeout(() => placeholder.remove(), 300);
+                        setTimeout(() => placeholder.remove(), 400);
                     }
                 })
                 .catch(() => {
@@ -2154,7 +2383,7 @@
                 });
         }
 
-        // 获取所有唯一的分类
+        // 获取分类
         function getCategories() {
             const categories = new Set(images.map(img => img.category));
             return ['all', ...Array.from(categories).sort()];
@@ -2180,8 +2409,8 @@
             const item = document.createElement('div');
             item.className = 'gallery-item';
             item.dataset.category = imageData.category;
+            item.style.animationDelay = `${(index % BATCH_SIZE) * 0.05}s`;
             
-            // 创建占位符
             const placeholder = document.createElement('div');
             placeholder.className = 'placeholder';
             item.appendChild(placeholder);
@@ -2191,10 +2420,13 @@
             img.alt = imageData.category;
             img.dataset.index = index;
             img.onclick = () => openLightbox(index);
-            
             item.appendChild(img);
             
-            // 使用 Intersection Observer 观察图片
+            const overlay = document.createElement('div');
+            overlay.className = 'image-overlay';
+            overlay.innerHTML = `<div class="image-category">${imageData.category}</div>`;
+            item.appendChild(overlay);
+            
             imageObserver.observe(img);
             
             return item;
@@ -2220,46 +2452,59 @@
             gallery.appendChild(fragment);
             loadedCount = end;
             
-            // 显示/隐藏"加载更多"按钮
-            if (loadedCount < filteredImages.length) {
-                loadMoreBtn.style.display = 'block';
-            } else {
-                loadMoreBtn.style.display = 'none';
+            // 预加载接下来的图片
+            for (let i = end; i < Math.min(end + PRELOAD_AHEAD, filteredImages.length); i++) {
+                preloadImage(filteredImages[i].src);
             }
             
-            updateImageCount();
+            loadMoreBtn.style.display = loadedCount < filteredImages.length ? 'block' : 'none';
+            updateStats();
         }
 
-        // 加载更多图片
+        // 加载更多
         function loadMoreImages() {
-            renderImageBatch();
+            const btn = loadMoreBtn.querySelector('.load-more-btn');
+            const spinner = btn.querySelector('.loading-spinner');
+            
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            
+            setTimeout(() => {
+                renderImageBatch();
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }, 300);
         }
 
         // 筛选图片
         function filterImages(category) {
             currentFilter = category;
             
-            // 更新按钮状态
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.category === category);
             });
             
-            // 过滤图片
             filteredImages = category === 'all' 
                 ? [...images] 
                 : images.filter(img => img.category === category);
             
-            // 重置并重新渲染
             gallery.innerHTML = '';
             loadedCount = 0;
-            renderImageBatch();
+            
+            if (filteredImages.length === 0) {
+                emptyState.style.display = 'block';
+                loadMoreBtn.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                renderImageBatch();
+            }
         }
 
-        // 更新图片计数
-        function updateImageCount() {
-            imageCount.textContent = currentFilter === 'all' 
-                ? `共 ${images.length} 张图片 (已加载 ${loadedCount} 张)` 
-                : `显示 ${filteredImages.length} / ${images.length} 张图片 (已加载 ${loadedCount} 张)`;
+        // 更新统计
+        function updateStats() {
+            document.getElementById('totalCount').textContent = images.length;
+            document.getElementById('loadedCount').textContent = loadedCount;
+            document.getElementById('categoryCount').textContent = filteredImages.length;
         }
 
         // 灯箱功能
@@ -2267,79 +2512,87 @@
             currentLightboxIndex = index;
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightboxImg');
+            const counter = document.getElementById('lightboxCounter');
+            
             lightboxImg.src = filteredImages[index].src;
+            counter.textContent = `${index + 1} / ${filteredImages.length}`;
             lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
             
             // 预加载相邻图片
-            if (index > 0) {
-                preloadImage(filteredImages[index - 1].src);
-            }
-            if (index < filteredImages.length - 1) {
-                preloadImage(filteredImages[index + 1].src);
-            }
+            [-1, 1].forEach(offset => {
+                const nextIndex = index + offset;
+                if (nextIndex >= 0 && nextIndex < filteredImages.length) {
+                    preloadImage(filteredImages[nextIndex].src);
+                }
+            });
         }
 
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         function navigateLightbox(direction) {
-            currentLightboxIndex += direction;
-            
-            if (currentLightboxIndex < 0) {
-                currentLightboxIndex = filteredImages.length - 1;
-            } else if (currentLightboxIndex >= filteredImages.length) {
-                currentLightboxIndex = 0;
-            }
+            currentLightboxIndex = (currentLightboxIndex + direction + filteredImages.length) % filteredImages.length;
             
             const lightboxImg = document.getElementById('lightboxImg');
-            lightboxImg.src = filteredImages[currentLightboxIndex].src;
+            const counter = document.getElementById('lightboxCounter');
             
-            // 预加载相邻图片
-            const prevIndex = (currentLightboxIndex - 1 + filteredImages.length) % filteredImages.length;
-            const nextIndex = (currentLightboxIndex + 1) % filteredImages.length;
-            preloadImage(filteredImages[prevIndex].src);
-            preloadImage(filteredImages[nextIndex].src);
+            lightboxImg.style.opacity = '0';
+            setTimeout(() => {
+                lightboxImg.src = filteredImages[currentLightboxIndex].src;
+                counter.textContent = `${currentLightboxIndex + 1} / ${filteredImages.length}`;
+                lightboxImg.style.opacity = '1';
+            }, 150);
+            
+            // 预加载
+            [-1, 1].forEach(offset => {
+                const nextIndex = (currentLightboxIndex + offset + filteredImages.length) % filteredImages.length;
+                preloadImage(filteredImages[nextIndex].src);
+            });
         }
 
-        // 点击背景关闭灯箱
+        // 滚动到顶部
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 事件监听
         document.getElementById('lightbox').addEventListener('click', (e) => {
-            if (e.target.id === 'lightbox') {
-                closeLightbox();
-            }
+            if (e.target.id === 'lightbox') closeLightbox();
         });
 
-        // 键盘控制
         document.addEventListener('keydown', (e) => {
             const lightbox = document.getElementById('lightbox');
             if (lightbox.classList.contains('active')) {
-                if (e.key === 'Escape') {
-                    closeLightbox();
-                } else if (e.key === 'ArrowLeft') {
-                    navigateLightbox(-1);
-                } else if (e.key === 'ArrowRight') {
-                    navigateLightbox(1);
-                }
+                if (e.key === 'Escape') closeLightbox();
+                else if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                else if (e.key === 'ArrowRight') navigateLightbox(1);
             }
         });
 
-        // 自动加载 - 滚动到底部时自动加载更多
+        // 滚动监听
         let isAutoLoading = false;
         window.addEventListener('scroll', () => {
+            // 显示/隐藏回到顶部按钮
+            scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+            
+            // 自动加载
             if (isAutoLoading) return;
             
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
             
-            // 距离底部200px时开始加载
-            if (scrollTop + windowHeight >= documentHeight - 200) {
+            if (scrollTop + windowHeight >= documentHeight - 300) {
                 if (loadedCount < filteredImages.length) {
                     isAutoLoading = true;
                     renderImageBatch();
-                    setTimeout(() => {
-                        isAutoLoading = false;
-                    }, 500);
+                    setTimeout(() => isAutoLoading = false, 500);
                 }
             }
         });
