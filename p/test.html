@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的图片库</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    .aspect-square { aspect-ratio: 1 / 1; }
+    .animate-spin { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+  
+  <!-- 主界面 -->
+  <div id="app" class="h-screen flex flex-col">
+    <!-- 顶部工具栏 -->
+    <div class="bg-gray-800 border-b border-gray-700 p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold flex items-center gap-2">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          我的图片库
+        </h1>
+        <div class="text-sm text-gray-400" id="imageCount">
+          共 0 / 0 张图片
+        </div>
+      </div>
+
+      <!-- 搜索栏 -->
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="搜索文件名或分类..."
+          class="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+        />
+      </div>
+
+      <!-- 分类筛选 -->
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2 text-sm text-gray-400">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            </svg>
+            <span>分类</span>
+          </div>
+          <select id="categorySelect" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="all">全部分类</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 活动过滤器标签 -->
+      <div id="activeFilters" class="flex gap-2 flex-wrap" style="display: none;"></div>
+    </div>
+
+    <!-- 图片网格 -->
+    <div id="container" class="flex-1 overflow-y-auto">
+      <div id="virtualList" style="position: relative;">
+        <div id="offsetWrapper">
+          <div id="imageGrid" class="grid grid-cols-5 gap-4 p-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div id="emptyState" class="flex-1 flex items-center justify-center text-gray-500" style="display: none;">
+      <div class="text-center">
+        <svg width="64" height="64" class="mx-auto mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <p class="text-xl">没有找到图片</p>
+        <p class="text-sm mt-2">尝试调整筛选条件</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 大图预览 -->
+  <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-8" style="display: none;">
+    <div class="relative max-w-6xl max-h-full">
+      <button id="closePreview" class="absolute -top-12 right-0 text-white hover:text-gray-300">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <img id="previewImg" class="max-w-full max-h-[85vh] object-contain rounded-lg" />
+      <div id="previewInfo" class="mt-4 text-center"></div>
+    </div>
+  </div>
+
+  <script>
+    // ============ 在这里配置你的图片数据 ============
+    const imageData = [
+      {src:"./Durandal/16_00016_4161595835.png", category:"Durandal"},
+      {src:"./Durandal/17_00017_4161595836.png", category:"Durandal"},
+      {src:"./Character/01_image.png", category:"Character"},
+      {src:"./Character/02_image.png", category:"Character"},
+      // 在这里添加更多图片...
+    ];
+    // ============================================
+
+    let allImages = imageData;
+    let filteredImages = [];
+    let searchTerm = '';
+    let selectedCategory = 'all';
+    let visibleRange = { start: 0, end: 50 };
+    
+    const ITEMS_PER_ROW = 5;
+    const ITEM_HEIGHT = 220;
+    const BUFFER_SIZE = 20;
+
+    // 初始化
+    function init() {
+      filteredImages = [...allImages];
+      initializeFilters();
+      updateDisplay();
+    }
+
+    // 初始化过滤器
+    function initializeFilters() {
+      const categories = new Set();
+      
+      allImages.forEach(img => {
+        if (img.category) {
+          categories.add(img.category);
+        }
+      });
+
+      const categorySelect = document.getElementById('categorySelect');
+      Array.from(categories).sort().forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+      });
+    }
+
+    // 过滤图片
+    function filterImages() {
+      let filtered = [...allImages];
+
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter(img => img.category === selectedCategory);
+      }
+
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        filtered = filtered.filter(img => {
+          const filename = img.src.split('/').pop().toLowerCase();
+          return filename.includes(term) || (img.category && img.category.toLowerCase().includes(term));
+        });
+      }
+
+      filteredImages = filtered;
+      visibleRange = { start: 0, end: 50 };
+      updateDisplay();
+    }
+
+    // 更新显示
+    function updateDisplay() {
+      document.getElementById('imageCount').textContent = `共 ${filteredImages.length} / ${allImages.length} 张图片`;
+      updateActiveFilters();
+      renderImages();
+      
+      const emptyState = document.getElementById('emptyState');
+      const container = document.getElementById('container');
+      if (filteredImages.length === 0) {
+        emptyState.style.display = 'flex';
+        container.style.display = 'none';
+      } else {
+        emptyState.style.display = 'none';
+        container.style.display = 'block';
+      }
+    }
+
+    // 更新活动过滤器标签
+    function updateActiveFilters() {
+      const container = document.getElementById('activeFilters');
+      const hasFilters = searchTerm || selectedCategory !== 'all';
+      
+      if (!hasFilters) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'flex';
+      container.innerHTML = '';
+
+      if (searchTerm) {
+        container.appendChild(createFilterBadge(`搜索: ${searchTerm}`, 'bg-blue-600', () => {
+          searchTerm = '';
+          document.getElementById('searchInput').value = '';
+          filterImages();
+        }));
+      }
+
+      if (selectedCategory !== 'all') {
+        container.appendChild(createFilterBadge(selectedCategory, 'bg-purple-600', () => {
+          selectedCategory = 'all';
+          document.getElementById('categorySelect').value = 'all';
+          filterImages();
+        }));
+      }
+    }
+
+    // 创建过滤器标签
+    function createFilterBadge(text, bgColor, onRemove) {
+      const badge = document.createElement('span');
+      badge.className = `px-3 py-1 ${bgColor} rounded-full text-sm flex items-center gap-2`;
+      badge.innerHTML = `${text} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="cursor-pointer"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      badge.querySelector('svg').addEventListener('click', onRemove);
+      return badge;
+    }
+
+    // 渲染图片
+    function renderImages() {
+      const totalHeight = Math.ceil(filteredImages.length / ITEMS_PER_ROW) * ITEM_HEIGHT;
+      const offsetY = Math.floor(visibleRange.start / ITEMS_PER_ROW) * ITEM_HEIGHT;
+      
+      document.getElementById('virtualList').style.height = totalHeight + 'px';
+      document.getElementById('offsetWrapper').style.transform = `translateY(${offsetY}px)`;
+      
+      const grid = document.getElementById('imageGrid');
+      grid.innerHTML = '';
+      
+      const visibleImages = filteredImages.slice(visibleRange.start, visibleRange.end);
+      visibleImages.forEach(img => {
+        const card = createImageCard(img);
+        grid.appendChild(card);
+      });
+    }
+
+    // 创建图片卡片
+    function createImageCard(img) {
+      const card = document.createElement('div');
+      card.className = 'group relative bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all';
+      
+      const filename = img.src.split('/').pop();
+      
+      const imgElement = document.createElement('img');
+      imgElement.src = img.src;
+      imgElement.alt = filename;
+      imgElement.className = 'w-full h-full object-cover';
+      imgElement.loading = 'lazy';
+      
+      const aspectDiv = document.createElement('div');
+      aspectDiv.className = 'aspect-square';
+      aspectDiv.appendChild(imgElement);
+      
+      const overlay = document.createElement('div');
+      overlay.className = 'absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all flex items-end p-3';
+      
+      const info = document.createElement('div');
+      info.className = 'opacity-0 group-hover:opacity-100 transition-opacity w-full';
+      info.innerHTML = `<p class="text-sm font-medium truncate">${filename}</p>`;
+      
+      if (img.category) {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'mt-1';
+        const categorySpan = document.createElement('span');
+        categorySpan.className = 'px-2 py-0.5 bg-purple-600 rounded text-xs';
+        categorySpan.textContent = img.category;
+        categoryDiv.appendChild(categorySpan);
+        info.appendChild(categoryDiv);
+      }
+      
+      overlay.appendChild(info);
+      card.appendChild(aspectDiv);
+      card.appendChild(overlay);
+      
+      card.addEventListener('click', () => showPreview(img));
+      
+      return card;
+    }
+
+    // 显示预览
+    function showPreview(img) {
+      const filename = img.src.split('/').pop();
+      
+      document.getElementById('previewImg').src = img.src;
+      document.getElementById('previewImg').alt = filename;
+      
+      let infoHTML = `<p class="text-lg font-medium">${filename}</p>`;
+      
+      if (img.category) {
+        infoHTML += `<p class="text-sm text-gray-400 mt-1">分类: ${img.category}</p>`;
+      }
+      
+      document.getElementById('previewInfo').innerHTML = infoHTML;
+      document.getElementById('previewModal').style.display = 'flex';
+    }
+
+    // 关闭预览
+    function closePreview() {
+      document.getElementById('previewModal').style.display = 'none';
+    }
+
+    // 虚拟滚动
+    document.getElementById('container').addEventListener('scroll', function() {
+      const scrollTop = this.scrollTop;
+      const viewportHeight = this.clientHeight;
+      
+      const startRow = Math.floor(scrollTop / ITEM_HEIGHT);
+      const endRow = Math.ceil((scrollTop + viewportHeight) / ITEM_HEIGHT);
+      
+      const start = Math.max(0, (startRow - BUFFER_SIZE) * ITEMS_PER_ROW);
+      const end = Math.min(filteredImages.length, (endRow + BUFFER_SIZE) * ITEMS_PER_ROW);
+      
+      if (start !== visibleRange.start || end !== visibleRange.end) {
+        visibleRange = { start, end };
+        renderImages();
+      }
+    });
+
+    // 事件监听
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      filterImages();
+    });
+
+    document.getElementById('categorySelect').addEventListener('change', (e) => {
+      selectedCategory = e.target.value;
+      filterImages();
+    });
+
+    document.getElementById('closePreview').addEventListener('click', closePreview);
+    document.getElementById('previewModal').addEventListener('click', (e) => {
+      if (e.target.id === 'previewModal') closePreview();
+    });
+
+    // 启动应用
+    init();
+  </script>
+</body>
+</html>
