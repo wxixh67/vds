@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瀑布流图库 - Pinterest风格</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Filter Controls */
+        .filter-bar {
+            background: white;
+            padding: 15px 0;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .filter-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        /* Gallery Container */
+        .container {
+            max-width: 1400px;
+            margin: 160px auto 40px;
+            padding: 0 20px;
+        }
+
+        /* Waterfall Grid */
+        .waterfall-grid {
+            column-count: 5;
+            column-gap: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @media (max-width: 1200px) {
+            .waterfall-grid { column-count: 4; }
+        }
+
+        @media (max-width: 900px) {
+            .waterfall-grid { column-count: 3; }
+        }
+
+        @media (max-width: 600px) {
+            .waterfall-grid { column-count: 2; }
+        }
+
+        @media (max-width: 400px) {
+            .waterfall-grid { column-count: 1; }
+        }
+
+        /* Image Cards */
+        .image-card {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: slideUp 0.5s ease backwards;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .image-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .image-info {
+            padding: 12px;
+            background: white;
+        }
+
+        .image-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .image-name {
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Loading Indicator */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .back-to-top.show {
+            display: flex;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes zoomIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-results-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .no-results-text {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="title">🎨 瀑布流图库</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalImages">0</span>
+                    <span class="stat-label">总图片</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="currentImages">0</span>
+                    <span class="stat-label">当前显示</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="categoryCount">0</span>
+                    <span class="stat-label">分类数</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-content">
+            <div class="category-filters" id="categoryFilters">
+                <button class="filter-btn active" data-category="all">全部</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索图片...">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="waterfall-grid" id="gallery">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在加载图片...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <img id="lightboxImg" src="" alt="">
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Generate sample image data (9999 images)
+        const generateImages = () => {
+            const categories = ["Durandal", "Landscape", "Portrait", "Nature", "Urban", "Abstract", "Animals", "Food", "Travel", "Architecture"];
+            const images = [];
+            
+            // Add your provided images
+            images.push(
+                {src:"./Durandal/16_00016_4161595835.png",category:"Durandal"},
+                {src:"./Durandal/17_00017_4161595836.png",category:"Durandal"}
+            );
+            
+            // Generate remaining images to reach 9999
+            for (let i = 3; i <= 9999; i++) {
+                const category = categories[Math.floor(Math.random() * categories.length)];
+                const width = 200 + Math.floor(Math.random() * 200);
+                const height = 200 + Math.floor(Math.random() * 300);
+                images.push({
+                    src: `https://picsum.photos/${width}/${height}?random=${i}`,
+                    category: category,
+                    name: `Image_${i.toString().padStart(5, '0')}`
+                });
+            }
+            
+            return images;
+        };
+
+        let allImages = generateImages();
+        let filteredImages = [...allImages];
+        let currentCategory = 'all';
+        let currentPage = 1;
+        const imagesPerPage = 50;
+        let isLoading = false;
+
+        // Initialize
+        function init() {
+            setupCategories();
+            updateStats();
+            loadImages();
+            setupEventListeners();
+        }
+
+        // Setup categories
+        function setupCategories() {
+            const categories = [...new Set(allImages.map(img => img.category))];
+            const filterContainer = document.getElementById('categoryFilters');
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.category = category;
+                btn.textContent = category;
+                btn.onclick = () => filterByCategory(category);
+                filterContainer.appendChild(btn);
+            });
+            
+            document.getElementById('categoryCount').textContent = categories.length;
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+            currentPage = 1;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            
+            // Filter images
+            if (category === 'all') {
+                filteredImages = [...allImages];
+            } else {
+                filteredImages = allImages.filter(img => img.category === category);
+            }
+            
+            // Reload gallery
+            document.getElementById('gallery').innerHTML = '';
+            loadImages();
+            updateStats();
+        }
+
+        // Load images with lazy loading
+        function loadImages() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            const gallery = document.getElementById('gallery');
+            const start = (currentPage - 1) * imagesPerPage;
+            const end = start + imagesPerPage;
+            const imagesToLoad = filteredImages.slice(start, end);
+            
+            if (imagesToLoad.length === 0 && currentPage === 1) {
+                gallery.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <div class="no-results-text">没有找到匹配的图片</div>
+                    </div>
+                `;
+                isLoading = false;
+                return;
+            }
+            
+            imagesToLoad.forEach((img, index) => {
+                const card = createImageCard(img, start + index);
+                gallery.appendChild(card);
+            });
+            
+            currentPage++;
+            isLoading = false;
+            updateStats();
+        }
+
+        // Create image card
+        function createImageCard(image, index) {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            card.style.animationDelay = `${(index % imagesPerPage) * 0.02}s`;
+            
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = image.name || `Image ${index}`;
+            img.loading = 'lazy';
+            img.onclick = () => openLightbox(image.src);
+            
+            const info = document.createElement('div');
+            info.className = 'image-info';
+            info.innerHTML = `
+                <span class="image-category">${image.category}</span>
+                <div class="image-name">${image.name || image.src.split('/').pop()}</div>
+            `;
+            
+            card.appendChild(img);
+            card.appendChild(info);
+            
+            return card;
+        }
+
+        // Search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const query = e.target.value.toLowerCase();
+                    
+                    if (query === '') {
+                        filterByCategory(currentCategory);
+                    } else {
+                        filteredImages = allImages.filter(img => 
+                            img.category.toLowerCase().includes(query) ||
+                            (img.name && img.name.toLowerCase().includes(query)) ||
+                            img.src.toLowerCase().includes(query)
+                        );
+                        
+                        currentPage = 1;
+                        document.getElementById('gallery').innerHTML = '';
+                        loadImages();
+                        updateStats();
+                    }
+                }, 300);
+            });
+        }
+
+        // Lightbox functions
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImg');
+            img.src = src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalImages').textContent = allImages.length;
+            document.getElementById('currentImages').textContent = 
+                Math.min(currentPage * imagesPerPage, filteredImages.length);
+        }
+
+        // Infinite scroll
+        function setupInfiniteScroll() {
+            window.addEventListener('scroll', () => {
+                if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 1000) {
+                    if (!isLoading && (currentPage - 1) * imagesPerPage < filteredImages.length) {
+                        loadImages();
+                    }
+                }
+                
+                // Show/hide back to top button
+                const backToTop = document.getElementById('backToTop');
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+            });
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            setupSearch();
+            setupInfiniteScroll();
+            
+            // Close lightbox on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
+            
+            // Close lightbox on background click
+            document.getElementById('lightbox').addEventListener('click', (e) => {
+                if (e.target.id === 'lightbox') {
+                    closeLightbox();
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
