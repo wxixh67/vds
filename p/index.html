@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片画廊 - 优化版</title>
+    <title>图片画廊</title>
     <style>
         * {
             margin: 0;
@@ -12,39 +12,30 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-            color: #2c3e50;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #333;
             padding: 20px;
-            min-height: 100vh;
         }
 
         .header {
             max-width: 1400px;
             margin: 0 auto 30px;
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
         h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #1a1a1a;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #111;
         }
 
         .controls {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
         .filter-container {
@@ -55,99 +46,67 @@
         }
 
         .filter-btn {
-            padding: 10px 18px;
-            border: 2px solid #e0e0e0;
+            padding: 7px 14px;
+            border: 1px solid #ddd;
             background: white;
-            color: #555;
-            border-radius: 8px;
+            color: #666;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .filter-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(102, 126, 234, 0.1);
-            transform: translate(-50%, -50%);
-            transition: width 0.4s, height 0.4s;
-        }
-
-        .filter-btn:hover::before {
-            width: 300px;
-            height: 300px;
+            font-size: 13px;
+            transition: all 0.15s;
         }
 
         .filter-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-            transform: translateY(-2px);
+            border-color: #999;
+            color: #333;
         }
 
         .filter-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111;
             color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border-color: #111;
         }
 
         .search-box {
             position: relative;
-            min-width: 200px;
+            min-width: 180px;
         }
 
         .search-input {
             width: 100%;
-            padding: 10px 40px 10px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
+            padding: 7px 32px 7px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
             background: white;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #999;
         }
 
         .search-icon {
             position: absolute;
-            right: 12px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            font-size: 14px;
             pointer-events: none;
         }
 
         .stats {
             display: flex;
-            gap: 20px;
-            font-size: 14px;
+            gap: 16px;
+            font-size: 13px;
             color: #666;
-            padding: 12px 0;
-            border-top: 1px solid #f0f0f0;
+            margin-bottom: 20px;
         }
 
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stat-item strong {
-            color: #667eea;
-            font-size: 16px;
-            font-weight: 600;
+        .stats span {
+            color: #111;
+            font-weight: 500;
         }
 
         .gallery-container {
@@ -157,7 +116,7 @@
 
         .gallery {
             column-count: 5;
-            column-gap: 16px;
+            column-gap: 14px;
         }
 
         @media (max-width: 1400px) { .gallery { column-count: 4; } }
@@ -167,45 +126,21 @@
 
         .gallery-item {
             break-inside: avoid;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             background: white;
-            border-radius: 12px;
+            border-radius: 2px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.3s;
             opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            cursor: pointer;
-            position: relative;
+            animation: fadeIn 0.4s forwards;
         }
 
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         .gallery-item:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-        }
-
-        .gallery-item::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .gallery-item:hover::after {
-            opacity: 0.7;
+            opacity: 0.85;
         }
 
         .gallery-item img {
@@ -213,17 +148,11 @@
             height: auto;
             display: block;
             opacity: 0;
-            transform: scale(1.1);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.3s;
         }
 
         .gallery-item img.loaded {
             opacity: 1;
-            transform: scale(1);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.05);
         }
 
         .gallery-item .placeholder {
@@ -232,69 +161,19 @@
             left: 0;
             width: 100%;
             padding-bottom: 100%;
-            background: linear-gradient(
-                110deg,
-                #f0f0f0 0%,
-                #f0f0f0 35%,
-                #e0e0e0 50%,
-                #f0f0f0 65%,
-                #f0f0f0 100%
-            );
-            background-size: 200% 100%;
-            animation: shimmer 1.8s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            background: #f5f5f5;
         }
 
         .gallery-item img.loaded + .placeholder {
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .category-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #667eea;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-        }
-
-        .gallery-item:hover .category-badge {
-            opacity: 1;
-            transform: translateY(0);
+            display: none;
         }
 
         .empty-state {
             text-align: center;
-            padding: 80px 20px;
+            padding: 60px 20px;
             color: #999;
+            font-size: 14px;
             display: none;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.3;
-        }
-
-        .empty-state p {
-            font-size: 16px;
-            margin-bottom: 8px;
         }
 
         .load-more {
@@ -303,68 +182,37 @@
             display: none;
         }
 
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .loading-text {
             color: #999;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .scroll-to-top {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            background: #111;
             color: white;
             border: none;
-            border-radius: 50%;
-            font-size: 24px;
+            border-radius: 2px;
+            font-size: 18px;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
             opacity: 0;
-            transform: translateY(20px) scale(0.8);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.2s;
             z-index: 100;
         }
 
         .scroll-to-top.visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
         }
 
         .scroll-to-top:hover {
-            transform: translateY(-4px) scale(1.1);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .scroll-to-top:active {
-            transform: translateY(-2px) scale(1.05);
+            background: #000;
         }
 
         @media (max-width: 768px) {
-            .header {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
             .controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -373,17 +221,12 @@
             .search-box {
                 width: 100%;
             }
-            
-            .stats {
-                flex-direction: column;
-                gap: 10px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>✨ 图片画廊</h1>
+        <h1>图片画廊</h1>
         
         <div class="controls">
             <div class="filter-container" id="filterContainer"></div>
@@ -393,29 +236,16 @@
                     type="text" 
                     class="search-input" 
                     id="searchInput" 
-                    placeholder="搜索分类..."
-                    autocomplete="off"
+                    placeholder="搜索分类"
                 >
-                <span class="search-icon">🔍</span>
+                <span class="search-icon">⌕</span>
             </div>
         </div>
         
         <div class="stats">
-            <div class="stat-item">
-                <span>📚 总计</span>
-                <strong id="totalCount">0</strong>
-                <span>张</span>
-            </div>
-            <div class="stat-item">
-                <span>📌 当前</span>
-                <strong id="categoryCount">0</strong>
-                <span>张</span>
-            </div>
-            <div class="stat-item">
-                <span>✅ 已加载</span>
-                <strong id="loadedCount">0</strong>
-                <span>张</span>
-            </div>
+            <div>总计 <span id="totalCount">0</span></div>
+            <div>当前 <span id="categoryCount">0</span></div>
+            <div>已加载 <span id="loadedCount">0</span></div>
         </div>
     </div>
 
@@ -423,30 +253,25 @@
         <div class="gallery" id="gallery"></div>
         
         <div class="empty-state" id="emptyState">
-            <div class="empty-state-icon">🖼️</div>
-            <p>没有找到图片</p>
-            <small>尝试其他筛选条件</small>
+            没有找到图片
         </div>
     </div>
 
     <div class="load-more" id="loadMore">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">正在加载更多...</div>
+        <div class="loading-text">加载中...</div>
     </div>
 
-    <button class="scroll-to-top" id="scrollToTop" title="返回顶部">↑</button>
+    <button class="scroll-to-top" id="scrollToTop">↑</button>
 
     <script>
-        // 配置
         const CONFIG = {
             BATCH_SIZE: 20,
             LOAD_THRESHOLD: 500,
             OBSERVER_MARGIN: '400px',
-            ANIMATION_DELAY: 40,
+            ANIMATION_DELAY: 30,
             DEBOUNCE_DELAY: 300
         };
 
-        // 图片数据
         const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
@@ -1894,9 +1719,9 @@
 {src:"./ぬぴゃん/3999_124141020_p19.jpg",category:"ぬぴゃん"},
 {src:"./ぬぴゃん/4000_124141020_p20.jpg",category:"ぬぴゃん"},
 
+
         ];
 
-        // 应用状态管理
         class GalleryState {
             constructor() {
                 this.currentFilter = 'all';
@@ -1926,7 +1751,6 @@
             }
         }
 
-        // DOM 元素管理
         class DOMManager {
             constructor() {
                 this.gallery = document.getElementById('gallery');
@@ -1959,7 +1783,6 @@
             }
         }
 
-        // 图片懒加载管理
         class ImageLoader {
             constructor() {
                 this.observer = new IntersectionObserver(
@@ -1994,20 +1817,14 @@
                     img.src = src;
                     requestAnimationFrame(() => {
                         img.classList.add('loaded');
-                        const placeholder = img.nextElementSibling;
-                        if (placeholder?.classList.contains('placeholder')) {
-                            setTimeout(() => placeholder.remove(), 500);
-                        }
                     });
                     this.loadingImages.delete(src);
                 };
                 
                 tempImg.onerror = () => {
-                    console.error('Failed to load image:', src);
                     const placeholder = img.nextElementSibling;
                     if (placeholder) {
-                        placeholder.style.background = '#ffebee';
-                        placeholder.innerHTML = '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#c62828;">⚠️</div>';
+                        placeholder.style.background = '#fee';
                     }
                     this.loadingImages.delete(src);
                 };
@@ -2018,13 +1835,8 @@
             observe(img) {
                 this.observer.observe(img);
             }
-
-            disconnect() {
-                this.observer.disconnect();
-            }
         }
 
-        // 工具函数
         const utils = {
             debounce(func, delay) {
                 let timeoutId;
@@ -2048,22 +1860,16 @@
                 img.dataset.src = imageData.src;
                 img.alt = imageData.category;
                 
-                const badge = document.createElement('div');
-                badge.className = 'category-badge';
-                badge.textContent = imageData.category;
-                
                 const placeholder = document.createElement('div');
                 placeholder.className = 'placeholder';
                 
                 item.appendChild(img);
                 item.appendChild(placeholder);
-                item.appendChild(badge);
                 
                 return { item, img };
             }
         };
 
-        // 主应用类
         class ImageGallery {
             constructor() {
                 this.state = new GalleryState();
@@ -2086,7 +1892,7 @@
                 categories.forEach(category => {
                     const btn = document.createElement('button');
                     btn.className = 'filter-btn' + (category === 'all' ? ' active' : '');
-                    btn.textContent = category === 'all' ? '🌟 全部' : category;
+                    btn.textContent = category === 'all' ? '全部' : category;
                     btn.dataset.category = category;
                     btn.onclick = () => this.filterImages(category);
                     this.dom.filterContainer.appendChild(btn);
@@ -2094,7 +1900,6 @@
             }
 
             setupEventListeners() {
-                // 搜索功能
                 this.dom.searchInput.addEventListener('input', 
                     utils.debounce((e) => {
                         this.state.searchQuery = e.target.value.trim();
@@ -2102,22 +1907,18 @@
                     }, CONFIG.DEBOUNCE_DELAY)
                 );
 
-                // 滚动事件
                 window.addEventListener('scroll', 
                     utils.debounce(() => this.handleScroll(), 100)
                 );
 
-                // 返回顶部按钮
                 this.dom.scrollToTopBtn.addEventListener('click', () => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
 
             handleScroll() {
-                // 显示/隐藏返回顶部按钮
                 this.dom.scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
                 
-                // 自动加载更多
                 if (this.state.isLoading || this.state.loadedCount >= this.state.filteredImages.length) return;
                 
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -2132,17 +1933,14 @@
             filterImages(category) {
                 this.state.currentFilter = category;
                 
-                // 更新按钮状态
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.category === category);
                 });
                 
-                // 重置状态
                 this.state.reset();
                 this.state.filteredImages = this.state.getFilteredImages();
                 this.dom.clearGallery();
                 
-                // 显示结果
                 if (this.state.filteredImages.length === 0) {
                     this.dom.showEmpty(true);
                     this.dom.showLoadMore(false);
@@ -2188,7 +1986,7 @@
                 setTimeout(() => {
                     this.renderImageBatch();
                     this.state.isLoading = false;
-                }, 300);
+                }, 200);
             }
 
             updateStats() {
@@ -2200,7 +1998,6 @@
             }
         }
 
-        // 启动应用
         const gallery = new ImageGallery();
     </script>
 </body>
