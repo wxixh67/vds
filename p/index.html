@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片画廊</title>
+    <title>图片画廊 - 优化版</title>
     <style>
         * {
             margin: 0;
@@ -12,61 +12,142 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: #2c3e50;
             padding: 20px;
+            min-height: 100vh;
         }
 
         .header {
             max-width: 1400px;
             margin: 0 auto 30px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
         h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
             margin-bottom: 20px;
-            color: #222;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .filter-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            flex: 1;
         }
 
         .filter-btn {
-            padding: 8px 16px;
-            border: 1px solid #ddd;
+            padding: 10px 18px;
+            border: 2px solid #e0e0e0;
             background: white;
-            color: #666;
-            border-radius: 6px;
+            color: #555;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .filter-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .filter-btn:hover {
-            border-color: #333;
-            color: #333;
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
         }
 
         .filter-btn.active {
-            background: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-color: #333;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
         }
 
         .stats {
+            display: flex;
+            gap: 20px;
             font-size: 14px;
             color: #666;
-            margin-bottom: 20px;
+            padding: 12px 0;
+            border-top: 1px solid #f0f0f0;
         }
 
-        .stats span {
-            margin-right: 20px;
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-item strong {
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .gallery-container {
@@ -76,69 +157,73 @@
 
         .gallery {
             column-count: 5;
-            column-gap: 15px;
+            column-gap: 16px;
         }
 
-        @media (max-width: 1200px) {
-            .gallery { column-count: 4; }
-        }
-
-        @media (max-width: 900px) {
-            .gallery { column-count: 3; }
-        }
-
-        @media (max-width: 600px) {
-            .gallery { column-count: 2; }
-        }
-
-        @media (max-width: 400px) {
-            .gallery { column-count: 1; }
-        }
+        @media (max-width: 1400px) { .gallery { column-count: 4; } }
+        @media (max-width: 1100px) { .gallery { column-count: 3; } }
+        @media (max-width: 768px) { .gallery { column-count: 2; } }
+        @media (max-width: 480px) { .gallery { column-count: 1; } }
 
         .gallery-item {
             break-inside: avoid;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transform: translateY(30px) scale(0.95);
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            cursor: pointer;
+            position: relative;
         }
 
         @keyframes fadeInUp {
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
         .gallery-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
         }
 
-        .gallery-item {
-            position: relative;
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .gallery-item:hover::after {
+            opacity: 0.7;
         }
 
         .gallery-item img {
             width: 100%;
             height: auto;
             display: block;
-            position: relative;
-            z-index: 1;
             opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1.1);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .gallery-item img.loaded {
             opacity: 1;
             transform: scale(1);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
         }
 
         .gallery-item .placeholder {
@@ -150,14 +235,13 @@
             background: linear-gradient(
                 110deg,
                 #f0f0f0 0%,
-                #f0f0f0 40%,
-                #f8f8f8 50%,
-                #f0f0f0 60%,
+                #f0f0f0 35%,
+                #e0e0e0 50%,
+                #f0f0f0 65%,
                 #f0f0f0 100%
             );
             background-size: 200% 100%;
-            animation: shimmer 2s ease-in-out infinite;
-            border-radius: 8px;
+            animation: shimmer 1.8s ease-in-out infinite;
         }
 
         @keyframes shimmer {
@@ -167,9 +251,50 @@
 
         .gallery-item img.loaded + .placeholder {
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0s 0.4s;
-            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .gallery-item:hover .category-badge {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 8px;
         }
 
         .load-more {
@@ -178,56 +303,119 @@
             display: none;
         }
 
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .loading-text {
             color: #999;
             font-size: 14px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-            display: none;
         }
 
         .scroll-to-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 48px;
-            height: 48px;
-            background: #333;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 50%;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s;
+            transform: translateY(20px) scale(0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 100;
         }
 
         .scroll-to-top.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .scroll-to-top:hover {
-            background: #000;
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .scroll-to-top:active {
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>图片画廊</h1>
+        <h1>✨ 图片画廊</h1>
         
-        <div class="filter-container" id="filterContainer"></div>
+        <div class="controls">
+            <div class="filter-container" id="filterContainer"></div>
+            
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="搜索分类..."
+                    autocomplete="off"
+                >
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
         
         <div class="stats">
-            <span>总计 <strong id="totalCount">0</strong> 张</span>
-            <span>当前 <strong id="categoryCount">0</strong> 张</span>
+            <div class="stat-item">
+                <span>📚 总计</span>
+                <strong id="totalCount">0</strong>
+                <span>张</span>
+            </div>
+            <div class="stat-item">
+                <span>📌 当前</span>
+                <strong id="categoryCount">0</strong>
+                <span>张</span>
+            </div>
+            <div class="stat-item">
+                <span>✅ 已加载</span>
+                <strong id="loadedCount">0</strong>
+                <span>张</span>
+            </div>
         </div>
     </div>
 
@@ -235,17 +423,30 @@
         <div class="gallery" id="gallery"></div>
         
         <div class="empty-state" id="emptyState">
-            <p>暂无图片</p>
+            <div class="empty-state-icon">🖼️</div>
+            <p>没有找到图片</p>
+            <small>尝试其他筛选条件</small>
         </div>
     </div>
 
     <div class="load-more" id="loadMore">
-        <div class="loading-text">正在加载...</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在加载更多...</div>
     </div>
 
-    <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">↑</button>
+    <button class="scroll-to-top" id="scrollToTop" title="返回顶部">↑</button>
 
     <script>
+        // 配置
+        const CONFIG = {
+            BATCH_SIZE: 20,
+            LOAD_THRESHOLD: 500,
+            OBSERVER_MARGIN: '400px',
+            ANIMATION_DELAY: 40,
+            DEBOUNCE_DELAY: 300
+        };
+
+        // 图片数据
         const images = [
 {src:"./Durandal/01_00000_1080311176.png",category:"Durandal"},
 {src:"./Durandal/02_00001_997581047.png",category:"Durandal"},
@@ -1692,172 +1893,315 @@
 {src:"./ぬぴゃん/3998_124141020_p18.jpg",category:"ぬぴゃん"},
 {src:"./ぬぴゃん/3999_124141020_p19.jpg",category:"ぬぴゃん"},
 {src:"./ぬぴゃん/4000_124141020_p20.jpg",category:"ぬぴゃん"},
-     ];
 
-        let currentFilter = 'all';
-        let loadedCount = 0;
-        let filteredImages = [];
-        const BATCH_SIZE = 15;
-        
-        const gallery = document.getElementById('gallery');
-        const filterContainer = document.getElementById('filterContainer');
-        const loadMoreBtn = document.getElementById('loadMore');
-        const emptyState = document.getElementById('emptyState');
-        const scrollToTopBtn = document.getElementById('scrollToTop');
+        ];
 
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    loadImage(img);
-                    imageObserver.unobserve(img);
+        // 应用状态管理
+        class GalleryState {
+            constructor() {
+                this.currentFilter = 'all';
+                this.searchQuery = '';
+                this.loadedCount = 0;
+                this.filteredImages = [];
+                this.isLoading = false;
+            }
+
+            reset() {
+                this.loadedCount = 0;
+                this.isLoading = false;
+            }
+
+            getFilteredImages() {
+                let result = this.currentFilter === 'all' 
+                    ? [...images] 
+                    : images.filter(img => img.category === this.currentFilter);
+
+                if (this.searchQuery) {
+                    result = result.filter(img => 
+                        img.category.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    );
                 }
-            });
-        }, { 
-            rootMargin: '300px',
-            threshold: 0.01
-        });
 
-        function loadImage(img) {
-            const src = img.dataset.src;
-            if (!src) return;
-            
-            const tempImg = new Image();
-            tempImg.onload = () => {
-                img.src = src;
-                setTimeout(() => {
-                    img.classList.add('loaded');
-                    const placeholder = img.nextElementSibling;
-                    if (placeholder && placeholder.classList.contains('placeholder')) {
-                        setTimeout(() => placeholder.remove(), 300);
+                return result;
+            }
+        }
+
+        // DOM 元素管理
+        class DOMManager {
+            constructor() {
+                this.gallery = document.getElementById('gallery');
+                this.filterContainer = document.getElementById('filterContainer');
+                this.searchInput = document.getElementById('searchInput');
+                this.loadMoreBtn = document.getElementById('loadMore');
+                this.emptyState = document.getElementById('emptyState');
+                this.scrollToTopBtn = document.getElementById('scrollToTop');
+                this.totalCount = document.getElementById('totalCount');
+                this.categoryCount = document.getElementById('categoryCount');
+                this.loadedCountEl = document.getElementById('loadedCount');
+            }
+
+            clearGallery() {
+                this.gallery.innerHTML = '';
+            }
+
+            showEmpty(show) {
+                this.emptyState.style.display = show ? 'block' : 'none';
+            }
+
+            showLoadMore(show) {
+                this.loadMoreBtn.style.display = show ? 'block' : 'none';
+            }
+
+            updateStats(total, category, loaded) {
+                this.totalCount.textContent = total;
+                this.categoryCount.textContent = category;
+                this.loadedCountEl.textContent = loaded;
+            }
+        }
+
+        // 图片懒加载管理
+        class ImageLoader {
+            constructor() {
+                this.observer = new IntersectionObserver(
+                    entries => this.handleIntersection(entries),
+                    { 
+                        rootMargin: CONFIG.OBSERVER_MARGIN,
+                        threshold: 0.01
                     }
-                }, 50);
-            };
-            tempImg.onerror = () => {
-                const placeholder = img.nextElementSibling;
-                if (placeholder) placeholder.remove();
-            };
-            tempImg.src = src;
-        }
-
-        function getCategories() {
-            const categories = new Set(images.map(img => img.category));
-            return ['all', ...Array.from(categories).sort()];
-        }
-
-        function createFilterButtons() {
-            const categories = getCategories();
-            filterContainer.innerHTML = '';
-            
-            categories.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn' + (category === 'all' ? ' active' : '');
-                btn.textContent = category === 'all' ? '全部' : category;
-                btn.dataset.category = category;
-                btn.onclick = () => filterImages(category);
-                filterContainer.appendChild(btn);
-            });
-        }
-
-        function createImageElement(imageData, index) {
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            item.style.animationDelay = `${(index % BATCH_SIZE) * 0.05}s`;
-            
-            const img = document.createElement('img');
-            img.dataset.src = imageData.src;
-            img.alt = imageData.category;
-            item.appendChild(img);
-            
-            const placeholder = document.createElement('div');
-            placeholder.className = 'placeholder';
-            item.appendChild(placeholder);
-            
-            imageObserver.observe(img);
-            
-            return item;
-        }
-
-        function renderImageBatch() {
-            const start = loadedCount;
-            const end = Math.min(start + BATCH_SIZE, filteredImages.length);
-            
-            if (start >= filteredImages.length) {
-                loadMoreBtn.style.display = 'none';
-                return;
+                );
+                this.loadingImages = new Set();
             }
 
-            const fragment = document.createDocumentFragment();
-            
-            for (let i = start; i < end; i++) {
-                const item = createImageElement(filteredImages[i], i);
-                fragment.appendChild(item);
+            handleIntersection(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        this.loadImage(img);
+                        this.observer.unobserve(img);
+                    }
+                });
             }
-            
-            gallery.appendChild(fragment);
-            loadedCount = end;
-            
-            loadMoreBtn.style.display = loadedCount < filteredImages.length ? 'block' : 'none';
-            updateStats();
-        }
 
-        function filterImages(category) {
-            currentFilter = category;
-            
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.category === category);
-            });
-            
-            filteredImages = category === 'all' 
-                ? [...images] 
-                : images.filter(img => img.category === category);
-            
-            gallery.innerHTML = '';
-            loadedCount = 0;
-            
-            if (filteredImages.length === 0) {
-                emptyState.style.display = 'block';
-                loadMoreBtn.style.display = 'none';
-            } else {
-                emptyState.style.display = 'none';
-                renderImageBatch();
+            loadImage(img) {
+                const src = img.dataset.src;
+                if (!src || this.loadingImages.has(src)) return;
+
+                this.loadingImages.add(src);
+                
+                const tempImg = new Image();
+                
+                tempImg.onload = () => {
+                    img.src = src;
+                    requestAnimationFrame(() => {
+                        img.classList.add('loaded');
+                        const placeholder = img.nextElementSibling;
+                        if (placeholder?.classList.contains('placeholder')) {
+                            setTimeout(() => placeholder.remove(), 500);
+                        }
+                    });
+                    this.loadingImages.delete(src);
+                };
+                
+                tempImg.onerror = () => {
+                    console.error('Failed to load image:', src);
+                    const placeholder = img.nextElementSibling;
+                    if (placeholder) {
+                        placeholder.style.background = '#ffebee';
+                        placeholder.innerHTML = '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#c62828;">⚠️</div>';
+                    }
+                    this.loadingImages.delete(src);
+                };
+                
+                tempImg.src = src;
+            }
+
+            observe(img) {
+                this.observer.observe(img);
+            }
+
+            disconnect() {
+                this.observer.disconnect();
             }
         }
 
-        function updateStats() {
-            document.getElementById('totalCount').textContent = images.length;
-            document.getElementById('categoryCount').textContent = filteredImages.length;
-        }
+        // 工具函数
+        const utils = {
+            debounce(func, delay) {
+                let timeoutId;
+                return function(...args) {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => func.apply(this, args), delay);
+                };
+            },
 
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+            getCategories() {
+                const categories = new Set(images.map(img => img.category));
+                return ['all', ...Array.from(categories).sort()];
+            },
 
-        let isAutoLoading = false;
-        
-        window.addEventListener('scroll', () => {
-            scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
-            
-            if (isAutoLoading || loadedCount >= filteredImages.length) return;
-            
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-            const documentHeight = document.documentElement.scrollHeight;
-            
-            if (scrollTop + windowHeight >= documentHeight - 400) {
-                isAutoLoading = true;
-                loadMoreBtn.style.display = 'block';
+            createImageElement(imageData, index) {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.style.animationDelay = `${(index % CONFIG.BATCH_SIZE) * (CONFIG.ANIMATION_DELAY / 1000)}s`;
+                
+                const img = document.createElement('img');
+                img.dataset.src = imageData.src;
+                img.alt = imageData.category;
+                
+                const badge = document.createElement('div');
+                badge.className = 'category-badge';
+                badge.textContent = imageData.category;
+                
+                const placeholder = document.createElement('div');
+                placeholder.className = 'placeholder';
+                
+                item.appendChild(img);
+                item.appendChild(placeholder);
+                item.appendChild(badge);
+                
+                return { item, img };
+            }
+        };
+
+        // 主应用类
+        class ImageGallery {
+            constructor() {
+                this.state = new GalleryState();
+                this.dom = new DOMManager();
+                this.imageLoader = new ImageLoader();
+                
+                this.init();
+            }
+
+            init() {
+                this.createFilterButtons();
+                this.setupEventListeners();
+                this.filterImages('all');
+            }
+
+            createFilterButtons() {
+                const categories = utils.getCategories();
+                this.dom.filterContainer.innerHTML = '';
+                
+                categories.forEach(category => {
+                    const btn = document.createElement('button');
+                    btn.className = 'filter-btn' + (category === 'all' ? ' active' : '');
+                    btn.textContent = category === 'all' ? '🌟 全部' : category;
+                    btn.dataset.category = category;
+                    btn.onclick = () => this.filterImages(category);
+                    this.dom.filterContainer.appendChild(btn);
+                });
+            }
+
+            setupEventListeners() {
+                // 搜索功能
+                this.dom.searchInput.addEventListener('input', 
+                    utils.debounce((e) => {
+                        this.state.searchQuery = e.target.value.trim();
+                        this.filterImages(this.state.currentFilter);
+                    }, CONFIG.DEBOUNCE_DELAY)
+                );
+
+                // 滚动事件
+                window.addEventListener('scroll', 
+                    utils.debounce(() => this.handleScroll(), 100)
+                );
+
+                // 返回顶部按钮
+                this.dom.scrollToTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            handleScroll() {
+                // 显示/隐藏返回顶部按钮
+                this.dom.scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+                
+                // 自动加载更多
+                if (this.state.isLoading || this.state.loadedCount >= this.state.filteredImages.length) return;
+                
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                
+                if (scrollTop + windowHeight >= documentHeight - CONFIG.LOAD_THRESHOLD) {
+                    this.loadMoreImages();
+                }
+            }
+
+            filterImages(category) {
+                this.state.currentFilter = category;
+                
+                // 更新按钮状态
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === category);
+                });
+                
+                // 重置状态
+                this.state.reset();
+                this.state.filteredImages = this.state.getFilteredImages();
+                this.dom.clearGallery();
+                
+                // 显示结果
+                if (this.state.filteredImages.length === 0) {
+                    this.dom.showEmpty(true);
+                    this.dom.showLoadMore(false);
+                } else {
+                    this.dom.showEmpty(false);
+                    this.renderImageBatch();
+                }
+            }
+
+            renderImageBatch() {
+                const start = this.state.loadedCount;
+                const end = Math.min(start + CONFIG.BATCH_SIZE, this.state.filteredImages.length);
+                
+                if (start >= this.state.filteredImages.length) {
+                    this.dom.showLoadMore(false);
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                
+                for (let i = start; i < end; i++) {
+                    const { item, img } = utils.createImageElement(
+                        this.state.filteredImages[i], 
+                        i
+                    );
+                    fragment.appendChild(item);
+                    this.imageLoader.observe(img);
+                }
+                
+                this.dom.gallery.appendChild(fragment);
+                this.state.loadedCount = end;
+                
+                this.dom.showLoadMore(end < this.state.filteredImages.length);
+                this.updateStats();
+            }
+
+            loadMoreImages() {
+                if (this.state.isLoading) return;
+                
+                this.state.isLoading = true;
+                this.dom.showLoadMore(true);
                 
                 setTimeout(() => {
-                    renderImageBatch();
-                    isAutoLoading = false;
+                    this.renderImageBatch();
+                    this.state.isLoading = false;
                 }, 300);
             }
-        });
 
-        createFilterButtons();
-        filteredImages = [...images];
-        renderImageBatch();
+            updateStats() {
+                this.dom.updateStats(
+                    images.length,
+                    this.state.filteredImages.length,
+                    this.state.loadedCount
+                );
+            }
+        }
+
+        // 启动应用
+        const gallery = new ImageGallery();
     </script>
 </body>
 </html>
