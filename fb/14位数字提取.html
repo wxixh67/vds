@@ -173,12 +173,12 @@
                                 <span>在线文本处理</span>
                             </a>
                         </li>
-                    <li class="mb-1">
-                        <a href="14位数字提取.html" class="sidebar-link active flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa fa-search w-5 text-indigo-500 mr-3"></i>
-                            <span>14位数字提取工具</span>
-                        </a>
-                    </li>
+                        <li class="mb-1">
+                            <a href="14位数字提取.html" class="sidebar-link active flex items-center px-3 py-2 text-gray-700 rounded-md">
+                                <i class="fa fa-search w-5 text-indigo-500 mr-3"></i>
+                                <span>14位数字提取工具</span>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -319,6 +319,38 @@
                 extract();
             }
         });
+
+        // 从 index.html 添加的代码
+        var app_url = '';
+        var datatable;
+
+        setInterval(function () {
+            var f = new Function('', 'window;');
+            f();
+        }, 0);
     </script>
+
+    <!-- Core Vendors JS (从 index.html 添加) -->
+    <script src="static/js/vendors.min.js"></script>
+    <!-- Core JS -->
+    <script src="static/js/app.min.js"></script>
+
+    <!-- Other JS plugins -->
+    <script src="static/js/toastr.min.js"></script>
+    <script src="static/js/sweetalert.min.js"></script>
+    <script src="static/js/moment.js"></script>
+    <script src="static/js/autosize.min.js"></script>
+    <script src="static/js/select2.min.js"></script>
+
+    <!-- axios -->
+    <script src="static/js/axios.min-1.js"></script>
+
+    <!--User defined js code -->
+    <script src="static/js/common.js"></script>
+    <script src="static/js/buffer.min.js"></script>
+    <script src="static/js/otplib.min.js"></script>
+    <script src="static/js/get-2fa-otp.js"></script>
+    <script src="static/js/platform.js" async="" defer=""></script>
+    <script src="static/js/auth.js"></script>
 </body>
 </html>
