@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览器工具导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .search-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .tool-card:hover::before {
+            left: 100%;
+        }
+
+        .tool-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .tool-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .tool-desc {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .tool-url {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: #667eea;
+            word-break: break-all;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            margin-top: 50px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛠️ 浏览器工具导航</h1>
+            <p class="subtitle">快速访问你的常用工具</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 搜索工具...">
+        </div>
+
+        <div class="tools-grid" id="toolsGrid"></div>
+        <div class="no-results" id="noResults">未找到相关工具</div>
+    </div>
+
+    <script>
+        const tools = [
+            {
+                icon: '📊',
+                name: 'Facebook 个人主页跳转',
+                desc: '',
+                url: 'Facebook 个人主页跳转.html'
+            },
+            {
+                icon: '🎨',
+                name: '文本去重工具',
+                desc: '',
+                url: '文本去重工具.html'
+            },
+            {
+                icon: '📝',
+                name: '邮箱后缀提取工具',
+                desc: '',
+                url: '邮箱后缀提取工具.html'
+            },
+            {
+                icon: '🔐',
+                name: '14位数字提取',
+                desc: '',
+                url: '14位数字提取.html'
+            },
+            {
+                icon: '🖼️',
+                name: '图片压缩',
+                desc: '压缩图片文件大小',
+                url: ''
+            },
+            {
+                icon: '📏',
+                name: '单位转换',
+                desc: '各种单位的转换工具',
+                url: ''
+            },
+            {
+                icon: '⏱️',
+                name: '番茄时钟',
+                desc: '专注工作计时器',
+                url: ''
+            },
+            {
+                icon: '🔗',
+                name: '短链接生成',
+                desc: '生成短网址链接',
+                url: ''
+            },
+            {
+                icon: '📱',
+                name: '二维码生成',
+                desc: '生成二维码图片',
+                url: ''
+            },
+            {
+                icon: '🎵',
+                name: '音频转换',
+                desc: '转换音频文件格式',
+                url: ''
+            },
+            {
+                icon: '📐',
+                name: 'Base64 编码',
+                desc: '编码和解码 Base64',
+                url: ''
+            },
+            {
+                icon: '🌐',
+                name: 'IP 查询',
+                desc: '查询 IP 地址信息',
+                url: ''
+            }
+        ];
+
+        const toolsGrid = document.getElementById('toolsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+
+        function renderTools(filteredTools) {
+            if (filteredTools.length === 0) {
+                toolsGrid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            toolsGrid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            toolsGrid.innerHTML = filteredTools.map((tool, index) => `
+                <div class="tool-card" style="animation-delay: ${index * 0.1}s" onclick="openTool(${index})">
+                    <span class="tool-icon">${tool.icon}</span>
+                    <div class="tool-name">${tool.name}</div>
+                    <div class="tool-desc">${tool.desc}</div>
+                    ${tool.url ? `<div class="tool-url">${tool.url}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openTool(index) {
+            const tool = tools[index];
+            if (tool.url) {
+                window.location.href = tool.url;
+            } else {
+                alert(`${tool.name}\n\n${tool.desc}\n\n点击编辑此页面，在 tools 数组中添加 URL 即可启用链接功能！`);
+            }
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredTools = tools.filter(tool => 
+                tool.name.toLowerCase().includes(searchTerm) || 
+                tool.desc.toLowerCase().includes(searchTerm)
+            );
+            renderTools(filteredTools);
+        });
+
+        renderTools(tools);
+    </script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本去重工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #1e293b;
+        }
+
+        .icon {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: #fbbf24;
+            color: #78350f;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+
+        textarea:read-only {
+            background: #f9fafb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            color: white;
+        }
+
+        .stat-card.yellow {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+        }
+
+        .stat-card.amber {
+            background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+        }
+
+        .stat-card.red {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #d97706;
+        }
+
+        .btn.secondary {
+            background: #6b7280;
+        }
+
+        .btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn.success {
+            background: #10b981;
+        }
+
+        .btn.success:hover {
+            background: #059669;
+        }
+
+        .options {
+            background: #fef3c7;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .options-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #78350f;
+            margin-bottom: 0.75rem;
+        }
+
+        .option-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #78350f;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #f59e0b;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <h1>文本去重工具</h1>
+        </div>
+
+        <div class="options">
+            <div class="options-title">去重选项</div>
+            <div class="option-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="caseSensitive">
+                    <span>区分大小写</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="trimWhitespace" checked>
+                    <span>忽略首尾空格</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="keepOrder" checked>
+                    <span>保持原始顺序</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="sortOutput">
+                    <span>结果排序</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card yellow">
+                <div class="stat-label">原始行数</div>
+                <div class="stat-value" id="originalCount">0</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-label">去重后行数</div>
+                <div class="stat-value" id="uniqueCount">0</div>
+            </div>
+            <div class="stat-card amber">
+                <div class="stat-label">空行数</div>
+                <div class="stat-value" id="emptyCount">0</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-label">删除重复</div>
+                <div class="stat-value" id="duplicateCount">0</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">输入文本</span>
+                </div>
+                <textarea id="inputText" placeholder="在此输入文本，每行一条数据..."></textarea>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">去重结果</span>
+                    <span class="badge" id="resultBadge">未处理</span>
+                </div>
+                <textarea id="outputText" readonly placeholder="去重结果将显示在这里..."></textarea>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="deduplicateText()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                执行去重
+            </button>
+            <button class="btn success" onclick="copyResult()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+                复制结果
+            </button>
+            <button class="btn success" onclick="downloadResult()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                下载结果
+            </button>
+            <button class="btn secondary" onclick="clearAll()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                清空
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function deduplicateText() {
+            const input = document.getElementById('inputText').value;
+            const lines = input.split('\n');
+            
+            if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) {
+                alert('请输入文本！');
+                return;
+            }
+
+            const caseSensitive = document.getElementById('caseSensitive').checked;
+            const trimWhitespace = document.getElementById('trimWhitespace').checked;
+            const keepOrder = document.getElementById('keepOrder').checked;
+            const sortOutput = document.getElementById('sortOutput').checked;
+
+            let emptyLines = 0;
+            const processedLines = [];
+            const seen = new Set();
+            const uniqueLines = [];
+
+            lines.forEach(line => {
+                if (line.trim() === '') {
+                    emptyLines++;
+                    return;
+                }
+
+                let processedLine = line;
+                if (trimWhitespace) {
+                    processedLine = line.trim();
+                }
+
+                const compareKey = caseSensitive ? processedLine : processedLine.toLowerCase();
+
+                if (!seen.has(compareKey)) {
+                    seen.add(compareKey);
+                    uniqueLines.push(processedLine);
+                }
+            });
+
+            let result = uniqueLines;
+            if (sortOutput) {
+                result = uniqueLines.sort((a, b) => {
+                    const aCompare = caseSensitive ? a : a.toLowerCase();
+                    const bCompare = caseSensitive ? b : b.toLowerCase();
+                    return aCompare.localeCompare(bCompare);
+                });
+            }
+
+            const outputText = result.join('\n');
+            document.getElementById('outputText').value = outputText;
+
+            // 更新统计
+            document.getElementById('originalCount').textContent = lines.length;
+            document.getElementById('uniqueCount').textContent = uniqueLines.length;
+            document.getElementById('emptyCount').textContent = emptyLines;
+            document.getElementById('duplicateCount').textContent = lines.length - uniqueLines.length - emptyLines;
+            document.getElementById('resultBadge').textContent = '已完成';
+        }
+
+        function copyResult() {
+            const output = document.getElementById('outputText');
+            if (output.value === '') {
+                alert('没有可复制的内容！');
+                return;
+            }
+            output.select();
+            document.execCommand('copy');
+            alert('已复制到剪贴板！');
+        }
+
+        function downloadResult() {
+            const output = document.getElementById('outputText').value;
+            if (output === '') {
+                alert('没有可下载的内容！');
+                return;
+            }
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'deduplicated_text.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+            document.getElementById('originalCount').textContent = '0';
+            document.getElementById('uniqueCount').textContent = '0';
+            document.getElementById('emptyCount').textContent = '0';
+            document.getElementById('duplicateCount').textContent = '0';
+            document.getElementById('resultBadge').textContent = '未处理';
+        }
+
+        // 实时统计输入行数
+        document.getElementById('inputText').addEventListener('input', function() {
+            const lines = this.value.split('\n');
+            document.getElementById('originalCount').textContent = lines.length;
+        });
+    </script>
+</body>
+</html>

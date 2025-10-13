@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱后缀提取工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #ebf4ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #1e293b;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #4338ca;
+        }
+
+        .btn.secondary {
+            background: #6b7280;
+        }
+
+        .btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            color: white;
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .stat-card.indigo {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-value.small {
+            font-size: 1.25rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .controls h2 {
+            font-size: 1.5rem;
+            color: #374151;
+        }
+
+        .domain-list {
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .domain-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            transition: box-shadow 0.2s;
+        }
+
+        .domain-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .domain-name {
+            font-family: 'Courier New', monospace;
+            color: #374151;
+        }
+
+        .domain-count {
+            background: #e0e7ff;
+            color: #4f46e5;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .icon {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4f46e5;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <h1>邮箱后缀提取工具</h1>
+        </div>
+
+        <div class="input-section">
+            <label for="emailInput">输入邮箱地址（每行一个）：</label>
+            <textarea id="emailInput" placeholder="例如：
+user1@example.com
+user2@gmail.com
+user3@company.org"></textarea>
+            <div style="margin-top: 1rem;">
+                <button class="btn" onclick="extractDomains()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    提取域名
+                </button>
+                <button class="btn secondary" onclick="clearAll()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    清空
+                </button>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="stats">
+                <div class="stat-card blue">
+                    <div class="stat-label">总邮箱数</div>
+                    <div class="stat-value" id="totalEmails">0</div>
+                </div>
+                <div class="stat-card indigo">
+                    <div class="stat-label">唯一域名数</div>
+                    <div class="stat-value" id="uniqueDomains">0</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-label">最常见域名</div>
+                    <div class="stat-value small" id="topDomain">-</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <h2>域名列表</h2>
+                <button class="btn" onclick="downloadList()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    下载列表
+                </button>
+            </div>
+
+            <div class="domain-list" id="domainList"></div>
+        </div>
+    </div>
+
+    <script>
+        let domains = [];
+        let stats = {};
+
+        function extractDomains() {
+            const input = document.getElementById('emailInput').value;
+            const emails = input.split('\n').filter(line => line.trim());
+            
+            if (emails.length === 0) {
+                alert('请输入邮箱地址！');
+                return;
+            }
+
+            const domainList = emails.map(email => {
+                const parts = email.trim().split('@');
+                return parts.length === 2 ? parts[1] : null;
+            }).filter(Boolean);
+
+            if (domainList.length === 0) {
+                alert('未找到有效的邮箱地址！');
+                return;
+            }
+
+            // 统计每个域名出现的次数
+            const domainCount = {};
+            domainList.forEach(domain => {
+                domainCount[domain] = (domainCount[domain] || 0) + 1;
+            });
+
+            // 获取唯一域名并排序
+            domains = [...new Set(domainList)].sort();
+            stats = domainCount;
+
+            updateUI();
+            document.getElementById('resultsSection').classList.add('visible');
+        }
+
+        function updateUI() {
+            // 更新统计数据
+            const totalEmails = Object.values(stats).reduce((a, b) => a + b, 0);
+            document.getElementById('totalEmails').textContent = totalEmails;
+            document.getElementById('uniqueDomains').textContent = domains.length;
+            
+            const topDomain = Object.entries(stats).sort((a, b) => b[1] - a[1])[0];
+            document.getElementById('topDomain').textContent = topDomain ? topDomain[0] : '-';
+
+            // 更新域名列表
+            const listElement = document.getElementById('domainList');
+            listElement.innerHTML = domains.map(domain => `
+                <div class="domain-item">
+                    <span class="domain-name">${domain}</span>
+                    <span class="domain-count">${stats[domain]} 个</span>
+                </div>
+            `).join('');
+        }
+
+        function downloadList() {
+            const text = domains.join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'email_domains.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAll() {
+            document.getElementById('emailInput').value = '';
+            document.getElementById('resultsSection').classList.remove('visible');
+            domains = [];
+            stats = {};
+        }
+    </script>
+</body>
+</html>
