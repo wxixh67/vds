@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh">
+
+
+<!-- Mirrored from 2fa.fun/check-live.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:28:19 GMT -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -7,18 +10,29 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta property="og:title" content="2FA Auth-2FA工具-2FA验证-谷歌身份验证器网页版Google Authenticator">
     <meta property="og:type" content="article">
+    <meta property="og:url" content="index.html">
     <meta name="author" content="2fa在线工具网站">
+    <meta property="og:image:alt" content="获取2FA代码-在线保存文本">
     <meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,在线文本处理工具,FB账号批量检测存活,无需登录检测FB账户存活,谷歌验证器网页版,Google authenticator网页版">
-    <meta property="og:description" content="2FA验证，谷歌身份验证网页版，双因素验证工具">
-    <title>无需登录实时检查FB账户存活状态工具-Check Live UID Facebook</title>
-    
+    <meta property="og:description" content="2FA验证，谷歌身份验证网页版，双因素验证(Two-factor authentication,简称 2FA，又名二步验证、双重验证)，是保证账户安全的一道有效防线。在登录或进行敏感操作时，需要输入验证器上的动态密码（类似于银行U盾），进一步保护您的帐户免受潜在攻击者的攻击。双因素验证的动态密码生成器分为软件和硬件两种，最常用的软件有OTP Auth和谷歌验证器 (Google Authenticator)。而此处要实现的功能就是：利用JS或PHP代码生成动态密码，简化用户登录账号获取验证码的流程。点击上面的“立即使用”按钮进入获取验证码页面">
+    <meta name="google-signin-client_id" content="">
+    <link rel="canonical" href="index.html">
+    <link rel="alternate" href="en.html" hreflang="en-us">
+    <link rel="alternate" href="vi.html" hreflang="vi-vn">
+    <title>无需登录登录实时检查FB账户存活状态工具-Check Live UID Facebook</title>
     <!-- Favicon-->
     <link rel="shortcut icon" href="static/picture/favicon.png">
 
-    <!-- 外部资源 - 修复后的CDN链接 -->
+    <!-- 外部资源 -->
     <script src="https://cdn.tailwindcss.com/"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+    <link href="../cdn.jsdelivr.net/npm/font-awesome%404.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="../cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+
+    <link href="static/css/icon.css" rel="stylesheet" type="text/css">
+    <link href="static/css/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="static/css/select2.css" rel="stylesheet" type="text/css">
+    <link href="static/css/app.min.css" media="all" type="text/css" rel="stylesheet">
+    <link href="static/css/custom-style.css" rel="stylesheet" type="text/css">
 
     <style>
         /* 自定义样式 */
@@ -37,12 +51,6 @@
         .btn-success {
             background-color: #10b981;
             border-color: #10b981;
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.375rem;
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
         }
         .btn-success:hover {
             background-color: #059669;
@@ -53,6 +61,7 @@
             border-radius: 0.5rem;
             border: 1px solid #e2e8f0;
         }
+        /* 确保列表容器使用flex布局 */
         .results-container {
             display: flex;
             gap: 1rem;
@@ -60,19 +69,7 @@
         }
         .result-column {
             flex: 1;
-            min-width: 0;
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            min-width: 0; /* 确保内容不会溢出容器 */
         }
         .copy-btn {
             margin-top: 0.5rem;
@@ -81,8 +78,6 @@
             border-radius: 0.375rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: none;
-            color: white;
         }
         .copy-btn:hover {
             opacity: 0.9;
@@ -108,7 +103,7 @@
         <div class="w-64 bg-white shadow-lg z-10 hidden md:block">
             <div class="p-4 border-b">
                 <div class="flex items-center">
-                    <img src="static/picture/2falogo.png" alt="2FA工具" class="h-10" onerror="this.style.display='none'">
+                    <img src="static/picture/2falogo.png" alt="2FA工具" class="h-10">
                 </div>
             </div>
             
@@ -117,31 +112,31 @@
                 <ul>
                     <li class="mb-1">
                         <a href="2fa-otp.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa-solid fa-key w-5 text-indigo-500 mr-3"></i>
+                            <i class="fa fa-key w-5 text-indigo-500 mr-3"></i>
                             <span>获取2FA验证码</span>
                         </a>
                     </li>
                     <li class="mb-1">
                         <a href="check-live.html" class="sidebar-link active flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa-solid fa-rotate w-5 text-emerald-500 mr-3"></i>
+                            <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
                             <span>检测FB账户存活</span>
                         </a>
                     </li>
                     <li class="mb-1">
                         <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa-solid fa-envelope w-5 text-emerald-500 mr-3"></i>
+                            <i class="fa fa-envelope w-5 text-emerald-500 mr-3"></i>
                             <span>快速阅读邮件</span>
                         </a>
                     </li>
                     <li class="mb-1">
                         <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa-solid fa-file-lines w-5 text-indigo-500 mr-3"></i>
+                            <i class="fa fa-file-text w-5 text-indigo-500 mr-3"></i>
                             <span>在线文本处理</span>
                         </a>
                     </li>
                     <li class="mb-1">
                         <a href="note-sharing.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa-solid fa-note-sticky w-5 text-indigo-500 mr-3"></i>
+                            <i class="fa fa-sticky-note w-5 text-indigo-500 mr-3"></i>
                             <span>在线笔记分享</span>
                         </a>
                     </li>
@@ -152,7 +147,7 @@
         <!-- 移动端菜单按钮 -->
         <div class="md:hidden fixed bottom-4 right-4 z-50">
             <button id="mobile-menu-button" class="bg-indigo-600 text-white p-3 rounded-full shadow-lg">
-                <i class="fa-solid fa-bars"></i>
+                <i class="fa fa-bars"></i>
             </button>
         </div>
         
@@ -161,10 +156,10 @@
             <div class="bg-white h-full w-64 p-4 transform transition-transform">
                 <div class="flex justify-between items-center mb-6">
                     <div class="flex items-center">
-                        <img src="static/picture/2falogo.png" alt="2FA工具" class="h-8" onerror="this.style.display='none'">
+                        <img src="static/picture/2falogo.png" alt="2FA工具" class="h-8">
                     </div>
                     <button id="close-menu" class="text-gray-500">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+                        <i class="fa fa-times text-xl"></i>
                     </button>
                 </div>
                 
@@ -173,35 +168,35 @@
                     <ul>
                         <li class="mb-1">
                             <a href="2fa-otp.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa-solid fa-key w-5 text-indigo-500 mr-3"></i>
+                                <i class="fa fa-key w-5 text-indigo-500 mr-3"></i>
                                 <span>获取2FA验证码</span>
                             </a>
                         </li>
                         <li class="mb-1">
                             <a href="check-live.html" class="sidebar-link active flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa-solid fa-rotate w-5 text-emerald-500 mr-3"></i>
+                                <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
                                 <span>检测FB账户存活</span>
                             </a>
                         </li>
-                        <li class="mb-1">
-                            <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa-solid fa-envelope w-5 text-emerald-500 mr-3"></i>
-                                <span>快速阅读邮件</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa-solid fa-file-lines w-5 text-indigo-500 mr-3"></i>
-                                <span>在线文本处理</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="note-sharing.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa-solid fa-note-sticky w-5 text-indigo-500 mr-3"></i>
-                                <span>在线笔记分享</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <li class="mb-1">
+                        <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-envelope w-5 text-emerald-500 mr-3"></i>
+                            <span>快速阅读邮件</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-file-text w-5 text-indigo-500 mr-3"></i>
+                            <span>在线文本处理</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="note-sharing.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-sticky-note w-5 text-indigo-500 mr-3"></i>
+                            <span>在线笔记分享</span>
+                        </a>
+                    </li>
+                </ul>
                 </nav>
             </div>
         </div>
@@ -215,17 +210,17 @@
                     <div class="space-y-6">
                         <div class="form-group">
                             <p class="text-gray-700 mb-3">无需登录FB账户即可实时检测账号死活/Facebook账户批量检测/查看Facebook实时UID</p>
-                            <textarea id="list_uid" class="form-control" 
+                            <textarea id="list_uid" class="form-control w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                                     placeholder="在这里输入FB UID，或输入完整账号信息，每行1个账户..." rows="8"></textarea>
                             <div class="duplicate-info" id="duplicate-info">
-                                <i class="fa-solid fa-circle-info mr-1"></i>
+                                <i class="fa fa-info-circle mr-1"></i>
                                 <span>已自动去除 <span id="duplicate-count">0</span> 个重复项</span>
                             </div>
                         </div>
 
                         <div class="form-group text-center">
-                            <button id="btn-check" class="btn-success">
-                                <i class="fa-solid fa-circle-check mr-2"></i>
+                            <button id="btn-check" class="btn btn-success px-6 py-2 rounded-md font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <i class="fa fa-check-circle mr-2"></i>
                                 实时检测
                             </button>
                         </div>
@@ -240,10 +235,10 @@
                                         <span id="live_count" class="ml-2 bg-cyan-100 text-cyan-800 text-xs font-medium px-2.5 py-0.5 rounded">0</span>
                                     </h3>
                                 </div>
-                                <textarea id="list_live" class="form-control" 
+                                <textarea id="list_live" class="form-control w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" 
                                         rows="8" style="background: rgba(0,201,167,0.1); border-color: #00c9a7;"></textarea>
                                 <button class="copy-btn bg-green-600 text-white" data-clipboard-target="#list_live">
-                                    <i class="fa-solid fa-copy mr-1"></i>复制
+                                    <i class="fa fa-copy mr-1"></i>复制
                                 </button>
                             </div>
                             
@@ -255,10 +250,10 @@
                                         <span id="die_count" class="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">0</span>
                                     </h3>
                                 </div>
-                                <textarea id="list_die" class="form-control" 
+                                <textarea id="list_die" class="form-control w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500" 
                                         rows="8" style="background: rgba(222,68,54,0.05); border-color: tomato;"></textarea>
                                 <button class="copy-btn bg-red-600 text-white" data-clipboard-target="#list_die">
-                                    <i class="fa-solid fa-copy mr-1"></i>复制
+                                    <i class="fa fa-copy mr-1"></i>复制
                                 </button>
                             </div>
                         </div>
@@ -266,7 +261,7 @@
                         <!-- 使用说明区域 -->
                         <div class="instructions p-5 mt-6">
                             <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                                <i class="fa-solid fa-circle-info text-indigo-500 mr-2"></i> 使用说明
+                                <i class="fa fa-info-circle text-indigo-500 mr-2"></i> 使用说明
                             </h3>
                             <ol class="list-decimal list-inside space-y-2 text-gray-700">
                                 <li>在输入框中输入FB UID，每行一个账户</li>
@@ -282,6 +277,18 @@
             </div>
         </div>
     </div>
+
+    <script>
+        var app_url = '';
+        
+        // Contain datatable instance
+        var datatable;
+
+        setInterval(function () {
+            var f = new Function('', 'window;');
+            f();
+        }, 0);
+    </script>
 
     <!-- 移动端菜单控制 -->
     <script>
@@ -306,10 +313,14 @@
         const uidInput = document.getElementById('list_uid');
         const duplicateInfo = document.getElementById('duplicate-info');
         const duplicateCount = document.getElementById('duplicate-count');
+        let lastValue = '';
         
         function removeDuplicates(text) {
+            // 按行分割
             const lines = text.split('\n');
+            // 过滤空行
             const nonEmptyLines = lines.filter(line => line.trim() !== '');
+            // 去重并保持原始顺序
             const uniqueLines = [];
             const seen = new Set();
             
@@ -320,6 +331,7 @@
                 }
             }
             
+            // 计算移除的重复项数量
             const removedCount = nonEmptyLines.length - uniqueLines.length;
             return {
                 text: uniqueLines.join('\n'),
@@ -335,6 +347,7 @@
                 duplicateCount.textContent = result.removedCount;
                 duplicateInfo.style.display = 'block';
                 
+                // 3秒后隐藏提示信息
                 setTimeout(() => {
                     duplicateInfo.style.display = 'none';
                 }, 3000);
@@ -353,17 +366,6 @@
                     duplicateInfo.style.display = 'none';
                 }, 3000);
             }
-            
-            // 这里添加实际的检测逻辑
-            const uids = uidInput.value.trim().split('\n').filter(line => line.trim() !== '');
-            
-            if (uids.length === 0) {
-                alert('请输入至少一个UID');
-                return;
-            }
-            
-            // 模拟检测过程（实际应该调用API）
-            alert('检测功能需要连接后端API。当前为演示版本。');
         });
         
         // 初始化复制功能
@@ -371,8 +373,9 @@
             const clipboard = new ClipboardJS('.copy-btn');
             
             clipboard.on('success', function(e) {
+                // 显示复制成功提示
                 const originalText = e.trigger.innerHTML;
-                e.trigger.innerHTML = '<i class="fa-solid fa-check mr-1"></i> 复制成功';
+                e.trigger.innerHTML = '<i class="fa fa-check mr-1"></i> 复制成功';
                 
                 setTimeout(() => {
                     e.trigger.innerHTML = originalText;
@@ -382,8 +385,9 @@
             });
             
             clipboard.on('error', function(e) {
+                // 显示复制失败提示
                 const originalText = e.trigger.innerHTML;
-                e.trigger.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i> 复制失败';
+                e.trigger.innerHTML = '<i class="fa fa-times mr-1"></i> 复制失败';
                 
                 setTimeout(() => {
                     e.trigger.innerHTML = originalText;
@@ -391,5 +395,30 @@
             });
         });
     </script>
+
+    <!-- Core Vendors JS -->
+    <script src="static/js/vendors.min.js"></script>
+    <!-- Core JS -->
+    <script src="static/js/app.min.js"></script>
+
+    <!-- Other JS plugins -->
+    <script src="static/js/toastr.min.js"></script>
+    <script src="static/js/sweetalert.min.js"></script>
+    <script src="static/js/moment.js"></script>
+    <script src="static/js/autosize.min.js"></script>
+    <script src="static/js/select2.min.js"></script>
+
+    <!-- axios -->
+    <script src="static/js/axios.min-1.js"></script>
+
+    <!--User defined js code -->
+    <script src="static/js/common.js"></script>
+    <script src="static/js/check-live-fb-id.js"></script>
+
+    <script src="static/js/platform.js" async="" defer=""></script>
+    <script src="static/js/auth.js"></script>
 </body>
+
+
+<!-- Mirrored from 2fa.fun/check-live.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:28:20 GMT -->
 </html>
