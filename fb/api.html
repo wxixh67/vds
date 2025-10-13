@@ -1,0 +1,1037 @@
+
+<html lang="zh-CN">
+
+<!-- Mirrored from 2fa.fun/api.php by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:07:29 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交媒体账号检测工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 32px;
+                margin-bottom: 30px;
+            }
+            
+            .input-section {
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+                margin-bottom: 30px;
+            }
+        }
+        
+        .platform-selector {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .platform-option {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-option:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        
+        .platform-option.active {
+            border-color: #2196f3;
+            background: #e3f2fd;
+        }
+        
+        .platform-option input {
+            margin-right: 10px;
+        }
+        
+        .accounts-input {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .input-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .input-info {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .input-stats {
+            color: #17a2b8;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .tool-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tool-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+            flex: 1;
+            min-width: 80px;
+        }
+        
+        .tool-btn:hover {
+            background: #5a6268;
+        }
+        
+        .tool-btn.success {
+            background: #28a745;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-section {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        @media (min-width: 768px) {
+            .button-section {
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+        
+        #checkButton {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        @media (min-width: 768px) {
+            #checkButton {
+                flex: none;
+                padding: 15px 40px;
+                font-size: 18px;
+            }
+        }
+        
+        #checkButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        #checkButton:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #cancelButton {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        @media (min-width: 768px) {
+            #cancelButton {
+                flex: none;
+                padding: 15px 40px;
+                font-size: 18px;
+                margin-left: 0;
+            }
+        }
+        
+        #cancelButton:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 992px) {
+            .results-section {
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+            }
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 300px;
+            position: relative;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-header h3 {
+            color: #333;
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        @media (min-width: 768px) {
+            .result-header h3 {
+                font-size: 18px;
+            }
+        }
+        
+        .copy-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #5a6268;
+        }
+        
+        .copy-btn.success {
+            background: #28a745;
+        }
+        
+        .active-accounts {
+            border: 2px solid #28a745;
+        }
+        
+        .inactive-accounts {
+            border: 2px solid #dc3545;
+        }
+        
+        .account-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .account-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .account-item.active {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .account-item.inactive {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .account-item.error {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        
+        .account-item.pending {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+            opacity: 0.7;
+        }
+        
+        .copy-icon {
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+        
+        .copy-icon:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .stats {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .bulk-copy {
+            margin-top: 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        @media (min-width: 480px) {
+            .bulk-copy {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+        
+        .bulk-copy-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+            flex: 1;
+        }
+        
+        @media (min-width: 480px) {
+            .bulk-copy-btn {
+                flex: none;
+                margin: 0 5px;
+            }
+        }
+        
+        .bulk-copy-btn:hover {
+            background: #138496;
+        }
+        
+        /* 移动设备优化 */
+        @media (max-width: 767px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 10px;
+                padding: 15px;
+            }
+            
+            .platform-option {
+                padding: 10px;
+                margin: 8px 0;
+            }
+            
+            textarea {
+                height: 150px;
+                font-size: 16px; /* 提高移动设备上的可读性 */
+            }
+            
+            .tool-buttons {
+                gap: 5px;
+            }
+            
+            .tool-btn {
+                padding: 8px 10px;
+                min-width: 70px;
+            }
+            
+            .account-item {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 小屏幕手机优化 */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .result-header h3 {
+                font-size: 16px;
+            }
+            
+            .copy-btn {
+                align-self: flex-end;
+            }
+            
+            .bulk-copy {
+                flex-direction: column;
+            }
+        }
+        
+        /* 防止移动设备上的缩放问题 */
+        @media (max-width: 767px) {
+            input, select, textarea, button {
+                font-size: 16px !important; /* 防止iOS缩放 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 社交媒体账号检测工具</h1>
+        
+        <form id="checkForm">
+            <div class="input-section">
+                <div class="platform-selector">
+                    <h3>选择平台</h3>
+                    <div class="platform-option active" onclick="selectPlatform('instagram')">
+                        <input type="radio" name="platform" value="instagram" checked> 
+                        <label>Instagram</label>
+                    </div>
+                    <div class="platform-option" onclick="selectPlatform('facebook')">
+                        <input type="radio" name="platform" value="facebook"> 
+                        <label>Facebook</label>
+                    </div>
+                    <div class="platform-option" onclick="selectPlatform('x')">
+                        <input type="radio" name="platform" value="x"> 
+                        <label>X (Twitter)</label>
+                    </div>
+                </div>
+                
+                <div class="accounts-input">
+                    <div class="input-tools">
+                        <div class="input-info">每行一个账号</div>
+                        <div class="input-stats" id="accountStats">0 个账号</div>
+                    </div>
+                    
+                    <textarea name="accounts" id="accountsTextarea" placeholder="请输入账号列表，每行一个...
+例如:
+user123
+user456:password789
+user789---password123
+user000|password000" oninput="updateAccountStats()"></textarea>
+                    
+                    <div class="tool-buttons">
+                        <button type="button" class="tool-btn" onclick="removeDuplicates()" title="移除重复的账号">去重复</button>
+                        <button type="button" class="tool-btn" onclick="removeEmptyLines()" title="移除空行">去空行</button>
+                        <button type="button" class="tool-btn" onclick="sortAccounts()" title="按字母顺序排序">排序</button>
+                        <button type="button" class="tool-btn" onclick="clearTextarea()" title="清空所有内容">清空</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-section">
+                <button type="button" id="checkButton">开始检测</button>
+                <button type="button" id="cancelButton">取消检测</button>
+            </div>
+        </form>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">处理中: 0/0 (0%)</div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>检测中，请稍候...</p>
+        </div>
+        
+        <div class="message error" id="errorMessage"></div>
+        <div class="message success" id="successMessage"></div>
+        
+        <div class="results-section">
+            <div class="result-box active-accounts">
+                <div class="result-header">
+                    <h3 id="activeHeader">✅ 活跃账号 (0)</h3>
+                    <button class="copy-btn" onclick="copyAll('active')" id="copyActiveBtn">复制全部</button>
+                </div>
+                <div class="account-list" id="activeList">
+                    <!-- 活跃账号将在这里动态添加 -->
+                </div>
+                <div class="bulk-copy">
+                    <button class="bulk-copy-btn" onclick="copyFormatted('active', 'colon')">复制为 user:pass</button>
+                    <button class="bulk-copy-btn" onclick="copyFormatted('active', 'newline')">复制为换行格式</button>
+                </div>
+            </div>
+            
+            <div class="result-box inactive-accounts">
+                <div class="result-header">
+                    <h3 id="inactiveHeader">❌ 非活跃账号 (0)</h3>
+                    <button class="copy-btn" onclick="copyAll('inactive')" id="copyInactiveBtn">复制全部</button>
+                </div>
+                <div class="account-list" id="inactiveList">
+                    <!-- 非活跃账号将在这里动态添加 -->
+                </div>
+                <div class="bulk-copy">
+                    <button class="bulk-copy-btn" onclick="copyFormatted('inactive', 'colon')">复制为 user:pass</button>
+                    <button class="bulk-copy-btn" onclick="copyFormatted('inactive', 'newline')">复制为换行格式</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats" id="stats">
+            总计: 0 个账号 | 活跃: 0 | 非活跃: 0
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentPlatform = 'instagram';
+        let accountsToCheck = [];
+        let currentIndex = 0;
+        let activeAccounts = [];
+        let inactiveAccounts = [];
+        let isChecking = false;
+        
+        // 页面加载初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeOption = document.querySelector('.platform-option input[value="instagram"]').closest('.platform-option');
+            if (activeOption) {
+                activeOption.classList.add('active');
+            }
+            
+            updateAccountStats();
+            
+            // 绑定开始检测按钮事件
+            document.getElementById('checkButton').addEventListener('click', startChecking);
+            
+            // 绑定取消检测按钮事件
+            document.getElementById('cancelButton').addEventListener('click', cancelChecking);
+        });
+        
+        // 选择平台
+        function selectPlatform(platform) {
+            currentPlatform = platform;
+            document.querySelectorAll('.platform-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            document.querySelector(`input[name="platform"][value="${platform}"]`).checked = true;
+        }
+        
+        // 更新账号统计信息
+        function updateAccountStats() {
+            const textarea = document.getElementById('accountsTextarea');
+            const lines = textarea.value.split('\n').filter(line => line.trim());
+            const uniqueLines = [...new Set(lines)];
+            document.getElementById('accountStats').textContent = `${lines.length} 个账号 (${uniqueLines.length} 个唯一)`;
+        }
+        
+        // 去重复功能
+        function removeDuplicates() {
+            const textarea = document.getElementById('accountsTextarea');
+            const lines = textarea.value.split('\n').filter(line => line.trim());
+            const uniqueLines = [...new Set(lines)];
+            
+            if (lines.length === uniqueLines.length) {
+                showSuccess('没有重复的账号');
+                return;
+            }
+            
+            const removedCount = lines.length - uniqueLines.length;
+            textarea.value = uniqueLines.join('\n');
+            updateAccountStats();
+            showSuccess(`已移除 ${removedCount} 个重复账号`);
+        }
+        
+        // 去空行功能
+        function removeEmptyLines() {
+            const textarea = document.getElementById('accountsTextarea');
+            const lines = textarea.value.split('\n').filter(line => line.trim());
+            
+            if (lines.length === textarea.value.split('\n').length) {
+                showSuccess('没有空行');
+                return;
+            }
+            
+            textarea.value = lines.join('\n');
+            updateAccountStats();
+            showSuccess('已移除空行');
+        }
+        
+        // 排序功能
+        function sortAccounts() {
+            const textarea = document.getElementById('accountsTextarea');
+            const lines = textarea.value.split('\n').filter(line => line.trim());
+            
+            if (lines.length <= 1) {
+                showSuccess('无需排序');
+                return;
+            }
+            
+            lines.sort();
+            textarea.value = lines.join('\n');
+            updateAccountStats();
+            showSuccess('已按字母顺序排序');
+        }
+        
+        // 清空功能
+        function clearTextarea() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('accountsTextarea').value = '';
+                updateAccountStats();
+                showSuccess('已清空内容');
+            }
+        }
+        
+        // 开始检测
+        function startChecking() {
+            const accountsText = document.getElementById('accountsTextarea').value.trim();
+            if (!accountsText) {
+                showError('请输入账号列表');
+                return;
+            }
+            
+            // 初始化状态
+            accountsToCheck = accountsText.split('\n').filter(line => line.trim());
+            currentIndex = 0;
+            activeAccounts = [];
+            inactiveAccounts = [];
+            
+            // 清空结果显示区域
+            document.getElementById('activeList').innerHTML = '';
+            document.getElementById('inactiveList').innerHTML = '';
+            
+            // 更新UI状态
+            document.getElementById('checkButton').disabled = true;
+            document.getElementById('cancelButton').style.display = 'inline-block';
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('loading').style.display = 'block';
+            isChecking = true;
+            
+            // 开始处理第一个账号
+            processNextAccount();
+        }
+        
+        // 取消检测
+        function cancelChecking() {
+            isChecking = false;
+            resetUI();
+            showSuccess('检测已取消');
+        }
+        
+        // 处理下一个账号
+        function processNextAccount() {
+            if (!isChecking || currentIndex >= accountsToCheck.length) {
+                // 所有账号处理完成或用户取消了
+                finishChecking();
+                return;
+            }
+            
+            const account = accountsToCheck[currentIndex];
+            const platform = currentPlatform;
+            
+            // 更新进度条
+            updateProgress(currentIndex, accountsToCheck.length);
+            
+            // 在结果列表中显示"处理中"状态
+            addPendingAccount(account);
+            
+            // 发送AJAX请求
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST.html', 'api.html', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                if (response.active) {
+                                    addActiveAccount(account);
+                                } else {
+                                    addInactiveAccount(account);
+                                }
+                            } else {
+                                addErrorAccount(account, response.message || '检测失败');
+                            }
+                        } catch (e) {
+                            addErrorAccount(account, '响应解析失败');
+                        }
+                    } else {
+                        addErrorAccount(account, '请求失败: ' + xhr.status);
+                    }
+                    
+                    // 处理下一个账号
+                    currentIndex++;
+                    setTimeout(processNextAccount, 500); // 添加延迟避免请求过快
+                }
+            };
+            
+            // 发送请求数据
+            const params = `platform=${encodeURIComponent(platform)}&account=${encodeURIComponent(account)}`;
+            xhr.send(params);
+        }
+        
+        // 更新进度条
+        function updateProgress(current, total) {
+            const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `处理中: ${current}/${total} (${percentage}%)`;
+        }
+        
+        // 添加处理中的账号到列表
+        function addPendingAccount(account) {
+            const item = document.createElement('div');
+            item.className = 'account-item pending';
+            item.innerHTML = `
+                <span>${account}</span>
+                <span>⏳ 检测中...</span>
+            `;
+            document.getElementById('activeList').appendChild(item);
+        }
+        
+        // 添加活跃账号
+        function addActiveAccount(account) {
+            // 移除pending状态的项目
+            removePendingAccount(account);
+            
+            const item = document.createElement('div');
+            item.className = 'account-item active';
+            item.innerHTML = `
+                <span>${account}</span>
+                <span class="copy-icon" onclick="copySingle('%24%7baccount.replace(/index.html'/g, "\\'")}')" title="复制">📋</span>
+            `;
+            document.getElementById('activeList').appendChild(item);
+            
+            activeAccounts.push(account);
+            updateResults();
+        }
+        
+        // 添加非活跃账号
+        function addInactiveAccount(account) {
+            // 移除pending状态的项目
+            removePendingAccount(account);
+            
+            const item = document.createElement('div');
+            item.className = 'account-item inactive';
+            item.innerHTML = `
+                <span>${account}</span>
+                <span class="copy-icon" onclick="copySingle('%24%7baccount.replace(/index.html'/g, "\\'")}')" title="复制">📋</span>
+            `;
+            document.getElementById('inactiveList').appendChild(item);
+            
+            inactiveAccounts.push(account);
+            updateResults();
+        }
+        
+        // 添加错误账号
+        function addErrorAccount(account, error) {
+            // 移除pending状态的项目
+            removePendingAccount(account);
+            
+            const item = document.createElement('div');
+            item.className = 'account-item error';
+            item.innerHTML = `
+                <span>${account}</span>
+                <span title="${error}">❌检测失败 </span>
+            `;
+            document.getElementById('inactiveList').appendChild(item);
+            
+            inactiveAccounts.push(account);
+            updateResults();
+        }
+        
+        // 移除pending状态的项目
+        function removePendingAccount(account) {
+            const items = document.querySelectorAll('.account-item.pending');
+            for (let item of items) {
+                if (item.textContent.includes(account)) {
+                    item.remove();
+                    break;
+                }
+            }
+        }
+        
+        // 更新结果统计
+        function updateResults() {
+            document.getElementById('activeHeader').textContent = `✅ 活跃账号 (${activeAccounts.length})`;
+            document.getElementById('inactiveHeader').textContent = `❌ 非活跃账号 (${inactiveAccounts.length})`;
+            
+            document.getElementById('stats').textContent = 
+                `总计: ${activeAccounts.length + inactiveAccounts.length} 个账号 | ` +
+                `活跃: ${activeAccounts.length} | ` +
+                `非活跃: ${inactiveAccounts.length}`;
+        }
+        
+        // 完成检测
+        function finishChecking() {
+            isChecking = false;
+            resetUI();
+            
+            // 滚动到结果区域
+            document.querySelector('.results-section').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            showSuccess(`检测完成! 活跃: ${activeAccounts.length}, 非活跃: ${inactiveAccounts.length}`);
+        }
+        
+        // 重置UI状态
+        function resetUI() {
+            document.getElementById('checkButton').disabled = false;
+            document.getElementById('cancelButton').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        // 显示错误消息
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 3000);
+        }
+        
+        // 显示成功消息
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => { successDiv.style.display = 'none'; }, 3000);
+        }
+        
+        // 复制单个账号
+        function copySingle(account) {
+            copyToClipboard(account, `已复制: ${account}`);
+        }
+        
+        // 复制全部账号
+        function copyAll(type) {
+            const accounts = type === 'active' ? activeAccounts : inactiveAccounts;
+            
+            if (accounts.length === 0) {
+                showError('没有可复制的账号');
+                return;
+            }
+            
+            const text = accounts.join('\n');
+            copyToClipboard(text, `已复制 ${accounts.length} 个${type === 'active' ? '活跃' : '非活跃'}账号`);
+            
+            // 显示复制成功效果
+            const btn = document.getElementById(`copy${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
+            const originalText = btn.textContent;
+            btn.textContent = '✓ 已复制';
+            btn.classList.add('success');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('success');
+            }, 2000);
+        }
+        
+        // 复制为特定格式
+        function copyFormatted(type, format) {
+            const accounts = type === 'active' ? activeAccounts : inactiveAccounts;
+            
+            if (accounts.length === 0) {
+                showError('没有可复制的账号');
+                return;
+            }
+            
+            let text;
+            if (format === 'colon') {
+                // 转换为 user:pass 格式
+                text = accounts.map(acc => {
+                    if (acc.includes('---')) return acc.replace('---', ':');
+                    if (acc.includes('|')) return acc.replace('|', ':');
+                    return acc;
+                }).join('\n');
+            } else {
+                // 换行格式
+                text = accounts.join('\n');
+            }
+            
+            copyToClipboard(text, `已复制 ${accounts.length} 个账号 (${format === 'colon' ? 'user:pass格式' : '换行格式'})`);
+        }
+        
+        // 通用的复制到剪贴板函数
+        function copyToClipboard(text, successMessage) {
+            // 创建一个临时的textarea元素
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showSuccess(successMessage);
+                } else {
+                    showError('复制失败，请手动复制');
+                }
+            } catch (err) {
+                showError('复制失败: ' + err);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+
+<!-- Mirrored from 2fa.fun/api.php by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:07:30 GMT -->
+</html>

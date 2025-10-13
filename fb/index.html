@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+
+<!-- Mirrored from 2fa.fun/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:06:33 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta property="og:title" content="2FA Auth-2FA工具-2FA验证-谷歌身份验证器网页版Google Authenticator">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="index.html">
+    <meta name="author" content="2fa在线工具网站">
+    <meta property="og:image:alt" content="获取2FA代码-在线保存文本">
+    <meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,在线文本处理工具,FB账号批量检测存活,无需登录登录检测FB账户存活,谷歌验证器网页版,Google authenticator网页版">
+    <meta property="og:description" content="2FA验证，谷歌身份验证网页版，双因素验证(Two-factor authentication,简称 2FA，又名二步验证、双重验证)，是保证账户安全的一道有效防线。在登录或进行敏感操作时，需要输入验证器上的动态密码（类似于银行U盾），进一步保护您的帐户免受潜在攻击者的攻击。双因素验证的动态密码生成器分为软件和硬件两种，最常用的软件有OTP Auth和谷歌验证器 (Google Authenticator)。而此处要实现的功能就是：利用JS或PHP代码生成动态密码，简化用户登录账号获取验证码的流程。">
+    <meta name="google-signin-client_id" content="">
+    <link rel="canonical" href="index.html">
+    <link rel="alternate" href="en.html" hreflang="en-us">
+    <link rel="alternate" href="vi.html" hreflang="vi-vn">
+    <title>2FA Auth-2FA工具-2FA验证-谷歌身份验证器网页版Google Authenticator</title>
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="static/picture/favicon.png">
+
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <link href="../cdn.jsdelivr.net/npm/font-awesome%404.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="../cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+
+    <link href="static/css/icon.css" rel="stylesheet" type="text/css">
+    <link href="static/css/toastr.min.css" rel="stylesheet" type="text/css">
+    <link href="static/css/select2.css" rel="stylesheet" type="text/css">
+    <link href="static/css/app.min.css" media="all" type="text/css" rel="stylesheet">
+    <link href="static/css/custom-style.css" rel="stylesheet" type="text/css">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="uWuXNcr6VvE401osW7KXYmw9xTUoLNuHt97zOKNy">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8W6M18WFZ9');
+    </script>
+
+    <style>
+        /* 自定义样式 */
+        .sidebar-link.active {
+            background-color: rgba(79, 70, 229, 0.1);
+            border-left: 3px solid #4f46e5;
+        }
+        .sidebar-link:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+            border-color: #4338ca;
+        }
+        .btn-success {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        .btn-success:hover {
+            background-color: #059669;
+            border-color: #059669;
+        }
+        .usage-instructions {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="app is-default flex h-screen overflow-hidden">
+        <!-- 侧边导航 -->
+        <div class="w-64 bg-white shadow-lg z-10 hidden md:block">
+            <div class="p-4 border-b">
+                <div class="flex items-center">
+                    <img src="static/picture/2falogo.png" alt="2FA工具" class="h-10">
+                </div>
+            </div>
+            
+            <nav class="p-4">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">菜单</p>
+                <ul>
+                    <li class="mb-1">
+                        <a href="2fa-otp.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-key w-5 text-indigo-500 mr-3"></i>
+                            <span>获取2FA验证码</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="check-live.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
+                            <span>检测FB账户存活</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-envelope w-5 text-emerald-500 mr-3"></i>
+                            <span>快速阅读邮件</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-file-text w-5 text-indigo-500 mr-3"></i>
+                            <span>在线文本处理</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="note-sharing.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-sticky-note w-5 text-indigo-500 mr-3"></i>
+                            <span>在线笔记分享</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- 移动端菜单按钮 -->
+        <div class="md:hidden fixed bottom-4 right-4 z-50">
+            <button id="mobile-menu-button" class="bg-indigo-600 text-white p-3 rounded-full shadow-lg">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端侧边栏 -->
+        <div id="mobile-sidebar" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden">
+            <div class="bg-white h-full w-64 p-4 transform transition-transform">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center">
+                        <img src="static/picture/2falogo.png" alt="2FA工具" class="h-8">
+                    </div>
+                    <button id="close-menu" class="text-gray-500">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <nav>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">菜单</p>
+                    <ul>
+                        <li class="mb-1">
+                            <a href="2fa-otp.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                                <i class="fa fa-key w-5 text-indigo-500 mr-3"></i>
+                                <span>获取2FA验证码</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="check-live.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                                <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
+                                <span>检测FB账户存活</span>
+                            </a>
+                        </li>
+                    <li class="mb-1">
+                        <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-envelope w-5 text-emerald-500 mr-3"></i>
+                            <span>快速阅读邮件</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-file-text w-5 text-indigo-500 mr-3"></i>
+                            <span>在线文本处理</span>
+                        </a>
+                    </li>
+                    <li class="mb-1">
+                        <a href="note-sharing.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
+                            <i class="fa fa-sticky-note w-5 text-indigo-500 mr-3"></i>
+                            <span>在线笔记分享</span>
+                        </a>
+                    </li>
+                </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="flex-1 overflow-y-auto bg-gray-50">
+            <div class="container mx-auto p-4 md:p-6">
+                <div class="card bg-white p-6 mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">在线2FA验证工具</h1>
+                    </div>
+
+                    <form id="form_secret" class="space-y-4" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="SECRET2FA" class="block text-sm font-medium text-gray-700 mb-1">2FA双重验证码/二步验证码获取工具（谷歌身份验证器的网页版）</label>
+                            <textarea id="SECRET2FA" name="SECRET2FA" rows="6" class="form-control w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="在这里输入完整的2FA密钥，可多个/每行一个"></textarea>
+
+                            <p class="mt-1 text-sm text-gray-500">
+                                也可以输入完整格式：UID|密码|2FA|邮箱|邮箱密码... 每行1个账户
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary px-4 py-2 rounded-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fa fa-key"></i>
+                            获取验证码
+                        </button>
+                    </form>
+
+                    <hr class="my-6 border-gray-200">
+
+                    <div id="toggle-2fa-list" class="mt-6">
+                        <!-- 验证码列表区域 -->
+                    </div>
+
+                    <!-- 使用说明区域 -->
+                    <div class="usage-instructions mt-6 p-5">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">谷歌身份验证器网页版使用指南</h3>
+                        <p class="text-gray-700 mb-3">2FA双重验证（Two-factor authentication）是保障账户安全的重要机制，在登录时除密码外还需输入动态验证码。</p>
+                        <p class="text-gray-700 mb-3">本工具作为谷歌身份验证器(Google Authenticator)的网页版本，支持通过2FA密钥生成6位动态验证码，适用于各种需要二次验证的平台。</p>
+                        <p class="text-gray-700 mb-3">使用步骤：
+                            <ol class="list-decimal list-inside ml-2 mt-1 space-y-1">
+                                <li>输入您的2FA密钥</li>
+                                <li>点击"获取验证码"按钮</li>
+                                <li>系统将生成当前有效的验证码，您可以复制使用</li>
+                                <li>验证码每30秒自动更新一次</li>
+                            </ol>
+                        <p class="text-gray-700">提示：请妥善保管您的2FA密钥，不要泄露给他人，以确保您的账户安全。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 移动端菜单控制
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-sidebar').classList.remove('hidden');
+        });
+        
+        document.getElementById('close-menu').addEventListener('click', function() {
+            document.getElementById('mobile-sidebar').classList.add('hidden');
+        });
+        
+        document.getElementById('mobile-sidebar').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+
+        var app_url = '';
+        var datatable;
+
+        setInterval(function () {
+            var f = new Function('', 'window;');
+            f();
+        }, 0);
+    </script>
+
+    <!-- Core Vendors JS -->
+    <script src="static/js/vendors.min.js"></script>
+    <!-- Core JS -->
+    <script src="static/js/app.min.js"></script>
+
+    <!-- Other JS plugins -->
+    <script src="static/js/toastr.min.js"></script>
+    <script src="static/js/sweetalert.min.js"></script>
+    <script src="static/js/moment.js"></script>
+    <script src="static/js/autosize.min.js"></script>
+    <script src="static/js/select2.min.js"></script>
+
+    <!-- axios -->
+    <script src="static/js/axios.min-1.js"></script>
+
+    <!--User defined js code -->
+    <script src="static/js/common.js"></script>
+    <script src="static/js/buffer.min.js"></script>
+    <script src="static/js/otplib.min.js"></script>
+    <script src="static/js/get-2fa-otp.js"></script>
+    <script src="static/js/platform.js" async="" defer=""></script>
+    <script src="static/js/auth.js"></script>
+</body>
+
+
+<!-- Mirrored from 2fa.fun/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:06:36 GMT -->
+</html>
