@@ -1,0 +1,27 @@
+body {
+  background: #f5f7fa;
+  font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.card-link {
+  text-decoration: none;
+  color: #212529;
+}
+
+.card-link:hover {
+  text-decoration: none;
+  color: #0d6efd;
+}
+
+.dark-mode body {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .card {
+  background: #1e1e1e;
+}
+
+.dark-toggle {
+  cursor: pointer;
+}
