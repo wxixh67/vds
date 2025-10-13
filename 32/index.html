@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人导航站</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container">
+            <h1>🚀 我的导航站</h1>
+            <div class="header-tools">
+                <button id="themeToggle" class="theme-btn">🌙</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 搜索栏 -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-box">
+                <select id="searchEngine" class="search-select">
+                    <option value="baidu">百度</option>
+                    <option value="google">Google</option>
+                    <option value="bing">必应</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="搜索你想要的内容..." />
+                <button id="searchBtn">搜索</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 导航内容 -->
+    <main class="container">
+        <!-- 常用工具 -->
+        <section class="nav-category">
+            <h2 class="category-title">📌 常用工具</h2>
+            <div class="nav-grid">
+                <a href="https://github.com" class="nav-item" target="_blank">
+                    <span class="icon">💻</span>
+                    <div class="nav-info">
+                        <h3>GitHub</h3>
+                        <p>代码托管平台</p>
+                    </div>
+                </a>
+                <a href="https://stackoverflow.com" class="nav-item" target="_blank">
+                    <span class="icon">📚</span>
+                    <div class="nav-info">
+                        <h3>Stack Overflow</h3>
+                        <p>编程问答社区</p>
+                    </div>
+                </a>
+                <a href="https://chat.openai.com" class="nav-item" target="_blank">
+                    <span class="icon">🤖</span>
+                    <div class="nav-info">
+                        <h3>ChatGPT</h3>
+                        <p>AI助手</p>
+                    </div>
+                </a>
+                <a href="https://www.figma.com" class="nav-item" target="_blank">
+                    <span class="icon">🎨</span>
+                    <div class="nav-info">
+                        <h3>Figma</h3>
+                        <p>在线设计工具</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 开发资源 -->
+        <section class="nav-category">
+            <h2 class="category-title">🛠️ 开发资源</h2>
+            <div class="nav-grid">
+                <a href="https://developer.mozilla.org" class="nav-item" target="_blank">
+                    <span class="icon">📖</span>
+                    <div class="nav-info">
+                        <h3>MDN</h3>
+                        <p>Web开发文档</p>
+                    </div>
+                </a>
+                <a href="https://www.runoob.com" class="nav-item" target="_blank">
+                    <span class="icon">📝</span>
+                    <div class="nav-info">
+                        <h3>菜鸟教程</h3>
+                        <p>编程学习平台</p>
+                    </div>
+                </a>
+                <a href="https://codepen.io" class="nav-item" target="_blank">
+                    <span class="icon">✏️</span>
+                    <div class="nav-info">
+                        <h3>CodePen</h3>
+                        <p>前端代码演示</p>
+                    </div>
+                </a>
+                <a href="https://www.npmjs.com" class="nav-item" target="_blank">
+                    <span class="icon">📦</span>
+                    <div class="nav-info">
+                        <h3>NPM</h3>
+                        <p>Node包管理器</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 设计资源 -->
+        <section class="nav-category">
+            <h2 class="category-title">🎨 设计资源</h2>
+            <div class="nav-grid">
+                <a href="https://www.dribbble.com" class="nav-item" target="_blank">
+                    <span class="icon">🏀</span>
+                    <div class="nav-info">
+                        <h3>Dribbble</h3>
+                        <p>设计师社区</p>
+                    </div>
+                </a>
+                <a href="https://unsplash.com" class="nav-item" target="_blank">
+                    <span class="icon">📷</span>
+                    <div class="nav-info">
+                        <h3>Unsplash</h3>
+                        <p>免费高清图片</p>
+                    </div>
+                </a>
+                <a href="https://www.iconfont.cn" class="nav-item" target="_blank">
+                    <span class="icon">🔣</span>
+                    <div class="nav-info">
+                        <h3>Iconfont</h3>
+                        <p>阿里图标库</p>
+                    </div>
+                </a>
+                <a href="https://coolors.co" class="nav-item" target="_blank">
+                    <span class="icon">🎨</span>
+                    <div class="nav-info">
+                        <h3>Coolors</h3>
+                        <p>配色方案生成</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 社交媒体 -->
+        <section class="nav-category">
+            <h2 class="category-title">🌐 社交媒体</h2>
+            <div class="nav-grid">
+                <a href="https://weibo.com" class="nav-item" target="_blank">
+                    <span class="icon">📱</span>
+                    <div class="nav-info">
+                        <h3>微博</h3>
+                        <p>社交平台</p>
+                    </div>
+                </a>
+                <a href="https://www.zhihu.com" class="nav-item" target="_blank">
+                    <span class="icon">💡</span>
+                    <div class="nav-info">
+                        <h3>知乎</h3>
+                        <p>问答社区</p>
+                    </div>
+                </a>
+                <a href="https://twitter.com" class="nav-item" target="_blank">
+                    <span class="icon">🐦</span>
+                    <div class="nav-info">
+                        <h3>Twitter</h3>
+                        <p>国际社交平台</p>
+                    </div>
+                </a>
+                <a href="https://www.reddit.com" class="nav-item" target="_blank">
+                    <span class="icon">🔴</span>
+                    <div class="nav-info">
+                        <h3>Reddit</h3>
+                        <p>兴趣社区</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>© 2024 我的导航站 | 简洁高效的个人导航</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
