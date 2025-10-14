@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>文本转表格</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="author" content="在线工具网站" />
+		<meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,汇率换算,世界时间,文本处理工具,FB账号批量检测,facebook批量检测,谷歌验证器网页版,Google authenticator网页版" />
+		<meta name="description" content="本站所有在线工具免费使用，旨在方便大家做业务。工具主要有：2FA验证码获取、汇率换算、文本处理、图片编辑、世界时间、节假日倒计时、笔记分享。" />
+		<link rel="apple-touch-icon" sizes="144x144" href="https://2fa.run/assets/images/favicons/apple-touch-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="57x57" href="https://2fa.run/assets/images/favicons/apple-touch-icon-57x57.png">
+		<link rel="shortcut icon" href="https://2fa.run/assets/images/favicons/tools.png" type="image/png">
+		<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/style.css" />
+		<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/editor.css" />
+		<style>
+			* { word-break: break-all;}
+			a,a:hover{text-decoration: none;}
+			textarea{height:360px!important;background-color: #F7F9FA; border: 0px; border-radius: 0.55rem;padding:2px 4px; box-shadow: none; color: #5E6E80;width: 100%; box-shadow: inset 0px 0px 1px 1px rgb(50 174 77);font-size: 0.65rem;}
+			li { list-style-type: none; float: left;}
+			.note-edit .box-content>.pb-sm-2,.note-edit .box-content>.py-sm-2 { padding: 0px !important;}
+			.title-2fa { position: relative; color: #3B4B5E; font-size: 2rem; font-family: "Poppins", sans-serif; font-weight: 600;}
+			.tongji { width:100%;height: 20px; padding: 0px; margin: 0px; font-weight: 600;font-size: 0.65rem;color: #8f8f8f;display: flex;justify-content: center;}
+			.tongji li { line-height: 20px;}
+			.tongji span { color:#2bb281;font-weight: 600;}
+			.note-right ul { float: left; width: 100%; padding: 0px; margin-bottom: 10px;}
+			.note-right li { margin: 0px 0.25rem 0.55rem 0px;}
+			.note-right button { width: 100%; height: 100%; padding-top: 2px; padding-bottom: 0px; border: 1px solid rgb(84 84 84 / 30%); border-radius: 4px; box-shadow: 1px 2px 2px rgb(150 149 149); background-color: #ffffff;}
+			.note-right button:hover { box-shadow: none; background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%); color: white; border-color: white;}
+			.txtbtn{-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+			#notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999;}
+			.notification { background-color: #030303bf; color: #fff; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateX(100%); transition: opacity 0.5s, transform 0.5s;}
+			.notification.show { opacity: 1; transform: translateX(0);}
+			#replaceModal,#replaceModal_2,#replaceModal_3 { display: none; position: fixed;top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 36px; background-color: white; border: 1px solid #ccc; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 1000;opacity:1;}
+			#replaceModal input,#replaceModal_2 input ,#replaceModal_3 input{ border-radius: 3px; border: 1px solid #5095ff;width: 100%;}
+			#replaceModal p,#replaceModal_2 p,#replaceModal_3 p{margin-bottom:0.5rem!important}
+			#replaceModal button,#replaceModal_2 button ,#replaceModal_3 button{ min-width: 45%; font-weight: 600; width: 100%; border: 0px; border-radius: 3px; color:white; background: #5095ff; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45); padding: .35rem .15rem;}
+			#replaceModal button:hover,#replaceModal_2 button:hover ,#replaceModal_3 button:hover{ color: #000; background: #fff; box-shadow: inset 0px 0px 1px 1px rgba(0, 0, 0, 0.45);}
+			#abortBtn:hover { background: #ff4a4a;}
+			.overlay-txt { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 999;}
+			@media only screen and (min-width: 1201px) {
+				.note-right li {  min-width: 45%;  padding: 0px 0.25rem 0.35rem 0px;  margin: 0px 0.25rem 0.50rem 0px; }
+				.note-right button {  font-size: 0.75rem;  padding: 0.25rem 0.55rem; }
+			}
+			@media only screen and (max-width: 1200px) {
+				.note-right li {  min-width: 45%;  padding: 0px 0.25rem 0.35rem 0px;  margin: 0px 0.25rem 0.50rem 0px; }
+				.note-right button {  font-size: 0.75rem;  padding: 0.25rem 0.55rem; }
+			}
+			@media only screen and (max-width: 990px) {
+				.note-right li {  min-width: 40%;  margin: 0px 0.15rem 0.55rem 0px; }
+				.note-right button {  font-size: 0.75rem;  padding: 0.22rem 0.25rem; }
+			}
+			@media only screen and (max-width: 768px) {
+				.note-right li {  min-width: 30%;  padding: 0px 0.15rem 0.15rem 0px;  margin: 0px 0.1rem 0.2rem 0px; }
+				.note-right button {  font-size: 0.85rem;  padding: 0.15rem 0.15rem; }
+				#replaceModal, #replaceModal_2,#replaceModal_3{top: 50%;left: 5%;transform: translateY(-50%);width: 90%;}
+			}
+		</style>
+
+	</head>
+	<body>
+		<div class="container gutter-top note-edit">
+			<div class="row sticky-parent">
+				<aside class="col-12 col-md-12 col-lg-2">
+					<div class="sidebar box sticky-column">
+						<ul class="nav">
+							<li class="nav__item"><a href="index.html"><i class="icon-key"></i>2FA工具</a></li>
+							<li class="nav__item"><a href="note.html"><i class="icon-clipboard"></i>文本处理</a></li>
+							<li class="nav__item"><a href="work.html"><i class="icon-instagram1"></i>图片处理</a></li>
+							<li class="nav__item"><a href="money.html"><i class="icon-activity"></i>汇率换算</a></li>
+							<li class="nav__item"><a class="active" href="more.html"><i class="icon-more-horizontal"></i>更多工具</a></li>
+						</ul>
+					</div>
+				</aside>
+				<div class="col-12 col-md-12 col-lg-10">
+					<div class="box box-content">
+						<div class="pb-2">
+							<a style="margin-right: 2rem;color:rgba(0,0,0,.85);" href="more.html">
+								<< 返回工具导航</a>
+						</div>
+						<hr>
+						<div class="caption">
+						    <h1 class="title title-style">文本转表格</h1>
+						</div>
+						<div class="row">
+							<div class="col-md-4 col-sm-12 note-right">
+								<ul class="notefun">
+									<li><button class="txtbtn" id="localCache">加载本地缓存</button></li>
+									<li><button class="txtbtn" id="copytxt">复制到剪切板</button></li>
+								</ul>
+								<ul class="notefun">
+									<li><button class="txtbtn" id="cleartxt">清空输入内容</button></li>
+									<li><button class="txtbtn" id="cleartxtLocal">清除缓存数据</button></li>
+									<li><button class="txtbtn" id="clearRepe">清除重复数据</button></li>
+									<li><button class="txtbtn" id="clearBlanklines">清除空白行</button></li>
+								</ul>
+								<ul class="notefun">
+								    <li><button class="txtbtn" id="saveTxt">导出文本TXT</button></li>
+								    <li><button class="txtbtn" id="saveXlsx">按行导出表格</button></li>
+									<li><button class="txtbtn" id="saveXlsxNum">分隔数据导表格</button></li>
+									<li><button class="txtbtn" id="needAddText">添加或删除注释</button></li>
+									<li><button class="txtbtn" id="replaceFormat">变换格式输出</button></li>
+								</ul>
+								<div class="tongji">
+							        <p>输入框统计[<span id="line_num">0</span>]行 [<span id="totalChars">0</span>]字</p>
+                				</div>
+							</div>
+							<div class="col-md-8 col-sm-12 note-left">
+								<textarea id="editor001"></textarea>
+							</div>
+						</div>
+						<hr />
+						<h3 class="title title--h5">文本转表格说明</h3>
+						<p class="tip-p"><strong>友情提示</strong>：<span>可用于注释每段数据、将文本分隔导出表格等。后续会增加其他功能，敬请关注。</span><br /><strong>新手提示</strong>：如果你要处理文本的细节请前往：<a href="note.html" target="_blank">https://2fa.run/note.html</a>。
+							<br><strong>最近维护</strong>：2023年10月24日
+						</p>
+					</div>
+					<footer class="footer">©2025 在线工具</footer>
+				</div>
+			</div>
+		</div>
+		<div id="notification-container"></div>
+		<div class="overlay-txt" id="overlay_txt"></div>
+		<div draggable="true" id="replaceModal">
+			<span>分隔符号 <input type="text" id="splitText_1" placeholder="输入数据分隔符号"></span>
+			<span>格式说明 <input type="text" id="splitTextStyle_1" placeholder="输入数据格式说明(包含分隔符)"></span>
+			<p>1、可将数据分隔并导出具有表头信息的Excel表格。
+			<br>2、分隔符号必须在输入文本中存在，格式说明必须包含有分隔符号。
+			<br>3、必须确认输入数据和格式说明的列数是否一致，否则会提示无法导出。
+			<br>4、删除注释导出时只会删除符合格式说明的文字，其他文字请在<a href="note.html" target="_blank">文本工具</a>替换。
+			<br>5、点击此弹窗之外的其他区域可关闭弹窗。</p>
+			<button id="saveXlsxNumBtn">分隔并导出表格</button>
+			<button style="margin-top:10px;" id="DelTextsaveXlsxNumBtn">去除注释并分隔导出表格</button>
+			<button style="background-color:#ff8d60;margin-top:10px;" onclick="$('#replaceModal').hide();$('#overlay_txt').hide();">关闭弹窗</button>
+		</div>
+		<div draggable="true" id="replaceModal_2">
+		    <span>分隔符号 <input type="text" id="splitText" placeholder="输入数据分隔符号"></span>
+		    <span>格式说明 <input type="text" id="splitTextStyle" placeholder="输入数据格式说明(包含分隔符)"></span>
+			<span>开头添加（全部数据，不是每行） <input type="text" id="addTextStart" placeholder="可添加数据说明"></span>
+			<span>结尾添加（全部数据，不是每行） <input type="text" id="addTextEnd" placeholder="可添加数据说明"></span>
+			<p>1、可为每段数据添加注释并导出TXT文件。
+			<br>2、分隔符必须要在输入的文本中存在。例如：--- 
+			<br>3、格式说明必须包含分隔符。例如：邮箱---备注
+			<br>4、删除注释时可选择性输入格式，不想删除的注释文字省略即可。
+			<br>5、如果想在每行数据的开始和结尾添加备注，请前往<a href="note.html" target="_blank">文本工具</a>【替换或添加】。
+			<br>6、点击此弹窗之外的其他区域可关闭弹窗。</p>
+			<button id="addTextNumBtn">添加注释并导出TXT</button>
+			<button style="margin-top:10px;" id="delTextNumBtn">删除注释并导出TXT</button>
+			<button style="background-color:#ff8d60;margin-top:10px;" onclick="$('#replaceModal_2').hide();$('#overlay_txt').hide();">关闭弹窗</button>
+		</div>
+		<div draggable="true" id="replaceModal_3">
+		    <span>分隔符号 <input type="text" id="splitText_2" placeholder="输入数据分隔符号"></span>
+		    <span>原来格式 <input type="text" id="splitTextStyle_2" placeholder="输入原来的格式说明(包含分隔符)"></span>
+		    <span>新的格式 <input type="text" id="splitTextStyle_2New" placeholder="输入新格式说明(包含分隔符)"></span>
+			<p>1、可更换原来格式的顺序来导出TXT和xlsx文件。
+			<br>2、分隔符必须要在输入的文本中存在。例如：--- 
+			<br>3、格式说明也必须携带分隔符。例如：邮箱---邮箱密码
+			<br>4、如果想省略其他数据，新的格式中不输入即可。
+			<br>5、点击此弹窗之外的其他区域可关闭弹窗。</p>
+			<button id="replaceFormatTxt">更改格式并导出TXT</button>
+			<button style="margin-top:10px;" id="replaceFormatXlsx">更改格式并导出表格</button>
+			<button style="background-color:#ff8d60;margin-top:10px;" onclick="$('#replaceModal_3').hide();$('#overlay_txt').hide();">关闭弹窗</button>
+		</div>
+		<div class="back-to-top"></div>
+		<script src="https://2fa.run/assets/js/jquery-3.4.1.min.js"></script>
+		<script src="https://2fa.run/assets/js/plugins.min.js"></script>
+		<script src="https://2fa.run/assets/js/common.js"></script>
+		<script src="https://2fa.run/assets/js/xlsx.full.min.js"></script>
+		<script>
+			let edit001,edit001val;
+			let localkey = window.localStorage;
+            $('#editor001').on('input selectionchange propertychange', function() {
+                let content = $('#editor001').val(); 
+                localStorage.setItem('edit001', $(this).val());
+                getLineNumbers();
+                if (chechText(content)) {
+					$("#cleartxt").css("background-color", "rgb(255, 108, 108)");
+					$("#cleartxtLocal").css("background-color", "rgb(255, 108, 108)");
+				}
+            });
+            
+	        function getLineNumbers(){
+                let content = $('#editor001').val();
+                let lines = content.split('\n').length;
+                $("#line_num").text(lines);
+                var totalChars = content.length;
+                $('#totalChars').text(totalChars);
+                if(!chechText(content)){
+                    $("#line_num").text("0");
+                }
+            }
+            
+            $(document).ready(function() {
+				edit001val = localkey.getItem("edit001");
+				if (storageValueSum("edit001", 10000)) {
+					$("#localCache").css("background-color", "rgb(255 161 65)");
+					showNotification("检测到大量本地缓存，需点击按钮加载~");
+				} else {
+					if (chechText(edit001val)) {
+						$('#editor001').val(edit001val);
+						$("#cleartxt").css("background-color", "rgb(255, 108, 108)");
+						$("#cleartxtLocal").css("background-color", "rgb(255, 108, 108)");
+					}
+				}
+				getLineNumbers();
+				
+				var originalOpacity = "1";
+                function toggleDraggable($element, isDraggable) {
+                    $element.attr('draggable', isDraggable);
+                }
+                $('#replaceModal, #replaceModal_2, #replaceModal_3').find('input, p').on({
+                    mouseenter: function() {
+                        toggleDraggable($(this).closest('[id^=replaceModal]'), 'false');
+                    },
+                    mouseleave: function() {
+                        toggleDraggable($(this).closest('[id^=replaceModal]'), 'true');
+                    }
+                });
+                $('[id^=replaceModal]').on({
+                    dragstart: function(event) {
+                        $(this).css('opacity', '0.01');
+                    },
+                    dragend: function(event) {
+                        $(this).css('opacity', originalOpacity);
+                    }
+                });
+				
+			});
+			function storageValueSum(key, limit) {
+				if (!key || !limit) {
+					return false;
+				}
+				let storedValue = window.localStorage.getItem(key);
+				return storedValue && storedValue.length >= limit;
+			}
+			$("#localCache").on("click", function() {
+				edit001val = localkey.getItem("edit001");
+				if (!chechText(edit001val)) {
+					showNotification("无本地缓存数据");
+				} else {
+					if (!storageValueSum("edit001", 10000)) {
+						showNotification("字符数小于10000时会自动加载");
+					} else {
+						$('#editor001').val(edit001val);
+						$("#localCache").css("background-color", "rgb(37 176 123 / 42%)");
+						showNotification("已成功加载本地缓存~");
+						getLineNumbers();
+					}
+				}
+			})
+			
+			$("#saveTxt").on("click", function() {
+			    let content = $('#editor001').val();
+				if (!chechText(content)) {
+					showNotification("输入为空！");
+				} else {
+					exportTxt();
+				}
+			})
+			
+			$("#saveXlsx").on('click', function() {
+			    let content = $('#editor001').val();
+				if (!chechText(content)) {
+					showNotification("未输入文本");
+				} else {
+				    var data = content.split('\n');
+                    var rows = [];
+                    for (var i = 0; i < data.length; i++) {
+                        rows.push([data[i]]);
+                    }
+                    var wb = XLSX.utils.book_new();
+                    wb.SheetNames.push("sheet1");
+                    var ws = XLSX.utils.aoa_to_sheet(rows);
+                    wb.Sheets["sheet1"] = ws;
+                    var wbout = XLSX.write(wb, {bookType:'xlsx', type: 'binary'});
+                    function s2ab(s) {
+                        var buf = new ArrayBuffer(s.length);
+                        var view = new Uint8Array(buf);
+                        for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                        return buf;
+                    }
+					let myDate = new Date();
+					XLSX.writeFile(wb, "数据表格_" + myDate.toLocaleString() + ".xlsx");
+				}
+			});
+			
+			$("#cleartxt").on("click", function() {
+				$('#editor001').val("");
+				$(".txtbtn").css("background-color", "#ffffff");
+				showNotification("已清空全部内容");
+				getLineNumbers();
+			})
+			
+			$("#cleartxtLocal").on("click", function() {
+				localStorage.setItem('edit001', "");
+				$('#editor001').val("");
+				$(".txtbtn").css("background-color", "#ffffff");
+				showNotification("已清空文本缓存");
+				getLineNumbers();
+			})
+			
+			$('#clearRepe').on("click", function() {
+			    let content = $('#editor001').val().split('\n');
+                var uniqueLines = Array.from(new Set(content));
+                var newText = uniqueLines.join('\n');
+                $('#editor001').val(newText);
+                localStorage.setItem('edit001', newText);
+                getLineNumbers();
+			});
+			
+			$('#clearBlanklines').on("click", function() {
+			    let content = $('#editor001').val().split('\n');
+                var nonBlankLines = content.filter(function(line) {
+                    return line.trim() != '';
+                });
+                var newText = nonBlankLines.join('\n');
+                $('#editor001').val(newText);
+                localStorage.setItem('edit001', newText);
+                getLineNumbers();
+			});
+			
+			$("#copytxt").on("click", function() {
+				if (!chechText($('#editor001').val())) {
+					showNotification("数据为空");
+				} else {
+					$('#editor001').select();
+					document.execCommand('copy');
+					showNotification("已复制内容");
+				}
+			})
+			
+			$('#saveXlsxNum').on("click", function() {
+			    let content = $('#editor001').val();
+				if (!chechText(content)) {
+					showNotification("输入内容为空");
+				} else {
+					event.stopPropagation(); 
+					$('#replaceModal').show();
+					$('#replaceModal').css('z-index', '99');
+					$('#replaceModal_2').css('z-index', '1');
+					$('#replaceModal_3').css('z-index', '1');
+				}
+			});
+			
+			$(document).on("click", function(event) {
+				var target = $(event.target);
+				if (!target.closest("#replaceModal").length) {
+					$('#replaceModal').hide();
+					$('#replaceModal').css('z-index', '1');
+				}
+				if (!target.closest("#replaceModal_2").length) {
+					$('#replaceModal_2').hide();
+					$('#replaceModal_2').css('z-index', '1');
+				}
+				if (!target.closest("#replaceModal_3").length) {
+					$('#replaceModal_3').hide();
+					$('#replaceModal_3').css('z-index', '1');
+				}
+			});
+			
+			$('#saveXlsxNumBtn').on("click", function() {
+			    let content = $('#editor001').val().trim();
+				let splitText = $('#splitText_1').val().trim();
+				let splitTextStyle = $('#splitTextStyle_1').val().trim();
+				var format = splitTextStyle.split(splitText);
+                var rows = content.split('\n');
+                if (!splitText || !splitTextStyle) {
+                    showNotification("请输入有效的分隔符号和格式说明。");
+                    return;
+                }
+                if (!splitTextStyle.includes(splitText)) {
+                    showNotification("格式说明中缺少分隔符！");
+                    return;
+                }
+                var processedData = [];
+                processedData.push(format); 
+                for (var i = 0; i < rows.length; i++) {
+                    var rowData = rows[i].split(splitText);
+                    
+                    if (!rows[i].includes(splitText)) {
+                        showNotification("数据中的第 " + (i+1) + " 行缺少分隔符！");
+                        return;
+                    }
+                    if (rowData.length === format.length) {
+                        processedData.push(rowData);
+                    }else{
+                        showNotification("数据有误 或 格式说明错误，请检查！");
+                        return;
+                    }
+                }
+                var wb = XLSX.utils.book_new();
+                wb.SheetNames.push("Sheet1");
+                var ws = XLSX.utils.aoa_to_sheet(processedData);
+                wb.Sheets["Sheet1"] = ws;
+                let myDate = new Date();
+				XLSX.writeFile(wb, "分隔结果_" + myDate.toLocaleString() + ".xlsx");
+				$('#replaceModal').hide();
+			});
+			
+			$('#DelTextsaveXlsxNumBtn').on("click", function() {
+			    let content = $('#editor001').val().trim();
+			    let contentArr = content.split('\n');
+				let splitText = $('#splitText_1').val().trim();
+				let splitTextStyle = $('#splitTextStyle_1').val().trim();
+				var format = splitTextStyle.split(splitText);
+                
+                if (!splitText || !splitTextStyle) {
+                    showNotification("请输入有效的分隔符号和格式说明。");
+                    return;
+                }
+                if (!splitTextStyle.includes(splitText)) {
+                    showNotification("格式说明中缺少分隔符！");
+                    return;
+                }
+                var checkResults = checkFormatTermsInInput(content,format);
+                if (checkResults != true) {
+                    showNotification("以下格式说明词不在输入数据中：" + checkResults.join(", "));
+                    return;
+                }
+                var replacements = {};
+                format.forEach(function(term) {
+                    replacements[term + '：'] = '';
+                });
+                var processedData1 = contentArr.map(function(line) {
+                    Object.keys(replacements).forEach(function(key) {
+                        line = line.replace(key, replacements[key]);
+                    });
+                    return line;
+                });
+                var finalData = processedData1.join('\n');
+                var rows = finalData.split('\n');
+                var processedData = [];
+                processedData.push(format); 
+                for (var i = 0; i < rows.length; i++) {
+                    var rowData = rows[i].split(splitText);
+                    
+                    if (!rows[i].includes(splitText)) {
+                        showNotification("数据中的第 " + (i+1) + " 行缺少分隔符！");
+                        return;
+                    }
+                    if (rowData.length === format.length) {
+                        processedData.push(rowData);
+                    }else{
+                        showNotification("数据有误 或 格式说明错误，请检查！");
+                        return;
+                    }
+                }
+                var wb = XLSX.utils.book_new();
+                wb.SheetNames.push("Sheet1");
+                var ws = XLSX.utils.aoa_to_sheet(processedData);
+                wb.Sheets["Sheet1"] = ws;
+                let myDate = new Date();
+				XLSX.writeFile(wb, "分隔结果_" + myDate.toLocaleString() + ".xlsx");
+				$('#replaceModal').hide();
+			});
+			
+			$('#needAddText').on("click", function() {
+			    let content = $('#editor001').val();
+				if (!chechText(content)) {
+					showNotification("输入内容为空");
+				} else {
+					event.stopPropagation(); 
+					$('#replaceModal_2').show();
+					$('#replaceModal_2').css('z-index', '99');
+					$('#replaceModal').css('z-index', '1');
+					$('#replaceModal_3').css('z-index', '1');
+				}
+			});
+			
+			
+			$('#addTextNumBtn').on("click", function() {
+			    let content = $('#editor001').val().trim().split('\n');
+				let splitText = $('#splitText').val().trim();
+				let splitTextStyle = $('#splitTextStyle').val().trim().split(splitText);
+				let addTextStart = $('#addTextStart').val();
+				let addTextEnd = $('#addTextEnd').val();
+                if (!splitText || splitTextStyle.length === 0) {
+                    showNotification("请输入有效的分隔符号和格式说明。");
+                    return;
+                }
+                
+                if (!$('#editor001').val().includes(splitText)) {
+                    showNotification("数据中不包含分隔符号！");
+                    return;
+                }
+                var finalData = "";
+                if(chechText(addTextStart)){
+                    finalData = addTextStart + '\n';
+                }
+                try {
+                    content.forEach(function(row) {
+                        var columns = row.split(splitText);
+                        if (columns.length !== splitTextStyle.length) {
+                            throw new Error('Terminate');
+                        }
+                        var annotatedRow = '';
+                        for (var i = 0; i < columns.length; i++) {
+                            annotatedRow += splitTextStyle[i] + '：' + columns[i] + ((i < columns.length - 1) ? splitText : '');
+                        }
+                        finalData += annotatedRow + '\n';
+                    });
+                } catch (e) {
+                    if (e.message === 'Terminate') {
+                        showNotification("数据有误 或 格式说明错误，请检查！");
+                        return;
+                    }
+                    throw e;
+                }
+                if(chechText(addTextEnd)){
+                    finalData += addTextEnd;
+                }
+				var myDate = new Date();
+    			var nameTxt  = '添加注释的文本_' + myDate.toLocaleString() + '.txt';
+    			exportRaw(finalData, nameTxt);
+    			showNotification("正在导出，请选择位置保存。");
+				$('#replaceModal_2').hide();
+			});
+			
+			function checkFormatTermsInInput(inputData, formatTerms) {
+                var missingTerms = [];
+            
+                formatTerms.forEach(function(term) {
+                    if (!inputData.includes(term)) {
+                        missingTerms.push(term);
+                    }
+                });
+                return missingTerms.length > 0 ? missingTerms : true;
+			}
+			$('#delTextNumBtn').on("click", function() {
+			    let contentVal = $('#editor001').val();
+			    let content = $('#editor001').val().trim().split('\n');
+				let splitText = $('#splitText').val().trim();
+				let splitTextStyle = $('#splitTextStyle').val().trim().split(splitText);
+                if (!splitText || splitTextStyle.length === 0) {
+                    showNotification("请输入有效的分隔符号和格式说明。");
+                    return;
+                }
+                if (!$('#editor001').val().includes(splitText)) {
+                    showNotification("数据中不包含分隔符号！");
+                    return;
+                }
+                var checkResults = checkFormatTermsInInput(contentVal,splitTextStyle);
+                if (checkResults != true) {
+                    showNotification("以下格式说明词不在输入数据中：" + checkResults.join(", "));
+                    return;
+                }
+                var replacements = {};
+                splitTextStyle.forEach(function(term) {
+                    replacements[term + '：'] = '';
+                });
+                var processedData = content.map(function(line) {
+                    Object.keys(replacements).forEach(function(key) {
+                        line = line.replace(key, replacements[key]);
+                    });
+                    return line;
+                });
+                var finalData = processedData.join('\n');
+                var myDate = new Date();
+    			var nameTxt  = '删除注释的文本_' + myDate.toLocaleString() + '.txt';
+    			exportRaw(finalData, nameTxt);
+    			showNotification("正在导出，请选择位置保存。");
+				$('#replaceModal_2').hide();
+			});
+		
+			$('#replaceFormat').on("click", function() {
+			    let content = $('#editor001').val();
+				if (!chechText(content)) {
+					showNotification("输入内容为空");
+				} else {
+			        event.stopPropagation(); 
+					$('#replaceModal_3').show();
+					$('#replaceModal_3').css('z-index', '99');
+					$('#replaceModal').css('z-index', '1');
+					$('#replaceModal_2').css('z-index', '1');
+				}
+			});
+			
+			$('#replaceFormatTxt').on("click", function() {
+			    let rawData = $('#editor001').val().trim();
+                let delimiter = $('#splitText_2').val().trim();
+                let originalFormat = $('#splitTextStyle_2').val().trim().split(delimiter).map(item => item.trim());
+                let newFormat = $('#splitTextStyle_2New').val().trim().split(delimiter).map(item => item.trim());
+                
+                if (!delimiter || originalFormat.length === 0 || newFormat.length === 0) {
+                    showNotification("请输入有效的分隔符和格式。");
+                    return;
+                }
+                
+                if (!$('#editor001').val().includes(delimiter)) {
+                    showNotification("数据中不包含分隔符号！");
+                    return;
+                }
+                if(checkArr(originalFormat,newFormat)===false){
+                    showNotification("新格式和老格式对比有错误！");
+                    return;
+                }
+                var lines = rawData.split('\n');
+                var processedData = lines.map(line => {
+                    var parts = line.trim().split(delimiter);
+                    var originalFormatMap = originalFormat.reduce((obj, key, index) => ({ ...obj, [key]: parts[index] }), {});
+                    return newFormat.map(f => originalFormatMap[f]);
+                });
+                var stringData = joinDelimiterArray(processedData,delimiter);
+                var myDate = new Date();
+    			var nameTxt  = '新格式文本_' + myDate.toLocaleString() + '.txt';
+    			exportRaw(stringData, nameTxt);
+    			showNotification("正在导出，请选择位置保存。");
+				$('#replaceModal_3').hide();
+			});
+			
+			function joinDelimiterArray(arr, separator) {
+                const rows = arr.map(row => {
+                    return row.join(separator);
+                });
+                return rows.join('\n');
+            }
+			
+			$('#replaceFormatXlsx').on("click", function() {
+			    let rawData = $('#editor001').val().trim();
+                let delimiter = $('#splitText_2').val().trim();
+                let originalFormat = $('#splitTextStyle_2').val().trim().split(delimiter).map(item => item.trim());
+                let newFormat = $('#splitTextStyle_2New').val().trim().split(delimiter).map(item => item.trim());
+                
+                if (!delimiter || originalFormat.length === 0 || newFormat.length === 0) {
+                    showNotification("请输入有效的分隔符和格式。");
+                    return;
+                }
+                
+                if (!$('#editor001').val().includes(delimiter)) {
+                    showNotification("数据中不包含分隔符号！");
+                    return;
+                }
+                if(checkArr(originalFormat,newFormat)===false){
+                    showNotification("新格式和老格式对比有错误！");
+                    return;
+                }
+                
+                var lines = rawData.split('\n');
+                var processedData = lines.map(line => {
+                    var parts = line.split(delimiter);
+                    var originalFormatMap = originalFormat.reduce((obj, key, index) => ({ ...obj, [key]: parts[index] }), {});
+                    return newFormat.map(f => originalFormatMap[f]);
+                });
+                processedData.unshift(newFormat);
+                var myDate = new Date();
+    			var nameTxt  = '新格式文本_' + myDate.toLocaleString() + '.txt';
+                var worksheet = XLSX.utils.aoa_to_sheet(processedData);
+                var workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+                XLSX.writeFile(workbook, "数据表格_" + myDate.toLocaleString() + ".xlsx");
+			});
+			
+            function checkArr(arr1,arr2){
+                if (arr1.length === arr2.length) {
+                    const sortedArr1 = arr1.slice().sort();
+                    const sortedArr2 = arr2.slice().sort();
+                    for (let i = 0; i < sortedArr1.length; i++) {
+                        if (sortedArr1[i] !== sortedArr2[i]) {
+                            return false;
+                        }
+                    }
+                }
+                if(arr1.length < arr2.length){
+                    return false;
+                }
+                if(isSubset(arr1,arr2) === false){
+                    return false;
+                }
+            }
+            function isSubset(array1, array2) {
+                return array2.every(element => array1.includes(element));
+            }
+			function isBase64Encoded(str) {
+				return /^[a-zA-Z0-9+/]+={0,2}$/.test(str);
+			}
+			function chechText(texts) {
+				if (texts == "" || texts == null || texts == undefined || texts === "<p><br></p>") {
+					return false;
+				}
+				return true;
+			}
+			
+			function showNotification(message) {
+				const container = document.getElementById('notification-container');
+				const notification = document.createElement('div');
+				notification.className = 'notification';
+				notification.textContent = message;
+				container.appendChild(notification);
+				void notification.offsetWidth;
+				notification.classList.add('show');
+				setTimeout(() => {
+					notification.remove();
+				}, 3000);
+			}
+			function exportTxt() {
+				let txtData = localkey.getItem("edit001");
+    			var myDate = new Date();
+    			var nameTxt  = 'TXT_' + myDate.toLocaleString() + '.txt';
+    			exportRaw(txtData, nameTxt);
+    			showNotification("正在导出，请选择位置保存。");
+			}
+			function exportRaw(data, name) {
+				let urlObject = window.URL || window.webkitURL || window;
+				let export_blob = new Blob(["\ufeff" + data], {
+					type: 'text/txt;charset=utf-8;'
+				});
+				let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+				save_link.href = urlObject.createObjectURL(export_blob);
+				save_link.download = name;
+				save_link.click();
+			}
+			function copyClassVal(copyValClass) {
+				window.getSelection().removeAllRanges();
+				var copyvalue = document.querySelector(copyValClass);
+				var range = document.createRange();
+				range.selectNode(copyvalue);
+				window.getSelection().addRange(range);
+				document.execCommand('copy');
+				window.getSelection().removeAllRanges();
+			}
+			function copyMess(mess) {
+				var input = document.createElement("input");
+				input.value = mess;
+				document.body.appendChild(input);
+				input.select();
+				input.setSelectionRange(0, input.value.length), document.execCommand('Copy');
+				document.body.removeChild(input);
+			}
+		</script>
+	</body>
+</html>

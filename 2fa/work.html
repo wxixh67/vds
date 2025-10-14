@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>图片编辑</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="在线工具网站" />
+	<meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,汇率换算,世界时间,文本处理工具,FB账号批量检测,facebook批量检测,谷歌验证器网页版,Google authenticator网页版" />
+	<meta name="description" content="本站所有在线工具免费使用，旨在方便大家做业务。工具主要有：2FA验证码获取、汇率换算、文本处理、图片编辑、世界时间、节假日倒计时、笔记分享。" />
+	<link rel="apple-touch-icon" sizes="144x144" href="https://2fa.run/assets/images/favicons/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="57x57" href="https://2fa.run/assets/images/favicons/apple-touch-icon-57x57.png">
+	<link rel="shortcut icon" href="https://2fa.run/assets/images/favicons/tools.png" type="image/png">
+	<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/style.css"/>
+	<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/fonts/fonts.css"/>
+	<style>
+        *{word-break: break-all;}
+        li,ul{list-style-type: none;}
+        .title-photo{font-size: 2rem;}
+        .title-p{margin-bottom: 0px!important;}
+        .photo-edit .pb-sm-2,.photo-edit .py-sm-2{padding: 0px!important;}
+        .imgedit{max-height: 380px;}
+        .imgedit ul{width:100%;min-height: 100px;float: left;padding: 0px;margin: 0px 0.55rem 0px 0px;}
+        .imgedit li{float: left;width:100%;height: 30px;margin:0px 0px 10px 0px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+        .imgedit input,.imgedit div{padding: 0px;margin: 0px;width:100%;height: 100%;text-align: center;}
+        .imgedit li>input{color:white;border:0px;border-radius: 5px;box-shadow: 2px 2px 2px rgba(0,0,0,.25);background-color: #007bff;}
+        .imgedit div{padding: 3px 0px;margin: 0px 0px 3px 0px;}
+        .imgedit button{min-width:100%;line-height: 1.75rem;color: white;border:0px;border-radius: 5px;box-shadow: 2px 2px 2px rgba(0,0,0,.25);background-color: #2ab280;}
+        .imgedit button:hover{background: none;color:#000;box-shadow:inset 0px 0px 2px 2px rgba(0,0,0,.25);}
+        input[type="file"] {position: absolute;top: 0;left: 0;width: 100%;height: 100%;padding: 0px;margin: 0px;opacity: 0;cursor: pointer;z-index: 999;}
+        .photo-button {background-color: #007bff;color: #fff;padding: 3px 5px;margin: 3px 0px;border: none;cursor: pointer;border-radius: 5px;display: inline-block;box-shadow: 2px 2px 2px rgba(0,0,0,.25);position: relative;overflow: hidden;}
+        .photo-button:hover,.imgedit input:hover {color: #000;background: none;box-shadow:inset 0px 0px 2px 2px rgba(0,0,0,.25);}
+        .operate-block{margin: 0px;padding: 0px;width: 100%;height: auto;}
+        #canvas{max-height: 380px;max-width: 100%;margin: 0px;padding: 0px;text-align: center;border: 1px dashed rgba(0,0,0,.25);}
+        #textControls button{background: #e3e3ffc9;}
+        #textControls button:nth-child(even),
+        #imageControls button:nth-child(even){background: #ffbaba;margin-right: 15px;}
+        #imageControls button{background: #deffc9ba;}
+        #textControls button, #imageControls button{margin: 0.25rem 0.55rem 0.25rem 0px;border: 1px solid rgba(0,0,0,.55);border-radius: 3px;}
+        .float-window {display:none;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 999;justify-content: center;align-items: center;}
+        .float-content {right: 0;bottom: 0;background-color: #fff;padding: 20px;border-radius: 5px;width: 80%;max-width: 500px;}
+        .ov-operate{border: 1px solid rgba(0, 0, 0, 0.55);border-radius: 10px;background-color: rgba(255, 255, 255, 0.5);padding: 10px;-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+        .ov-operate>input{width:100%;}
+        .font-div select{border-radius: 3px;padding: 5px 5px;margin: 5px 0px;border: 1px solid rgba(0,0,0,.55);background: rgb(255 255 255);line-height: 15px;}
+        .ov-operate>div>button{margin: 5px 0px;width: 100%;border: 1px solid rgba(0,0,0,.55);border-radius: 5px;background: #2ab280;}
+        .ov-operate>div>select{height:30px;}
+        .ov-operate>button{width: 100%;border: 0px;margin-top: 10px;border-radius: 5px;background: #ffbaba;}
+        .draggable-area{margin-bottom: 5px;cursor: move;background: rgb(255 255 255);border: 1px dashed rgba(0,0,0,.55);border-radius: 5px;line-height: 30px;color: black;font-weight: 600;display: flex;justify-content: center;align-content: center;}
+        .ov-modal{position: fixed;top: 0;left: 0;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;z-index: 999;}
+        .ov-close{width: 100%;height: 100%;background: none;border: 0px;display: flex;align-items: end;justify-content: right;}
+        #notification-container {position: fixed;top: 20px;right: 20px;z-index: 9999;}
+        .notification {background-color: #030303bf;color: #fff;padding: 15px;border-radius: 4px;margin-bottom: 10px;box-shadow: 0 2px 5px rgba(0,0,0,0.3);opacity: 0;transform: translateX(100%);transition: opacity 0.5s, transform 0.5s;}
+        .notification.show {opacity: 1;transform: translateX(0);}
+        #showRoundedModal{background: #007bff;}
+        #roundedCornersModal{max-width:200px;border-radius: 10px;background: rgba(0,0,0,.15);}
+        #roundedCornersModal input{width: 100%;margin: 0px 5px 5px 0px;}
+        #roundedCornersModal button{width: 100%;margin: 0px 0px 5px 0px;border:0px;border-radius: 5px;background: #2ab280;}
+        #roundedCornersModal button:nth-child(even){color: black;background: #ffbaba;}
+        #textControls button:hover,#imageControls button:hover,#roundedCornersModal button:hover,#showRoundedModal:hover{background: white;box-shadow: 1px 1px 2px rgba(0,0,0,0.6);border:1px solid rgba(0,0,0,.2);}
+	</style>
+</head>
+<body>
+    <div class="container gutter-top photo-edit">
+	    <div class="row sticky-parent">
+            <aside class="col-12 col-md-12 col-lg-2">
+			    <div class="sidebar box sticky-column">
+                    <ul class="nav">
+                        <li class="nav__item"><a href="index.html"><i class="icon-key"></i>2FA工具</a></li>
+							<li class="nav__item"><a href="note.html"><i class="icon-clipboard"></i>文本处理</a></li>
+                            <li class="nav__item"><a class="active" href="work.html"><i class="icon-instagram1"></i>图片处理</a></li>
+                            <li class="nav__item"><a href="money.html"><i class="icon-activity"></i>汇率换算</a></li>
+                            <li class="nav__item"><a href="more.html"><i class="icon-more-horizontal"></i>更多工具</a></li>
+                    </ul>
+				</div>
+	        </aside>
+	        <div class="col-12 col-md-12 col-lg-10">
+			    <div class="box box-content">
+					<div class="pb-0 pb-sm-2">
+	                    <h1 class="title-photo">图片编辑</h1>
+	                    <p class="title-p">可以为图片添加透明元素和自定义字体的文字。</p>
+					</div>
+					<hr/>
+					<div class="row">
+    					<div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 imgedit">
+    					    <ul>
+        				        <li>
+                                    <div class="photo-button" style="background:#945fff;">添加背景
+                                        <input type="file" id="backgroundImage" accept="image/*" onchange="loadBackgroundImage(event)" />
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="photo-button">添加图片
+                                        <input type="file" id="overlayImage" accept="image/*" multiple onchange="loadOverlayImages(event)" />
+                                    </div>
+                                </li>
+                                <li><input type="button" value="添加文字" onclick="addTextInput()" /></li>
+                                <li><button id="showRoundedModal">设置圆角</button></li>
+                                <li><button onclick="downloadCanvas()">导出图片</button></li>
+    					    </ul>
+    					</div>
+    					<div class="col-lg-8 col-md-10 col-sm-12 col-xs-12" style="display: flex;justify-content: center;">
+    					    <canvas id="canvas"></canvas>
+    				    </div>
+				    </div>
+				    <div class="operate-block">
+                        <div id="imageControls"></div>
+                        <div id="textControls"></div>
+                        <div class="button-container" id="btn_add"></div>
+                        <div class="float-window" id="operate_over">
+                            <div class="float-content" id = "operate-btn">
+                            </div>
+                        </div>
+				    </div>
+			    <hr/>
+    				<h3 class="title title--h5">图片工具说明</h3>
+    				<p class="tip-p"><strong>功能说明</strong>：<span>不是专业的作图工具，未实现图层的调整，仅适合简单的P图。图片可移动、可缩放，字体可设置颜色、更换字体（字体有限选择，部分字体选择后可能无法生效）。可为图片设置圆角导出，导出的格式为PNG。（会持续更新此工具，目前还有多处BUG）</span><br/><strong>新手提示</strong>：需要上传背景图片才可以添加图片和文字。点击添加图片、添加文字后会出现【编辑按钮】和【删除按钮】。点击编辑按钮可以在弹窗设置相关值。预览的图片大小非实际大小，上传的图片分辨率是多少导出就是多少，未做压缩处理。所有功能处理仅在浏览器端完成，推荐使用火狐和谷歌浏览器。
+    				<br><strong>最近维护</strong>：2023年08月20日</p>
+			    </div>
+				<footer class="footer">©2025 在线工具</footer>
+			</div>
+		</div>
+	</div>
+    <div class="back-to-top"></div>
+    <div id="notification-container"></div>
+    <div id="roundedCornersModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border: 1px solid #ccc;">
+        <input type="number" id="topLeft" placeholder="左上角" />
+        <input type="number" id="topRight" placeholder="右上角" />
+        <input type="number" id="bottomLeft" placeholder="左下角" />
+        <input type="number" id="bottomRight" placeholder="右下角" />
+        <button id="applyRounded">应用圆角</button>
+        <button id="closeModal">关闭窗口</button>
+    </div>
+	<script src="https://2fa.run/assets/js/jquery-3.4.1.min.js"></script>
+	<script src="https://2fa.run/assets/js/plugins.min.js"></script>
+    <script src="https://2fa.run/assets/js/common.js"></script>
+    <script>
+        const availableFonts = [{name: "OCR_B_10_BT",value: "OCR_B_10_BT"},{name: "display dots",value: "display-dots"},{name: "orange juice",value: "orange_juice"},{name: "04661679",value: "04661679"},{name: "10418306",value: "10418306"},{name: "12229",value: "12229"},{name: "12453",value: "12453"},{name: "35191___",value: "35191___"},{name: "36223158",value: "36223158"},{name: "59250___",value: "59250___"},{name: "70729___",value: "70729___"},{name: "7793",value: "7793"},{name: "8Pin Matrix",value: "8Pin Matrix"},{name: "9622",value: "9622"},{name: "A Glitch In Time",value: "A Glitch In Time"},{name: "Aaargh",value: "Aaargh"},{name: "abel-regular",value: "abel-regular"},{name: "AbhayaLibre-Bold",value: "AbhayaLibre-Bold"},{name: "AbhayaLibre-ExtraBold",value: "AbhayaLibre-ExtraBold"},{name: "AbhayaLibre-Medium",value: "AbhayaLibre-Medium"},{name: "AbhayaLibre-Regular",value: "AbhayaLibre-Regular"},{name: "AbhayaLibre-SemiBold",value: "AbhayaLibre-SemiBold"},{name: "Across the Road",value: "Across the Road"},{name: "AGENCYB",value: "AGENCYB"},{name: "AGENCYR",value: "AGENCYR"},{name: "aldhabi",value: "aldhabi"},{name: "ALGER",value: "ALGER"},{name: "AllRoundGothic-Bold_3",value: "AllRoundGothic-Bold_3"},{name: "AllRoundGothic-BoldOblique_3",value: "AllRoundGothic-BoldOblique_3"},{name: "AllRoundGothic-Book_5",value: "AllRoundGothic-Book_5"},{name: "AllRoundGothic-BookOblique_3",value: "AllRoundGothic-BookOblique_3"},{name: "AllRoundGothic-Demi_3",value: "AllRoundGothic-Demi_3"},{name: "AllRoundGothic-DemiOblique_3",value: "AllRoundGothic-DemiOblique_3"},{name: "AllRoundGothic-Medium_5",value: "AllRoundGothic-Medium_5"},{name: "AllRoundGothic-MediumOblique_3",value: "AllRoundGothic-MediumOblique_3"},{name: "AllRoundGothic-XLig_5",value: "AllRoundGothic-XLig_5"},{name: "AllRoundGothic-XLigOblique_3",value: "AllRoundGothic-XLigOblique_3"},{name: "Always Forever Bold",value: "Always Forever Bold"},{name: "Always Forever",value: "Always Forever"},{name: "Always In My Heart",value: "Always In My Heart"},{name: "Ansley Display-Regular",value: "Ansley Display-Regular"},{name: "ANTQUAB",value: "ANTQUAB"},{name: "ANTQUABI",value: "ANTQUABI"},{name: "ANTQUAI",value: "ANTQUAI"},{name: "ARBLI__",value: "ARBLI__"},{name: "Arial Black_2",value: "Arial Black_2"},{name: "Arial Regular",value: "Arial Regular"},{name: "ARIAL",value: "ARIAL"},{name: "arial_0",value: "arial_0"},{name: "arialbd",value: "arialbd"},{name: "arialbd_0",value: "arialbd_0"},{name: "arialbi",value: "arialbi"},{name: "arialbi_0",value: "arialbi_0"},{name: "arial-black_[allfont",value: "arial-black_[allfont"},{name: "ariali",value: "ariali"},{name: "ariali_0",value: "ariali_0"},{name: "arial-mt-extra-bold",value: "arial-mt-extra-bold"},{name: "ARIALN",value: "ARIALN"},{name: "ARIALN_0",value: "ARIALN_0"},{name: "arial-narrow_[allfont",value: "arial-narrow_[allfont"},{name: "arialnb",value: "arialnb"},{name: "ARIALNBI",value: "ARIALNBI"},{name: "ARIALNI",value: "ARIALNI"},{name: "ARIALUNI",value: "ARIALUNI"},{name: "ariblk",value: "ariblk"},{name: "Arkhip_font",value: "Arkhip_font"},{name: "ARLRDBD",value: "ARLRDBD"},{name: "arnamu",value: "arnamu"},{name: "arnamub",value: "arnamub"},{name: "arnamubi",value: "arnamubi"},{name: "arnamui",value: "arnamui"},{name: "Autograf_PersonalUseOnly",value: "Autograf_PersonalUseOnly"},{name: "bahnschrift",value: "bahnschrift"},{name: "Baloo-Regular_07dce754b98c840ee605e0087784e4d0",value: "Baloo-Regular_07dce754b98c840ee605e0087784e4d0"},{name: "BASKVILL",value: "BASKVILL"},{name: "BAUHS93",value: "BAUHS93"},{name: "BELL MT",value: "BELL MT"},{name: "BELL",value: "BELL"},{name: "BELLB",value: "BELLB"},{name: "Bellerose",value: "Bellerose"},{name: "BELLI",value: "BELLI"},{name: "BERNHC",value: "BERNHC"},{name: "Bevan-Regular_002f77bed96d1377c44d60ce9270a2d8",value: "Bevan-Regular_002f77bed96d1377c44d60ce9270a2d8"},{name: "big_noodle_titling",value: "big_noodle_titling"},{name: "bill_au",value: "bill_au"},{name: "Biloxi Script",value: "Biloxi Script"},{name: "Biloxi Thin",value: "Biloxi Thin"},{name: "BOD",value: "BOD"},{name: "BOD_0",value: "BOD_0"},{name: "BOD_B",value: "BOD_B"},{name: "BOD_BI",value: "BOD_BI"},{name: "BOD_BLAI",value: "BOD_BLAI"},{name: "BOD_BLAR",value: "BOD_BLAR"},{name: "BOD_CB",value: "BOD_CB"},{name: "BOD_CBI",value: "BOD_CBI"},{name: "BOD_CI",value: "BOD_CI"},{name: "BOD_CR",value: "BOD_CR"},{name: "BOD_I",value: "BOD_I"},{name: "BOD_PSTC",value: "BOD_PSTC"},{name: "BOD_R",value: "BOD_R"},{name: "Book antigua",value: "Book antigua"},{name: "BOOKOS",value: "BOOKOS"},{name: "BOOKOSB",value: "BOOKOSB"},{name: "BOOKOSBI",value: "BOOKOSBI"},{name: "BOOKOSI",value: "BOOKOSI"},{name: "BRADHITC",value: "BRADHITC"},{name: "BRADHITC_0",value: "BRADHITC_0"},{name: "BRITANIC",value: "BRITANIC"},{name: "BRLNSB",value: "BRLNSB"},{name: "BRLNSDB",value: "BRLNSDB"},{name: "BRLNSR",value: "BRLNSR"},{name: "BROADW",value: "BROADW"},{name: "BRUSHSCI",value: "BRUSHSCI"},{name: "BSSYM7",value: "BSSYM7"},{name: "Calibri",value: "Calibri"},{name: "calibrib",value: "calibrib"},{name: "calibrib_0",value: "calibrib_0"},{name: "calibrii",value: "calibrii"},{name: "calibrii_0",value: "calibrii_0"},{name: "calibril",value: "calibril"},{name: "calibrili",value: "calibrili"},{name: "calibriz",value: "calibriz"},{name: "calibriz_0",value: "calibriz_0"},{name: "CALIFB",value: "CALIFB"},{name: "CALIFI",value: "CALIFI"},{name: "CALIFR",value: "CALIFR"},{name: "CALIST",value: "CALIST"},{name: "CALISTB",value: "CALISTB"},{name: "CALISTBI",value: "CALISTBI"},{name: "CALISTI",value: "CALISTI"},{name: "cambriab",value: "cambriab"},{name: "cambriai",value: "cambriai"},{name: "cambriaz",value: "cambriaz"},{name: "Candara",value: "Candara"},{name: "Candarab",value: "Candarab"},{name: "Candarai",value: "Candarai"},{name: "Candaraz",value: "Candaraz"},{name: "CANDY",value: "CANDY"},{name: "CapricaScriptPersonalUse",value: "CapricaScriptPersonalUse"},{name: "CASTELAR",value: "CASTELAR"},{name: "CaviarDreams_Bold_0",value: "CaviarDreams_Bold_0"},{name: "Cecilia Script",value: "Cecilia Script"},{name: "cecilia_script-webfont",value: "cecilia_script-webfont"},{name: "CENSCBK",value: "CENSCBK"},{name: "CENTAUR",value: "CENTAUR"},{name: "CENTURY",value: "CENTURY"},{name: "CHER_0",value: "CHER_0"},{name: "CHILLER",value: "CHILLER"},{name: "Chivo-Black",value: "Chivo-Black"},{name: "CinzelDecorative-Black_89eeef9fee3bb5426e6d5fcdda990f94",value: "CinzelDecorative-Black_89eeef9fee3bb5426e6d5fcdda990f94"},{name: "cmbx10",value: "cmbx10"},{name: "cmsy10",value: "cmsy10"},{name: "cmtt8",value: "cmtt8"},{name: "cocacolaii",value: "cocacolaii"},{name: "Codystar-Light",value: "Codystar-Light"},{name: "Codystar-Regular",value: "Codystar-Regular"},{name: "COLONNA",value: "COLONNA"},{name: "comic",value: "comic"},{name: "comicbd",value: "comicbd"},{name: "comici",value: "comici"},{name: "comicz",value: "comicz"},{name: "Confessions WITHOUT ACCENTS (TrueType)",value: "Confessions WITHOUT ACCENTS (TrueType)"},{name: "consola",value: "consola"},{name: "consola_0",value: "consola_0"},{name: "consolab",value: "consolab"},{name: "consolai",value: "consolai"},{name: "consolaz",value: "consolaz"},{name: "constan",value: "constan"},{name: "constanb",value: "constanb"},{name: "constani",value: "constani"},{name: "constanz",value: "constanz"},{name: "coolvetica rg_0",value: "coolvetica rg_0"},{name: "coolvetica_rg",value: "coolvetica_rg"},{name: "COOPBL",value: "COOPBL"},{name: "COPRGTB",value: "COPRGTB"},{name: "COPRGTL",value: "COPRGTL"},{name: "corbel",value: "corbel"},{name: "corbelb",value: "corbelb"},{name: "corbeli",value: "corbeli"},{name: "corbelz",value: "corbelz"},{name: "cour",value: "cour"},{name: "cour_0",value: "cour_0"},{name: "courbd",value: "courbd"},{name: "courbd_0",value: "courbd_0"},{name: "courbi",value: "courbi"},{name: "courbi_0",value: "courbi_0"},{name: "couri",value: "couri"},{name: "couri_0",value: "couri_0"},{name: "Courier Prime Bold Italic",value: "Courier Prime Bold Italic"},{name: "Courier Prime Bold",value: "Courier Prime Bold"},{name: "Courier Prime Italic",value: "Courier Prime Italic"},{name: "Courier Prime",value: "Courier Prime"},{name: "Courier-M-OT-Light_12091",value: "Courier-M-OT-Light_12091"},{name: "CourierNewPS-BoldMT - Courier New - Bold",value: "CourierNewPS-BoldMT - Courier New - Bold"},{name: "CourierNewPSMT - Courier New - Regular",value: "CourierNewPSMT - Courier New - Regular"},{name: "CREDC___",value: "CREDC___"},{name: "CRYSRG",value: "CRYSRG"},{name: "CURLZ___",value: "CURLZ___"},{name: "D432",value: "D432"},{name: "DaysOne-Regular_f9b2b7ff4f04d61dbf87f1b916d4a8fb",value: "DaysOne-Regular_f9b2b7ff4f04d61dbf87f1b916d4a8fb"},{name: "DIN Mittelschrift Mittelschrift",value: "DIN Mittelschrift Mittelschrift"},{name: "display-dots_[allfont",value: "display-dots_[allfont"},{name: "dokchamp_0",value: "dokchamp_0"},{name: "DOTMATRI",value: "DOTMATRI"},{name: "Dotsalfn",value: "Dotsalfn"},{name: "dotted-letters",value: "dotted-letters"},{name: "dotted-letters_1",value: "dotted-letters_1"},{name: "dotted-letters-fr",value: "dotted-letters-fr"},{name: "dotted-letters-spain",value: "dotted-letters-spain"},{name: "DS_Moster",value: "DS_Moster"},{name: "dutch-dotted-letters",value: "dutch-dotted-letters"},{name: "dutch-laser-dots",value: "dutch-laser-dots"},{name: "ebrima",value: "ebrima"},{name: "ebrima_0",value: "ebrima_0"},{name: "ebrimabd",value: "ebrimabd"},{name: "ebrimabd_0",value: "ebrimabd_0"},{name: "ELEPHNT",value: "ELEPHNT"},{name: "ELEPHNTI",value: "ELEPHNTI"},{name: "ENGR",value: "ENGR"},{name: "epson1",value: "epson1"},{name: "Eras Demi ITC Font Download",value: "Eras Demi ITC Font Download"},{name: "Eras_Demi_ITC",value: "Eras_Demi_ITC"},{name: "ERASBD",value: "ERASBD"},{name: "ERASDEMI",value: "ERASDEMI"},{name: "Eras-Itc-T-OT-Demi_15896",value: "Eras-Itc-T-OT-Demi_15896"},{name: "ERASLGHT",value: "ERASLGHT"},{name: "ERASMD",value: "ERASMD"},{name: "estre_0",value: "estre_0"},{name: "EucrosiaUPCBoldItalic",value: "EucrosiaUPCBoldItalic"},{name: "euphemia",value: "euphemia"},{name: "euphemia_0",value: "euphemia_0"},{name: "EXOTBII_0",value: "EXOTBII_0"},{name: "exotic-bold",value: "exotic-bold"},{name: "FELIXTI",value: "FELIXTI"},{name: "FG Rebecca Script",value: "FG Rebecca Script"},{name: "FG Rebecca Script_1",value: "FG Rebecca Script_1"},{name: "Fh_Script",value: "Fh_Script"},{name: "filelist",value: "filelist"},{name: "FlemishScriptBT",value: "FlemishScriptBT"},{name: "FMBF-Tahoma-Regular-9227",value: "FMBF-Tahoma-Regular-9227"},{name: "fon2",value: "fon2"},{name: "font3",value: "font3"},{name: "font4",value: "font4"},{name: "FontBitcoinColor-1pVe",value: "FontBitcoinColor-1pVe"},{name: "FontBitcoinColor-lnZD",value: "FontBitcoinColor-lnZD"},{name: "FORTE",value: "FORTE"},{name: "fox in the snow",value: "fox in the snow"},{name: "FRABK",value: "FRABK"},{name: "FRABKIT",value: "FRABKIT"},{name: "FRADM",value: "FRADM"},{name: "FRADMCN",value: "FRADMCN"},{name: "FRADMIT",value: "FRADMIT"},{name: "FRAHV",value: "FRAHV"},{name: "FRAHVIT",value: "FRAHVIT"},{name: "framd",value: "framd"},{name: "FRAMDCN",value: "FRAMDCN"},{name: "framdit",value: "framdit"},{name: "Franklin Gothic Medium Cond Regular",value: "Franklin Gothic Medium Cond Regular"},{name: "FREESCPT",value: "FREESCPT"},{name: "FRSCRIPT",value: "FRSCRIPT"},{name: "FTLTLT",value: "FTLTLT"},{name: "futura-condensedextrabold-th",value: "futura-condensedextrabold-th"},{name: "gadugi",value: "gadugi"},{name: "gadugi_0",value: "gadugi_0"},{name: "gadugib",value: "gadugib"},{name: "gadugib_0",value: "gadugib_0"},{name: "GARA",value: "GARA"},{name: "GARABD",value: "GARABD"},{name: "GARAIT",value: "GARAIT"},{name: "gautami",value: "gautami"},{name: "gautamib",value: "gautamib"},{name: "georgia",value: "georgia"},{name: "georgia_0",value: "georgia_0"},{name: "georgiab",value: "georgiab"},{name: "georgiai",value: "georgiai"},{name: "georgiaz",value: "georgiaz"},{name: "GIGI",value: "GIGI"},{name: "GIL_____",value: "GIL_____"},{name: "GILB____",value: "GILB____"},{name: "GILBI___",value: "GILBI___"},{name: "GILC____",value: "GILC____"},{name: "GILI____",value: "GILI____"},{name: "GILLUBCD",value: "GILLUBCD"},{name: "GILSANUB",value: "GILSANUB"},{name: "gisha",value: "gisha"},{name: "gishabd",value: "gishabd"},{name: "GLECB",value: "GLECB"},{name: "GLSNECB",value: "GLSNECB"},{name: "gogatingbold",value: "gogatingbold"},{name: "GOTHIC",value: "GOTHIC"},{name: "GOTHICB",value: "GOTHICB"},{name: "GOTHICBI",value: "GOTHICBI"},{name: "GOTHICI",value: "GOTHICI"},{name: "GOUDOS",value: "GOUDOS"},{name: "GOUDOSB",value: "GOUDOSB"},{name: "GOUDOSI",value: "GOUDOSI"},{name: "GOUDYSTO",value: "GOUDYSTO"},{name: "GOUDYSTO_0",value: "GOUDYSTO_0"},{name: "GRILCBTO",value: "GRILCBTO"},{name: "Haiku's Script version 09 Bold",value: "Haiku's Script version 09 Bold"},{name: "Haiku's Script version 09 Regular",value: "Haiku's Script version 09 Regular"},{name: "HALTER__",value: "HALTER__"},{name: "HALTERA_",value: "HALTERA_"},{name: "HALTERP_",value: "HALTERP_"},{name: "Harabara",value: "Harabara"},{name: "HARLOWSI",value: "HARLOWSI"},{name: "HARNGTON",value: "HARNGTON"},{name: "HATTEN",value: "HATTEN"},{name: "helr46w",value: "helr46w"},{name: "helr47w",value: "helr47w"},{name: "helr48w",value: "helr48w"},{name: "helr65w",value: "helr65w"},{name: "helr66w",value: "helr66w"},{name: "helr67w",value: "helr67w"},{name: "helr68w",value: "helr68w"},{name: "Helvetica Bold Font Download",value: "Helvetica Bold Font Download"},{name: "Helvetica Bold",value: "Helvetica Bold"},{name: "Helvetica CE Bold",value: "Helvetica CE Bold"},{name: "Helvetica CE Regular",value: "Helvetica CE Regular"},{name: "Helvetica Cyrillic Bold Inclined",value: "Helvetica Cyrillic Bold Inclined"},{name: "Helvetica Cyrillic Bold",value: "Helvetica Cyrillic Bold"},{name: "Helvetica Cyrillic Inclined",value: "Helvetica Cyrillic Inclined"},{name: "Helvetica Cyrillic Upright",value: "Helvetica Cyrillic Upright"},{name: "Helvetica Inserat Cyrillic Upright",value: "Helvetica Inserat Cyrillic Upright"},{name: "Helvetica Inserat LT",value: "Helvetica Inserat LT"},{name: "Helvetica LT 57 Condensed",value: "Helvetica LT 57 Condensed"},{name: "helvetica",value: "helvetica"},{name: "Helvetica-Black-SemiBold",value: "Helvetica-Black-SemiBold"},{name: "Helvetica-Condensed-Black-Se",value: "Helvetica-Condensed-Black-Se"},{name: "Helvetica-Condensed-Light-Li",value: "Helvetica-Condensed-Light-Li"},{name: "Helvetica-Condensed-Light-Light",value: "Helvetica-Condensed-Light-Light"},{name: "Helvetica-Condensed-Thin",value: "Helvetica-Condensed-Thin"},{name: "Helvetica-Conth",value: "Helvetica-Conth"},{name: "helvetica-neue",value: "helvetica-neue"},{name: "HelveticaNeueLTCom-Roman",value: "HelveticaNeueLTCom-Roman"},{name: "HelveticaNeue-Roman",value: "HelveticaNeue-Roman"},{name: "HelvNeue55_Cyr",value: "HelvNeue55_Cyr"},{name: "himalaya",value: "himalaya"},{name: "holomdl2",value: "holomdl2"},{name: "HoneyScript-Light",value: "HoneyScript-Light"},{name: "HoneyScript-SemiBold",value: "HoneyScript-SemiBold"},{name: "HTOWERT",value: "HTOWERT"},{name: "HTOWERTI",value: "HTOWERTI"},{name: "impact",value: "impact"},{name: "IMPRISHA",value: "IMPRISHA"},{name: "INFROMAN",value: "INFROMAN"},{name: "ITCBLKAD",value: "ITCBLKAD"},{name: "ITCEDSCR",value: "ITCEDSCR"},{name: "ITCKRIST",value: "ITCKRIST"},{name: "javatext",value: "javatext"},{name: "Jellyka_Estrya_Handwriting",value: "Jellyka_Estrya_Handwriting"},{name: "Jennifer Lynne Bold",value: "Jennifer Lynne Bold"},{name: "Jennifer Lynne",value: "Jennifer Lynne"},{name: "Jey",value: "Jey"},{name: "JIMMY_B",value: "JIMMY_B"},{name: "JimThorpe-High_25318",value: "JimThorpe-High_25318"},{name: "JOKERMAN",value: "JOKERMAN"},{name: "JP Hand Slanted",value: "JP Hand Slanted"},{name: "JUICE___",value: "JUICE___"},{name: "kalinga",value: "kalinga"},{name: "kalingab",value: "kalingab"},{name: "kevinwildfont",value: "kevinwildfont"},{name: "KhmerUI_0",value: "KhmerUI_0"},{name: "KhmerUIb_0",value: "KhmerUIb_0"},{name: "KievitOffcPro",value: "KievitOffcPro"},{name: "KUNSTLER",value: "KUNSTLER"},{name: "l",value: "l"},{name: "l_10646",value: "l_10646"},{name: "LATINWD",value: "LATINWD"},{name: "LBRITE",value: "LBRITE"},{name: "LBRITED",value: "LBRITED"},{name: "LBRITEDI",value: "LBRITEDI"},{name: "LBRITEI",value: "LBRITEI"},{name: "LCALLIG",value: "LCALLIG"},{name: "LeelaUIb",value: "LeelaUIb"},{name: "LEELAWAD",value: "LEELAWAD"},{name: "LEELAWDB",value: "LEELAWDB"},{name: "LeelawUI",value: "LeelawUI"},{name: "LeelUIsl",value: "LeelUIsl"},{name: "LFAX",value: "LFAX"},{name: "LFAXD",value: "LFAXD"},{name: "LFAXDI",value: "LFAXDI"},{name: "LFAXI",value: "LFAXI"},{name: "LHANDW",value: "LHANDW"},{name: "LiberationSans-Bold",value: "LiberationSans-Bold"},{name: "LSANS",value: "LSANS"},{name: "LSANSD",value: "LSANSD"},{name: "LSANSDI",value: "LSANSDI"},{name: "LSANSI",value: "LSANSI"},{name: "LTYPE",value: "LTYPE"},{name: "LTYPEB",value: "LTYPEB"},{name: "LTYPEBO",value: "LTYPEBO"},{name: "LTYPEO",value: "LTYPEO"},{name: "lucon",value: "lucon"},{name: "lucon_0",value: "lucon_0"},{name: "lvnm",value: "lvnm"},{name: "lvnmbd",value: "lvnmbd"},{name: "LyricsMovement",value: "LyricsMovement"},{name: "MA Sexy",value: "MA Sexy"},{name: "MAGNETOB",value: "MAGNETOB"},{name: "MagnumSansProAlfa-Regular10",value: "MagnumSansProAlfa-Regular10"},{name: "MagnumSansProAlfa-Regular2",value: "MagnumSansProAlfa-Regular2"},{name: "MagnumSansProAlfa-Regular3",value: "MagnumSansProAlfa-Regular3"},{name: "MagnumSansProAlfa-Regular4",value: "MagnumSansProAlfa-Regular4"},{name: "MagnumSansProAlfa-Regular5",value: "MagnumSansProAlfa-Regular5"},{name: "MagnumSansProAlfa-Regular6",value: "MagnumSansProAlfa-Regular6"},{name: "MagnumSansProAlfa-Regular7",value: "MagnumSansProAlfa-Regular7"},{name: "MagnumSansProAlfa-Regular8",value: "MagnumSansProAlfa-Regular8"},{name: "MagnumSansProAlfa-Regular9",value: "MagnumSansProAlfa-Regular9"},{name: "MagnumSansPro-Regular10",value: "MagnumSansPro-Regular10"},{name: "MagnumSansPro-Regular101",value: "MagnumSansPro-Regular101"},{name: "MagnumSansPro-Regular11",value: "MagnumSansPro-Regular11"},{name: "MagnumSansPro-Regular111",value: "MagnumSansPro-Regular111"},{name: "MagnumSansPro-Regular12",value: "MagnumSansPro-Regular12"},{name: "MagnumSansPro-Regular13",value: "MagnumSansPro-Regular13"},{name: "MagnumSansPro-Regular14",value: "MagnumSansPro-Regular14"},{name: "MagnumSansPro-Regular15",value: "MagnumSansPro-Regular15"},{name: "MagnumSansPro-Regular16",value: "MagnumSansPro-Regular16"},{name: "MagnumSansPro-Regular17",value: "MagnumSansPro-Regular17"},{name: "MagnumSansPro-Regular18",value: "MagnumSansPro-Regular18"},{name: "MagnumSansPro-Regular19",value: "MagnumSansPro-Regular19"},{name: "MagnumSansPro-Regular2",value: "MagnumSansPro-Regular2"},{name: "MagnumSansPro-Regular20",value: "MagnumSansPro-Regular20"},{name: "MagnumSansPro-Regular21",value: "MagnumSansPro-Regular21"},{name: "MagnumSansPro-Regular22",value: "MagnumSansPro-Regular22"},{name: "MagnumSansPro-Regular3",value: "MagnumSansPro-Regular3"},{name: "MagnumSansPro-Regular31",value: "MagnumSansPro-Regular31"},{name: "MagnumSansPro-Regular4",value: "MagnumSansPro-Regular4"},{name: "MagnumSansPro-Regular41",value: "MagnumSansPro-Regular41"},{name: "MagnumSansPro-Regular5",value: "MagnumSansPro-Regular5"},{name: "MagnumSansPro-Regular51",value: "MagnumSansPro-Regular51"},{name: "MagnumSansPro-Regular6",value: "MagnumSansPro-Regular6"},{name: "MagnumSansPro-Regular61",value: "MagnumSansPro-Regular61"},{name: "MagnumSansPro-Regular7",value: "MagnumSansPro-Regular7"},{name: "MagnumSansPro-Regular71",value: "MagnumSansPro-Regular71"},{name: "MagnumSansPro-Regular8",value: "MagnumSansPro-Regular8"},{name: "MagnumSansPro-Regular81",value: "MagnumSansPro-Regular81"},{name: "MagnumSansPro-Regular9",value: "MagnumSansPro-Regular9"},{name: "MagnumSansPro-Regular91",value: "MagnumSansPro-Regular91"},{name: "MagnumSansPro-RegularItalic",value: "MagnumSansPro-RegularItalic"},{name: "MAIAN",value: "MAIAN"},{name: "majalla",value: "majalla"},{name: "majallab",value: "majallab"},{name: "marlett",value: "marlett"},{name: "MATURASC",value: "MATURASC"},{name: "MelbourneSerial-Bold",value: "MelbourneSerial-Bold"},{name: "micrenc",value: "micrenc"},{name: "micross",value: "micross"},{name: "micross_0",value: "micross_0"},{name: "MISTRAL",value: "MISTRAL"},{name: "mmrtext",value: "mmrtext"},{name: "mmrtextb",value: "mmrtextb"},{name: "MOD20",value: "MOD20"},{name: "monbaiti",value: "monbaiti"},{name: "Monem ExtraLight Regular",value: "Monem ExtraLight Regular"},{name: "Monem_ExtraLight_Italic_PDF",value: "Monem_ExtraLight_Italic_PDF"},{name: "Monem_ExtraLight_PDF",value: "Monem_ExtraLight_PDF"},{name: "moolbor_0",value: "moolbor_0"},{name: "mrvocrbIV_1",value: "mrvocrbIV_1"},{name: "MSUIGHUB",value: "MSUIGHUB"},{name: "MSUIGHUR",value: "MSUIGHUR"},{name: "msyi",value: "msyi"},{name: "MTCORSVA",value: "MTCORSVA"},{name: "Mustansar_FF",value: "Mustansar_FF"},{name: "mustansar_serif",value: "mustansar_serif"},{name: "mvboli",value: "mvboli"},{name: "NexaSlabBlackItalic",value: "NexaSlabBlackItalic"},{name: "NexaSlabBlackOblique",value: "NexaSlabBlackOblique"},{name: "NexaSlabBold",value: "NexaSlabBold"},{name: "NexaSlabBoldItalic",value: "NexaSlabBoldItalic"},{name: "NexaSlabBook",value: "NexaSlabBook"},{name: "NexaSlabBookItalic",value: "NexaSlabBookItalic"},{name: "NexaSlabBookOblique",value: "NexaSlabBookOblique"},{name: "NexaSlabLight",value: "NexaSlabLight"},{name: "NexaSlabLightItalic",value: "NexaSlabLightItalic"},{name: "NexaSlabLightOblique",value: "NexaSlabLightOblique"},{name: "NexaSlabRegular",value: "NexaSlabRegular"},{name: "NexaSlabRegularItalic",value: "NexaSlabRegularItalic"},{name: "NexaSlabRegularOblique",value: "NexaSlabRegularOblique"},{name: "NexaSlabThin",value: "NexaSlabThin"},{name: "NexaSlabThinItalic",value: "NexaSlabThinItalic"},{name: "NexaSlabThinOblique",value: "NexaSlabThinOblique"},{name: "NexaSlabXBold",value: "NexaSlabXBold"},{name: "NexaSlabXBoldItalic",value: "NexaSlabXBoldItalic"},{name: "NIAGENG",value: "NIAGENG"},{name: "NIAGSOL",value: "NIAGSOL"},{name: "NimbusSanL-Regu",value: "NimbusSanL-Regu"},{name: "Nirmala",value: "Nirmala"},{name: "Nirmala_0",value: "Nirmala_0"},{name: "NirmalaB",value: "NirmalaB"},{name: "NirmalaB_0",value: "NirmalaB_0"},{name: "NirmalaS",value: "NirmalaS"},{name: "Notera_PersonalUseOnly",value: "Notera_PersonalUseOnly"},{name: "NotoSerif-Black",value: "NotoSerif-Black"},{name: "NotoSerif-BlackItalic",value: "NotoSerif-BlackItalic"},{name: "NotoSerif-Bold",value: "NotoSerif-Bold"},{name: "NotoSerif-BoldItalic",value: "NotoSerif-BoldItalic"},{name: "NotoSerif-Condensed",value: "NotoSerif-Condensed"},{name: "NotoSerif-CondensedBlack",value: "NotoSerif-CondensedBlack"},{name: "NotoSerif-CondensedBlackItalic",value: "NotoSerif-CondensedBlackItalic"},{name: "NotoSerif-CondensedBold",value: "NotoSerif-CondensedBold"},{name: "NotoSerif-CondensedBoldItalic",value: "NotoSerif-CondensedBoldItalic"},{name: "NotoSerif-CondensedExtraBold",value: "NotoSerif-CondensedExtraBold"},{name: "NotoSerif-CondensedExtraBoldItalic",value: "NotoSerif-CondensedExtraBoldItalic"},{name: "NotoSerif-CondensedExtraLight",value: "NotoSerif-CondensedExtraLight"},{name: "NotoSerif-CondensedExtraLightItalic",value: "NotoSerif-CondensedExtraLightItalic"},{name: "NotoSerif-CondensedItalic",value: "NotoSerif-CondensedItalic"},{name: "NotoSerif-CondensedLight",value: "NotoSerif-CondensedLight"},{name: "NotoSerif-CondensedLightItalic",value: "NotoSerif-CondensedLightItalic"},{name: "NotoSerif-CondensedMedium",value: "NotoSerif-CondensedMedium"},{name: "NotoSerif-CondensedMediumItalic",value: "NotoSerif-CondensedMediumItalic"},{name: "NotoSerif-CondensedSemiBold",value: "NotoSerif-CondensedSemiBold"},{name: "NotoSerif-CondensedSemiBoldItalic",value: "NotoSerif-CondensedSemiBoldItalic"},{name: "NotoSerif-CondensedThin",value: "NotoSerif-CondensedThin"},{name: "NotoSerif-CondensedThinItalic",value: "NotoSerif-CondensedThinItalic"},{name: "NotoSerif-ExtraBold",value: "NotoSerif-ExtraBold"},{name: "NotoSerif-ExtraBoldItalic",value: "NotoSerif-ExtraBoldItalic"},{name: "NotoSerif-ExtraCondensed",value: "NotoSerif-ExtraCondensed"},{name: "NotoSerif-ExtraCondensedBlack",value: "NotoSerif-ExtraCondensedBlack"},{name: "NotoSerif-ExtraCondensedBlackItalic",value: "NotoSerif-ExtraCondensedBlackItalic"},{name: "NotoSerif-ExtraCondensedBold",value: "NotoSerif-ExtraCondensedBold"},{name: "NotoSerif-ExtraCondensedBoldItalic",value: "NotoSerif-ExtraCondensedBoldItalic"},{name: "NotoSerif-ExtraCondensedExtraBold",value: "NotoSerif-ExtraCondensedExtraBold"},{name: "NotoSerif-ExtraCondensedExtraBoldItalic",value: "NotoSerif-ExtraCondensedExtraBoldItalic"},{name: "NotoSerif-ExtraCondensedExtraLight",value: "NotoSerif-ExtraCondensedExtraLight"},{name: "NotoSerif-ExtraCondensedExtraLightItalic",value: "NotoSerif-ExtraCondensedExtraLightItalic"},{name: "NotoSerif-ExtraCondensedItalic",value: "NotoSerif-ExtraCondensedItalic"},{name: "NotoSerif-ExtraCondensedLight",value: "NotoSerif-ExtraCondensedLight"},{name: "NotoSerif-ExtraCondensedLightItalic",value: "NotoSerif-ExtraCondensedLightItalic"},{name: "NotoSerif-ExtraCondensedMedium",value: "NotoSerif-ExtraCondensedMedium"},{name: "NotoSerif-ExtraCondensedMediumItalic",value: "NotoSerif-ExtraCondensedMediumItalic"},{name: "NotoSerif-ExtraCondensedSemiBold",value: "NotoSerif-ExtraCondensedSemiBold"},{name: "NotoSerif-ExtraCondensedSemiBoldItalic",value: "NotoSerif-ExtraCondensedSemiBoldItalic"},{name: "NotoSerif-ExtraCondensedThin",value: "NotoSerif-ExtraCondensedThin"},{name: "NotoSerif-ExtraCondensedThinItalic",value: "NotoSerif-ExtraCondensedThinItalic"},{name: "NotoSerif-ExtraLight",value: "NotoSerif-ExtraLight"},{name: "NotoSerif-ExtraLightItalic",value: "NotoSerif-ExtraLightItalic"},{name: "NotoSerif-Italic",value: "NotoSerif-Italic"},{name: "NotoSerif-Light",value: "NotoSerif-Light"},{name: "NotoSerif-LightItalic",value: "NotoSerif-LightItalic"},{name: "NotoSerif-Medium",value: "NotoSerif-Medium"},{name: "NotoSerif-MediumItalic",value: "NotoSerif-MediumItalic"},{name: "NotoSerif-Regular",value: "NotoSerif-Regular"},{name: "NotoSerif-SemiBold",value: "NotoSerif-SemiBold"},{name: "NotoSerif-SemiBoldItalic",value: "NotoSerif-SemiBoldItalic"},{name: "NotoSerif-SemiCondensed",value: "NotoSerif-SemiCondensed"},{name: "NotoSerif-SemiCondensedBlack",value: "NotoSerif-SemiCondensedBlack"},{name: "NotoSerif-SemiCondensedBlackItalic",value: "NotoSerif-SemiCondensedBlackItalic"},{name: "NotoSerif-SemiCondensedBold",value: "NotoSerif-SemiCondensedBold"},{name: "NotoSerif-SemiCondensedBoldItalic",value: "NotoSerif-SemiCondensedBoldItalic"},{name: "NotoSerif-SemiCondensedExtraBold",value: "NotoSerif-SemiCondensedExtraBold"},{name: "NotoSerif-SemiCondensedExtraBoldItalic",value: "NotoSerif-SemiCondensedExtraBoldItalic"},{name: "NotoSerif-SemiCondensedExtraLight",value: "NotoSerif-SemiCondensedExtraLight"},{name: "NotoSerif-SemiCondensedExtraLightItalic",value: "NotoSerif-SemiCondensedExtraLightItalic"},{name: "NotoSerif-SemiCondensedItalic",value: "NotoSerif-SemiCondensedItalic"},{name: "NotoSerif-SemiCondensedLight",value: "NotoSerif-SemiCondensedLight"},{name: "NotoSerif-SemiCondensedLightItalic",value: "NotoSerif-SemiCondensedLightItalic"},{name: "NotoSerif-SemiCondensedMedium",value: "NotoSerif-SemiCondensedMedium"},{name: "NotoSerif-SemiCondensedMediumItalic",value: "NotoSerif-SemiCondensedMediumItalic"},{name: "NotoSerif-SemiCondensedSemiBold",value: "NotoSerif-SemiCondensedSemiBold"},{name: "NotoSerif-SemiCondensedSemiBoldItalic",value: "NotoSerif-SemiCondensedSemiBoldItalic"},{name: "NotoSerif-SemiCondensedThin",value: "NotoSerif-SemiCondensedThin"},{name: "NotoSerif-SemiCondensedThinItalic",value: "NotoSerif-SemiCondensedThinItalic"},{name: "NotoSerif-Thin",value: "NotoSerif-Thin"},{name: "NotoSerif-ThinItalic",value: "NotoSerif-ThinItalic"},{name: "ntailu",value: "ntailu"},{name: "ntailub",value: "ntailub"},{name: "NumbersRedbird",value: "NumbersRedbird"},{name: "nyala",value: "nyala"},{name: "nyala_0",value: "nyala_0"},{name: "OCR-a___",value: "OCR-a___"},{name: "OCRAEXT",value: "OCRAEXT"},{name: "ocrb",value: "ocrb"},{name: "OCR-b_10__bt",value: "OCR-b_10__bt"},{name: "OCR-B_10_Pitch_BT",value: "OCR-B_10_Pitch_BT"},{name: "OCR-B_10_Pitch_BT_0",value: "OCR-B_10_Pitch_BT_0"},{name: "ocrb10",value: "ocrb10"},{name: "OCR-B-Digits",value: "OCR-B-Digits"},{name: "OLDENGL",value: "OLDENGL"},{name: "ONYX",value: "ONYX"},{name: "OpenSans-Bold",value: "OpenSans-Bold"},{name: "OpenSans-BoldItalic",value: "OpenSans-BoldItalic"},{name: "OpenSans-ExtraBold",value: "OpenSans-ExtraBold"},{name: "OpenSans-ExtraBoldItalic",value: "OpenSans-ExtraBoldItalic"},{name: "OpenSans-Italic",value: "OpenSans-Italic"},{name: "OpenSans-Light",value: "OpenSans-Light"},{name: "OpenSans-LightItalic",value: "OpenSans-LightItalic"},{name: "OpenSans-Regular",value: "OpenSans-Regular"},{name: "OpenSans-Semibold",value: "OpenSans-Semibold"},{name: "OpenSans-SemiboldItalic",value: "OpenSans-SemiboldItalic"},{name: "optima cyr",value: "optima cyr"},{name: "Optima Medium",value: "Optima Medium"},{name: "Orbitron-Regular_65121005c9a84031bdd58dadd8bca551",value: "Orbitron-Regular_65121005c9a84031bdd58dadd8bca551"},{name: "OUTLOOK",value: "OUTLOOK"},{name: "pala",value: "pala"},{name: "pala_0",value: "pala_0"},{name: "palab",value: "palab"},{name: "palab_0",value: "palab_0"},{name: "palabi",value: "palabi"},{name: "palai",value: "palai"},{name: "PALSCRI",value: "PALSCRI"},{name: "PapposBlues",value: "PapposBlues"},{name: "PAPYRUS",value: "PAPYRUS"},{name: "PARCHM",value: "PARCHM"},{name: "PepperHands-Regular",value: "PepperHands-Regular"},{name: "PER_____",value: "PER_____"},{name: "PERB____",value: "PERB____"},{name: "PERBI___",value: "PERBI___"},{name: "Perforation New_0",value: "Perforation New_0"},{name: "PERI____",value: "PERI____"},{name: "PERTIBD",value: "PERTIBD"},{name: "PERTILI",value: "PERTILI"},{name: "PetraScriptEF-Alternate",value: "PetraScriptEF-Alternate"},{name: "phagspa",value: "phagspa"},{name: "phagspab",value: "phagspab"},{name: "PhontPhreaks Handwriting",value: "PhontPhreaks Handwriting"},{name: "plantc",value: "plantc"},{name: "plantc_0",value: "plantc_0"},{name: "PLAYBILL",value: "PLAYBILL"},{name: "POORICH",value: "POORICH"},{name: "Primo Script Regular",value: "Primo Script Regular"},{name: "PRISTINA",value: "PRISTINA"},{name: "PWsignaturefont",value: "PWsignaturefont"},{name: "PWSignaturetwo",value: "PWSignaturetwo"},{name: "RAGE",value: "RAGE"},{name: "RAGE_0",value: "RAGE_0"},{name: "RammettoOne-Regular_7125a74a2ea672ac6a8c886886c0b859",value: "RammettoOne-Regular_7125a74a2ea672ac6a8c886886c0b859"},{name: "RAVIE",value: "RAVIE"},{name: "REFSAN",value: "REFSAN"},{name: "REFSPCL",value: "REFSPCL"},{name: "RHGDT",value: "RHGDT"},{name: "riesling",value: "riesling"},{name: "RigaScreen-Bold",value: "RigaScreen-Bold"},{name: "RigaScreen-BoldItalic",value: "RigaScreen-BoldItalic"},{name: "RigaScreen-Italic",value: "RigaScreen-Italic"},{name: "RigaScreen-Regular",value: "RigaScreen-Regular"},{name: "ROCC____",value: "ROCC____"},{name: "ROCCB___",value: "ROCCB___"},{name: "ROCK",value: "ROCK"},{name: "ROCK_0",value: "ROCK_0"},{name: "ROCKB",value: "ROCKB"},{name: "ROCKBI",value: "ROCKBI"},{name: "ROCKEB",value: "ROCKEB"},{name: "ROCKI",value: "ROCKI"},{name: "SALINA__",value: "SALINA__"},{name: "Sansation_Bold",value: "Sansation_Bold"},{name: "Sansation_Light",value: "Sansation_Light"},{name: "Sansation_Regular",value: "Sansation_Regular"},{name: "sayso chic",value: "sayso chic"},{name: "SCHLBKB",value: "SCHLBKB"},{name: "SCHLBKBI",value: "SCHLBKBI"},{name: "SCHLBKI",value: "SCHLBKI"},{name: "SCRIPTBL",value: "SCRIPTBL"},{name: "SCRIPTIN",value: "SCRIPTIN"},{name: "segmdl2",value: "segmdl2"},{name: "segoepr",value: "segoepr"},{name: "segoeprb",value: "segoeprb"},{name: "segoesc",value: "segoesc"},{name: "segoescb",value: "segoescb"},{name: "segoeui",value: "segoeui"},{name: "segoeui_0",value: "segoeui_0"},{name: "segoeuib",value: "segoeuib"},{name: "segoeuib_0",value: "segoeuib_0"},{name: "segoeuii",value: "segoeuii"},{name: "segoeuii_0",value: "segoeuii_0"},{name: "segoeuil",value: "segoeuil"},{name: "segoeuil_0",value: "segoeuil_0"},{name: "segoeuisl",value: "segoeuisl"},{name: "segoeuisl_0",value: "segoeuisl_0"},{name: "segoeuiz",value: "segoeuiz"},{name: "segoeuiz_0",value: "segoeuiz_0"},{name: "seguibl",value: "seguibl"},{name: "seguibli",value: "seguibli"},{name: "seguiemj",value: "seguiemj"},{name: "seguihis",value: "seguihis"},{name: "seguili",value: "seguili"},{name: "seguili_0",value: "seguili_0"},{name: "seguisb",value: "seguisb"},{name: "seguisb_0",value: "seguisb_0"},{name: "seguisbi",value: "seguisbi"},{name: "seguisbi_0",value: "seguisbi_0"},{name: "seguisli",value: "seguisli"},{name: "seguisli_0",value: "seguisli_0"},{name: "September Mornings",value: "September Mornings"},{name: "ShimesOne_PERSONAL",value: "ShimesOne_PERSONAL"},{name: "ShimesTwo_PERSONAL",value: "ShimesTwo_PERSONAL"},{name: "SHOWG",value: "SHOWG"},{name: "shruti",value: "shruti"},{name: "shrutib",value: "shrutib"},{name: "Signature",value: "Signature"},{name: "Signerica_Fat",value: "Signerica_Fat"},{name: "Signerica_Medium",value: "Signerica_Medium"},{name: "Signerica_Medium_5",value: "Signerica_Medium_5"},{name: "Signerica_Thin",value: "Signerica_Thin"},{name: "Simply Glamorous",value: "Simply Glamorous"},{name: "simsunb",value: "simsunb"},{name: "SLANT",value: "SLANT"},{name: "SNAP____",value: "SNAP____"},{name: "SourceCodePro-Black",value: "SourceCodePro-Black"},{name: "SourceCodePro-Bold",value: "SourceCodePro-Bold"},{name: "SourceCodePro-ExtraLight",value: "SourceCodePro-ExtraLight"},{name: "SourceCodePro-Light",value: "SourceCodePro-Light"},{name: "SourceCodePro-Regular",value: "SourceCodePro-Regular"},{name: "SourceCodePro-Semibold",value: "SourceCodePro-Semibold"},{name: "SouthernAire_Personal_Use_Only",value: "SouthernAire_Personal_Use_Only"},{name: "SPINC_",value: "SPINC_"},{name: "SSN Corroded",value: "SSN Corroded"},{name: "Staatliches-Regular",value: "Staatliches-Regular"},{name: "STARWARS",value: "STARWARS"},{name: "STENCIL",value: "STENCIL"},{name: "Sweetly Broken Bold",value: "Sweetly Broken Bold"},{name: "Sweetly Broken SemiBold",value: "Sweetly Broken SemiBold"},{name: "Sweetly Broken",value: "Sweetly Broken"},{name: "sylfaen",value: "sylfaen"},{name: "symbol",value: "symbol"},{name: "Tahoma Bold Faux Italic",value: "Tahoma Bold Faux Italic"},{name: "Tahoma Bold",value: "Tahoma Bold"},{name: "Tahoma Faux Italic",value: "Tahoma Faux Italic"},{name: "Tahoma Regular",value: "Tahoma Regular"},{name: "Tahoma",value: "Tahoma"},{name: "tahoma_0",value: "tahoma_0"},{name: "tahomabd",value: "tahomabd"},{name: "tahomabd_0",value: "tahomabd_0"},{name: "tahoma-bold",value: "tahoma-bold"},{name: "taile",value: "taile"},{name: "taile_0",value: "taile_0"},{name: "taileb",value: "taileb"},{name: "taileb_0",value: "taileb_0"},{name: "TCB_____",value: "TCB_____"},{name: "TCBI____",value: "TCBI____"},{name: "TCCB____",value: "TCCB____"},{name: "TCCEB",value: "TCCEB"},{name: "TCCM____",value: "TCCM____"},{name: "TCM_____",value: "TCM_____"},{name: "TCMI____",value: "TCMI____"},{name: "Tele-GroteskNor",value: "Tele-GroteskNor"},{name: "TEMPSITC",value: "TEMPSITC"},{name: "TheSansExtraLight_Caps",value: "TheSansExtraLight_Caps"},{name: "TheSansExtraLight_Caps_Italic",value: "TheSansExtraLight_Caps_Italic"},{name: "TheSansExtraLight_Expert",value: "TheSansExtraLight_Expert"},{name: "TheSansExtraLight_Expert_Italic",value: "TheSansExtraLight_Expert_Italic"},{name: "TheSansExtraLight_Plain",value: "TheSansExtraLight_Plain"},{name: "the-sans-extra-light-plain-1361523891",value: "the-sans-extra-light-plain-1361523891"},{name: "TIMES NEW ROMAN",value: "TIMES NEW ROMAN"},{name: "times",value: "times"},{name: "timesbd",value: "timesbd"},{name: "timesbd_0",value: "timesbd_0"},{name: "timesbi",value: "timesbi"},{name: "timesbi_0",value: "timesbi_0"},{name: "timesi",value: "timesi"},{name: "timesi_0",value: "timesi_0"},{name: "TimesNewRomanPSBold",value: "TimesNewRomanPSBold"},{name: "TimesNewRomanPS-BoldMT - Times New Roman - Bold",value: "TimesNewRomanPS-BoldMT - Times New Roman - Bold"},{name: "TimesNewRomanPS-ItalicMT - Times New Roman - Italic",value: "TimesNewRomanPS-ItalicMT - Times New Roman - Italic"},{name: "TimesNewRomanPSMT - Times New Roman - Regular",value: "TimesNewRomanPSMT - Times New Roman - Regular"},{name: "Trajan Bold",value: "Trajan Bold"},{name: "trebuc",value: "trebuc"},{name: "trebucbd",value: "trebucbd"},{name: "trebucbi",value: "trebucbi"},{name: "trebucit",value: "trebucit"},{name: "tt0132m_",value: "tt0132m_"},{name: "TT0610M_",value: "TT0610M_"},{name: "tunga",value: "tunga"},{name: "tungab",value: "tungab"},{name: "Ubuntu-B",value: "Ubuntu-B"},{name: "Ubuntu-B_0",value: "Ubuntu-B_0"},{name: "Ubuntu-BI",value: "Ubuntu-BI"},{name: "Ubuntu-BI_0",value: "Ubuntu-BI_0"},{name: "Ubuntu-C",value: "Ubuntu-C"},{name: "Ubuntu-C_0",value: "Ubuntu-C_0"},{name: "Ubuntu-L",value: "Ubuntu-L"},{name: "Ubuntu-L_0",value: "Ubuntu-L_0"},{name: "Ubuntu-LI",value: "Ubuntu-LI"},{name: "Ubuntu-LI_0",value: "Ubuntu-LI_0"},{name: "Ubuntu-M",value: "Ubuntu-M"},{name: "Ubuntu-M_0",value: "Ubuntu-M_0"},{name: "Ubuntu-MI",value: "Ubuntu-MI"},{name: "Ubuntu-MI_0",value: "Ubuntu-MI_0"},{name: "UbuntuMono-B_0",value: "UbuntuMono-B_0"},{name: "UbuntuMono-BI_0",value: "UbuntuMono-BI_0"},{name: "UbuntuMono-R_0",value: "UbuntuMono-R_0"},{name: "UbuntuMono-RI_0",value: "UbuntuMono-RI_0"},{name: "Ubuntu-R",value: "Ubuntu-R"},{name: "Ubuntu-R_0",value: "Ubuntu-R_0"},{name: "Ubuntu-RI",value: "Ubuntu-RI"},{name: "Ubuntu-RI_0",value: "Ubuntu-RI_0"},{name: "ufonts",value: "ufonts"},{name: "unicode",value: "unicode"},{name: "UniversNextPro-Black",value: "UniversNextPro-Black"},{name: "UniversNextPro-BlackCond",value: "UniversNextPro-BlackCond"},{name: "UniversNextPro-BlackCondIt",value: "UniversNextPro-BlackCondIt"},{name: "UniversNextPro-BlackExt",value: "UniversNextPro-BlackExt"},{name: "UniversNextPro-BlackExtIt",value: "UniversNextPro-BlackExtIt"},{name: "UniversNextPro-BlackItalic",value: "UniversNextPro-BlackItalic"},{name: "UniversNextPro-Bold",value: "UniversNextPro-Bold"},{name: "UniversNextPro-BoldCond",value: "UniversNextPro-BoldCond"},{name: "UniversNextPro-BoldCondIt",value: "UniversNextPro-BoldCondIt"},{name: "UniversNextPro-BoldExt",value: "UniversNextPro-BoldExt"},{name: "UniversNextPro-BoldExtIt",value: "UniversNextPro-BoldExtIt"},{name: "UniversNextPro-BoldItalic",value: "UniversNextPro-BoldItalic"},{name: "UniversNextPro-Compressed",value: "UniversNextPro-Compressed"},{name: "UniversNextPro-Cond",value: "UniversNextPro-Cond"},{name: "UniversNextPro-CondItalic",value: "UniversNextPro-CondItalic"},{name: "UniversNextPro-Ext",value: "UniversNextPro-Ext"},{name: "UniversNextPro-ExtItalic",value: "UniversNextPro-ExtItalic"},{name: "UniversNextPro-Heavy",value: "UniversNextPro-Heavy"},{name: "UniversNextPro-HeavyCond",value: "UniversNextPro-HeavyCond"},{name: "UniversNextPro-HeavyCondIt",value: "UniversNextPro-HeavyCondIt"},{name: "UniversNextPro-HeavyExt",value: "UniversNextPro-HeavyExt"},{name: "UniversNextPro-HeavyExtIt",value: "UniversNextPro-HeavyExtIt"},{name: "UniversNextPro-HeavyItalic",value: "UniversNextPro-HeavyItalic"},{name: "UniversNextPro-Italic",value: "UniversNextPro-Italic"},{name: "UniversNextPro-Light",value: "UniversNextPro-Light"},{name: "UniversNextPro-LightCm",value: "UniversNextPro-LightCm"},{name: "UniversNextPro-LightCond",value: "UniversNextPro-LightCond"},{name: "UniversNextPro-LightCondIt",value: "UniversNextPro-LightCondIt"},{name: "UniversNextPro-LightExt",value: "UniversNextPro-LightExt"},{name: "UniversNextPro-LightExtIt",value: "UniversNextPro-LightExtIt"},{name: "UniversNextPro-LightItalic",value: "UniversNextPro-LightItalic"},{name: "UniversNextPro-Medium",value: "UniversNextPro-Medium"},{name: "UniversNextPro-MediumCm",value: "UniversNextPro-MediumCm"},{name: "UniversNextPro-MediumCond",value: "UniversNextPro-MediumCond"},{name: "UniversNextPro-MediumCondIt",value: "UniversNextPro-MediumCondIt"},{name: "UniversNextPro-MediumExt",value: "UniversNextPro-MediumExt"},{name: "UniversNextPro-MediumExtIt",value: "UniversNextPro-MediumExtIt"},{name: "UniversNextPro-MediumItalic",value: "UniversNextPro-MediumItalic"},{name: "UniversNextPro-Regular",value: "UniversNextPro-Regular"},{name: "UniversNextPro-Thin",value: "UniversNextPro-Thin"},{name: "UniversNextPro-ThinCm",value: "UniversNextPro-ThinCm"},{name: "UniversNextPro-ThinCond",value: "UniversNextPro-ThinCond"},{name: "UniversNextPro-ThinCondIt",value: "UniversNextPro-ThinCondIt"},{name: "UniversNextPro-ThinExt",value: "UniversNextPro-ThinExt"},{name: "UniversNextPro-ThinExtIt",value: "UniversNextPro-ThinExtIt"},{name: "UniversNextPro-ThinItalic",value: "UniversNextPro-ThinItalic"},{name: "UniversNextPro-UltLt",value: "UniversNextPro-UltLt"},{name: "UniversNextPro-UltLtCm",value: "UniversNextPro-UltLtCm"},{name: "UniversNextPro-UltLtCond",value: "UniversNextPro-UltLtCond"},{name: "UniversNextPro-UltLtCondIt",value: "UniversNextPro-UltLtCondIt"},{name: "UniversNextPro-UltLtExt",value: "UniversNextPro-UltLtExt"},{name: "UniversNextPro-UltLtExtIt",value: "UniversNextPro-UltLtExtIt"},{name: "UniversNextPro-UltLtIt",value: "UniversNextPro-UltLtIt"},{name: "UniversNextPro-XBlack",value: "UniversNextPro-XBlack"},{name: "UniversNextPro-XBlackCond",value: "UniversNextPro-XBlackCond"},{name: "UniversNextPro-XBlackCondIt",value: "UniversNextPro-XBlackCondIt"},{name: "UniversNextPro-XBlackExt",value: "UniversNextPro-XBlackExt"},{name: "UniversNextPro-XBlackExtIt",value: "UniversNextPro-XBlackExtIt"},{name: "UniversNextPro-XBlackIt",value: "UniversNextPro-XBlackIt"},{name: "UniversNextTypewrtrPro-Bd",value: "UniversNextTypewrtrPro-Bd"},{name: "UniversNextTypewrtrPro-BdIt",value: "UniversNextTypewrtrPro-BdIt"},{name: "UniversNextTypewrtrPro-It",value: "UniversNextTypewrtrPro-It"},{name: "UniversNextTypewrtrPro-Rg",value: "UniversNextTypewrtrPro-Rg"},{name: "upceb",value: "upceb"},{name: "upcebi",value: "upcebi"},{name: "UPCEI",value: "UPCEI"},{name: "upcel",value: "upcel"},{name: "upcji",value: "upcji"},{name: "usuzv2i",value: "usuzv2i"},{name: "UTSAAH",value: "UTSAAH"},{name: "UTSAAHB",value: "UTSAAHB"},{name: "Valken__",value: "Valken__"},{name: "Vani",value: "Vani"},{name: "Verdana",value: "Verdana"},{name: "verdanab",value: "verdanab"},{name: "verdanai",value: "verdanai"},{name: "verdanaz",value: "verdanaz"},{name: "VERDREF",value: "VERDREF"},{name: "VINERITC",value: "VINERITC"},{name: "VIVALDII",value: "VIVALDII"},{name: "VLADIMIR",value: "VLADIMIR"},{name: "wcash",value: "wcash"},{name: "webdings",value: "webdings"},{name: "wingding",value: "wingding"},{name: "WINGDNG2",value: "WINGDNG2"},{name: "WINGDNG3",value: "WINGDNG3"},{name: "Yahoo",value: "Yahoo"}];
+		populateFonts(availableFonts);
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const overlayImages = [];
+		const texts = [];
+		const textContents = [""];
+		let background;
+		let scale = 1;
+		let isDragging = false;
+		let offsetX, offsetY;
+		let backgroundUploaded = false;
+		let roundedCorners = {
+			topLeft: 0,
+			topRight: 0,
+			bottomRight: 0,
+			bottomLeft: 0
+		};
+		$("#fontSearch").on("input", function() {
+			const searchTerm = $(this).val().toLowerCase();
+			const filteredFonts = availableFonts.filter(font => font.name.toLowerCase().startsWith(searchTerm));
+			populateFonts(filteredFonts);
+		});
+		function populateFonts(fonts) {
+			const selector = $("#fontSelector");
+			selector.empty();
+			fonts.forEach(font => {
+				const option = $("<option>").val(font.value).text(font.name);
+				selector.append(option);
+			});
+		}
+		function checkBackgroundUploaded() {
+			if (!backgroundUploaded) {
+				showNotification("未上传背景图片");
+				return false;
+			}
+			return true;
+		}
+		function addImageOrTextControl(type, index) {
+			if (!checkBackgroundUploaded()) return;
+			const controlsDiv = document.getElementById(type + 'Controls');
+			const editButton = document.createElement('button');
+			if (type === "image") {
+				editButton.innerText = '编辑图片' + (index + 1);
+			} else if (type === 'text') {
+				editButton.innerText = '编辑文字' + (index + 1);
+			}
+			editButton.onclick = function() {
+				showEditorModal(type, index);
+			};
+			const clearButton = createClearButton(index, type);
+			controlsDiv.appendChild(editButton);
+			controlsDiv.appendChild(clearButton);
+		}
+		function createClearButton(index, type) {
+			const button = document.createElement('button');
+			button.innerHTML = type === 'image' ? '清除此图片' : '清除此段文字';
+			button.onclick = () => {
+				if (type === 'image') {
+					overlayImages.splice(index, 1);
+					rebuildOverlayControls();
+					showNotification("已清除选定图片");
+				} else {
+					texts.splice(index, 1);
+					rebuildTextControls();
+					showNotification("已清除选定文字");
+					textContents.splice(index, 1);
+					for (let i = index; i < texts.length; i++) {
+						const btn = document.querySelector(`#textControls button[data-index="${i+1}"]`);
+						if (btn) {
+							btn.innerText = `编辑文字${i+1}`;
+							btn.setAttribute('data-index', i);
+						}
+					}
+				}
+				drawCanvas();
+			};
+			return button;
+		}
+		function rebuildOverlayControls() {
+			const controlsDiv = document.getElementById('imageControls');
+			controlsDiv.innerHTML = '';
+			overlayImages.forEach((_, index) => {
+				addImageOrTextControl('image', index);
+			});
+		}
+		function rebuildTextControls() {
+			const controlsDiv = document.getElementById('textControls');
+			controlsDiv.innerHTML = '';
+			texts.forEach((_, index) => {
+				addImageOrTextControl('text', index);
+			});
+		}
+		function showEditorModal(type, index) {
+			const modal = document.createElement('div');
+			const closeButton = document.createElement('button');
+			const contentDiv = document.createElement('div');
+			modal.classList.add("ov-modal");
+			closeButton.classList.add("ov-close");
+			contentDiv.classList.add("ov-operate");
+			closeButton.onclick = function() {
+				textContents[index] = contentDiv.querySelector('input').value;
+				document.body.removeChild(modal);
+			};
+			contentDiv.style.position = 'absolute';
+			contentDiv.style.left = '50%';
+			contentDiv.style.top = '50%';
+			contentDiv.style.transform = 'translate(-50%, -50%)';
+			const draggableArea = document.createElement('div');
+			draggableArea.classList.add('draggable-area');
+			draggableArea.innerText = '点击此处可拖动';
+			contentDiv.appendChild(draggableArea);
+			modal.appendChild(closeButton);
+			modal.onclick = function(e) {
+				if (e.target === modal) {
+					document.body.removeChild(modal);
+				}
+			}
+			if (type === 'image') {
+				const overlayImage = overlayImages[index].image;
+				const sliderX = createSlider('X', index, 'image', -overlayImage.width, canvas.width);
+				const sliderY = createSlider('Y', index, 'image', -overlayImage.height, canvas.height);
+				const sliderScale = createSlider('Scale', index, 'image', 0.1, canvas.width / overlayImage.width, 0.1);
+				const sliderRotate = createSlider('Rotate', index, 'image', -60, 60);
+				contentDiv.appendChild(sliderX);
+				contentDiv.appendChild(sliderY);
+				contentDiv.appendChild(sliderScale);
+				contentDiv.appendChild(sliderRotate);
+
+			} else if (type === 'text') {
+				const input = createTextInput(index);
+				const sliderX = createSlider('X', index, 'text', 0, canvas.width);
+				const sliderY = createSlider('Y', index, 'text', 0, canvas.height);
+				const sliderSize = createSlider('Size', index, 'text', 10, canvas.width / 2, 1, true);
+				const fontSelect = createFontSelect(index);
+				const colorInput = createColorInput(index);
+				contentDiv.appendChild(input);
+				contentDiv.appendChild(sliderX);
+				contentDiv.appendChild(sliderY);
+				contentDiv.appendChild(sliderSize);
+				contentDiv.appendChild(fontSelect);
+				contentDiv.appendChild(colorInput);
+			}
+			modal.appendChild(contentDiv);
+			document.body.appendChild(modal);
+			draggableArea.onmousedown = function(event) {
+				isDragging = true;
+				const rect = contentDiv.getBoundingClientRect();
+				offsetX = event.clientX - rect.left;
+				offsetY = event.clientY - rect.top;
+				contentDiv.style.transform = 'none';
+				contentDiv.style.left = rect.left + 'px';
+				contentDiv.style.top = rect.top + 'px';
+				document.onmousemove = onMouseMove;
+				document.onmouseup = endDrag;
+			};
+			function onMouseMove(event) {
+				if (!isDragging) return;
+				let newLeft = event.clientX - offsetX;
+				let newTop = event.clientY - offsetY;
+				newLeft = Math.max(0, newLeft);
+				newTop = Math.max(0, newTop);
+				newLeft = Math.min(window.innerWidth - contentDiv.offsetWidth, newLeft);
+				newTop = Math.min(window.innerHeight - contentDiv.offsetHeight, newTop);
+				contentDiv.style.left = newLeft + 'px';
+				contentDiv.style.top = newTop + 'px';
+			}
+			function endDrag() {
+				isDragging = false;
+				document.onmousemove = null;
+				document.onmouseup = null;
+			}
+		}
+		function loadOverlayImages(event) {
+			if (!checkBackgroundUploaded()) return;
+			const controlsDiv = document.getElementById('overlayControls');
+			Array.from(event.target.files).forEach((file) => {
+				const index = overlayImages.length;
+				const overlayImage = new Image();
+				overlayImage.src = URL.createObjectURL(file);
+				overlayImage.onload = () => {
+					overlayImages.push({
+						image: overlayImage,
+						x: 100,
+						y: 100,
+						scale: 1,
+						rotation: 0
+					});
+					addImageOrTextControl('image', index);
+					drawCanvas();
+				};
+			});
+		}
+		function addTextInput() {
+			const controlsDiv = document.getElementById('textControls');
+			const index = texts.length;
+			texts.push({
+				x: 100,
+				y: 100,
+				size: 30,
+				text: '',
+				font: availableFonts[0].value,
+				color: '#000000'
+			});
+			addImageOrTextControl('text', index);
+		}
+		function createTextInput(index) {
+			const input = document.createElement('input');
+			if (index < textContents.length && textContents[index] !== undefined) {
+				input.value = textContents[index];
+			} else {
+				input.value = "";
+			}
+			input.type = 'text';
+			input.placeholder = '输入文字';
+			input.oninput = (event) => {
+				texts[index].text = event.target.value;
+				drawCanvas();
+			};
+			return input;
+		}
+		function createColorInput(index) {
+			const colorPicker = document.createElement('input');
+			colorPicker.type = 'color';
+			colorPicker.id = 'text-color-' + index;
+			colorPicker.value = texts[index].color;
+			colorPicker.addEventListener('input', function(event) {
+				setTextFillColor(index, event.target.value);
+			});
+			return colorPicker;
+		}
+		function setTextFillColor(index, color) {
+			if (texts[index]) {
+				texts[index].color = color;
+				drawCanvas();
+			}
+		}
+		function createFontSelect(index) {
+			const container = document.createElement('div');
+			container.classList.add("font-div");
+			const searchInput = document.createElement('input');
+			searchInput.type = 'text';
+			searchInput.placeholder = '搜索字体...';
+			searchInput.addEventListener('input', function() {
+				updateFontOptions(select, this.value.toLowerCase());
+			});
+			container.appendChild(searchInput);
+			const select = document.createElement('select');
+			updateFontOptions(select, '');
+			select.onchange = (event) => {
+				texts[index].font = event.target.value;
+				drawCanvas();
+			};
+			container.appendChild(select);
+			return container;
+		}
+		function updateFontOptions(selectElement, searchTerm) {
+			selectElement.innerHTML = '';
+			availableFonts.forEach((font) => {
+				if (font.name.toLowerCase().includes(searchTerm)) {
+					const option = document.createElement('option');
+					option.value = font.value;
+					option.text = font.name;
+					selectElement.appendChild(option);
+				}
+			});
+		}
+		function loadBackgroundImage(event) {
+			$("canvas").css("background", "none")
+			const file = event.target.files[0];
+			background = new Image();
+			background.src = URL.createObjectURL(file);
+			background.onload = () => {
+				canvas.width = background.width;
+				canvas.height = background.height;
+				scale = canvas.offsetWidth / canvas.width;
+				drawCanvas();
+				showNotification("已加载背景");
+				backgroundUploaded = true;
+			};
+		}
+		function createSlider(label, index, type, min = 0, max = canvas.width, step = 1, needUpdateButton = false) {
+			const div = document.createElement('div');
+			let labelText;
+			switch (type + ' ' + label) {
+				case 'image X':
+					labelText = `图${index+1}左右`;
+					break;
+				case 'image Y':
+					labelText = `图${index+1}上下`;
+					break;
+				case 'image Scale':
+					labelText = `图${index+1}缩放`;
+					break;
+				case 'image Rotate':
+					labelText = `图${index+1}旋转`;
+					break;
+				case 'text X':
+					labelText = `文字${index+1}左右`;
+					break;
+				case 'text Y':
+					labelText = `文字${index+1}上下`;
+					break;
+				case 'text Size':
+					labelText = `文字${index+1}大小`;
+					break;
+				default:
+					labelText = `${type} ${index} ${label}`;
+					break;
+			}
+			const lbl = document.createElement('label');
+			lbl.innerHTML = labelText + ': ';
+			div.appendChild(lbl);
+			const input = document.createElement('input');
+			input.type = 'range';
+			input.min = min * scale;
+			input.max = max * scale;
+			input.step = step * scale;
+			input.value = label === 'Scale' ? 1 : 100 * scale;
+			div.appendChild(input);
+			const span = document.createElement('span');
+			span.innerHTML = ` ${parseFloat(input.value).toFixed(2)}`; 
+			input.oninput = () => {
+				span.innerHTML = ` ${parseFloat(input.value).toFixed(2)}`;
+				if (!needUpdateButton) {
+					adjustPosition({
+						target: {
+							value: input.value
+						}
+					}, index, label, type);
+				}
+			};
+			div.appendChild(span);
+			if (needUpdateButton) {
+				const updateButton = document.createElement('button');
+				updateButton.innerText = '点击更新';
+				updateButton.onclick = () => {
+					adjustPosition({
+						target: {
+							value: input.value
+						}
+					}, index, label, type);
+					drawCanvas();
+				};
+				div.appendChild(updateButton);
+			}
+			input.id = `${type}${index}${label}`;
+
+			return div;
+		}
+		function adjustPosition(event, index, label, type) {
+			const realValue = event.target.value / scale;
+			if (type === 'image') {
+				if (label === 'X') overlayImages[index].x = realValue;
+				if (label === 'Y') overlayImages[index].y = realValue;
+				if (label === 'Scale') overlayImages[index].scale = realValue;
+				if (label === 'Rotate') overlayImages[index].rotation = event.target.value;
+			}
+			if (type === 'text') {
+				if (label === 'X') texts[index].x = realValue;
+				if (label === 'Y') texts[index].y = realValue;
+				if (label === 'Size') texts[index].size = realValue;
+			}
+			if (type === 'image' && label === 'Scale') {
+				const image = overlayImages[index].image;
+				const newWidth = image.width * event.target.value;
+				const newHeight = image.height * event.target.value;
+				document.getElementById(`image${index}X`).min = -newWidth;
+				document.getElementById(`image${index}Y`).min = -newHeight;
+			}
+			drawCanvas();
+		}
+		function drawCanvas() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			drawRoundedImage(
+				background,
+				0, 0,
+				canvas.width, canvas.height,
+				roundedCorners.topLeft,
+				roundedCorners.topRight,
+				roundedCorners.bottomRight,
+				roundedCorners.bottomLeft
+			);
+			overlayImages.forEach((item) => {
+				ctx.save();
+				ctx.translate(item.x + item.image.width / 2 * item.scale, item.y + item.image.height / 2 * item.scale);
+				ctx.scale(item.scale, item.scale);
+				ctx.rotate(item.rotation);
+				ctx.drawImage(item.image, -item.image.width / 2, -item.image.height / 2);
+				ctx.restore();
+			});
+			texts.forEach(({
+				x,
+				y,
+				size,
+				text,
+				font,
+				color
+			}) => {
+				ctx.font = `${size}px ${font}`;
+				ctx.fillStyle = `${color}`;
+				ctx.fillText(text, x, y);
+			});
+		}
+		function downloadCanvas() {
+			if (!checkBackgroundUploaded()) return;
+			const link = document.createElement('a');
+			link.href = canvas.toDataURL();
+			link.download = 'IMG_' + new Date().getTime() + '.png';
+			link.click();
+			showNotification("正在导出图片");
+		}
+		function showNotification(message) {
+			const container = document.getElementById('notification-container');
+			const notification = document.createElement('div');
+			notification.className = 'notification';
+			notification.textContent = message;
+			container.appendChild(notification);
+			void notification.offsetWidth;
+			notification.classList.add('show');
+			setTimeout(() => {
+				notification.remove();
+			}, 3000);
+		}
+		$("#showRoundedModal").click(function() {
+			if (!checkBackgroundUploaded()) return;
+			$("#roundedCornersModal").fadeIn();
+		});
+		$("#applyRounded").click(function() {
+			let topLeft = parseInt($("#topLeft").val()) || 0;
+			let topRight = parseInt($("#topRight").val()) || 0;
+			let bottomLeft = parseInt($("#bottomLeft").val()) || 0;
+			let bottomRight = parseInt($("#bottomRight").val()) || 0;
+			roundedCorners = {
+				topLeft: topLeft,
+				topRight: topRight,
+				bottomLeft: bottomLeft,
+				bottomRight: bottomRight
+			};
+			drawCanvas();
+			$("#roundedCornersModal").fadeOut();
+		});
+
+		$("#closeModal").click(function() {
+			$("#roundedCornersModal").fadeOut();
+		});
+
+		function drawRoundedImage(image, x, y, width, height, topLeft = 0, topRight = 0, bottomRight = 0, bottomLeft = 0) {
+			ctx.beginPath();
+			ctx.moveTo(x + topLeft, y);
+			ctx.lineTo(x + width - topRight, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + topRight);
+			ctx.lineTo(x + width, y + height - bottomRight);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - bottomRight, y + height);
+			ctx.lineTo(x + bottomLeft, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - bottomLeft);
+			ctx.lineTo(x, y + topLeft);
+			ctx.quadraticCurveTo(x, y, x + topLeft, y);
+			ctx.closePath();
+			ctx.clip();
+			ctx.drawImage(image, x, y, width, height);
+		}
+    </script>
+</body>
+</html>

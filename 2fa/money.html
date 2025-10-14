@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>汇率换算</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="author" content="在线工具网站" />
+		<meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,汇率换算,世界时间,文本处理工具,FB账号批量检测,facebook批量检测,谷歌验证器网页版,Google authenticator网页版" />
+		<meta name="description" content="本站所有在线工具免费使用，旨在方便大家做业务。工具主要有：2FA验证码获取、汇率换算、文本处理、图片编辑、世界时间、节假日倒计时、笔记分享。" />
+		<link rel="apple-touch-icon" sizes="144x144" href="https://2fa.run/assets/images/favicons/apple-touch-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="57x57" href="https://2fa.run/assets/images/favicons/apple-touch-icon-57x57.png">
+		<link rel="shortcut icon" href="https://2fa.run/assets/images/favicons/tools.png" type="image/png">
+		<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/style.css" />
+		<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/fonts/fonts.css" />
+		<style>
+			* { word-break: break-all;}
+			li,ul { list-style-type: none;}
+			.title-money { font-size: 2rem;}
+			.title-p { margin-bottom: 0px !important;}
+			.pb-sm-2, .py-sm-2{padding:0px!important;}
+			.hbfh { font-size: .86rem; min-width: 2.8rem; padding: 0.25rem 0.25rem; display: flex; align-content: center; justify-content: center; border-radius: 5px 0px 0px 5px; background: rgb(201 232 220 / 43%); border: 0px; cursor: pointer;}
+			.gjfh { font-size: 0.86rem; padding: 0.25rem 0.25rem; border-radius: 0px 5px 5px 0px; background: #41c1908c; border: 0px;}
+			.tip-mess { font-size: 0.75rem; line-height: 15px; margin: 0px; padding: 0px;}
+			.inputnum { padding: 0px !important; line-height: 30px; background: rgb(201 232 220 / 43%); border: 0px; border-left: 1px solid white; padding-left: 3px !important;}
+			.inputnum:hover { border: 0px; border-left: 1px solid white;}
+			.inputnum:focus { background: #dfefff; border: 0px; border-left: 1px solid white;}
+			#toupdate { color: white; border: 0px; border-radius: 3px; background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%); box-shadow: inset -0.25rem -0.25rem 0.3125rem rgba(0, 0, 0, 0.1), inset 0.25rem 0.25rem 0.3125rem rgba(255, 255, 255, 0.23);}
+			#notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999;}
+			.notification { background-color: #030303bf; color: #fff; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateX(100%); transition: opacity 0.5s, transform 0.5s;}
+			.notification.show { opacity: 1; transform: translateX(0);}
+			@media only screen and (max-width: 580px) { 
+				.hbfh {  width: 20%;  border-radius: 5px 0px 0px 0px !important; }
+				.inputnum {  width: 60% !important;  border-radius: 0px 5px 0px 0px !important; }
+				.gjfh {  display: flex;  justify-content: center;  width: 100%;  border-radius: 0px 0px 5px 5px !important; }
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container gutter-top photo-edit">
+			<div class="row sticky-parent">
+				<aside class="col-12 col-md-12 col-lg-2">
+					<div class="sidebar box sticky-column">
+						<ul class="nav">
+							<li class="nav__item"><a href="index.html"><i class="icon-key"></i>2FA工具</a></li>
+							<li class="nav__item"><a href="note.html"><i class="icon-clipboard"></i>文本处理</a></li>
+							<li class="nav__item"><a href="work.html"><i class="icon-instagram1"></i>图片处理</a></li>
+							<li class="nav__item"><a class="active" href="money.html"><i class="icon-activity"></i>汇率换算</a></li>
+							<li class="nav__item"><a href="more.html"><i class="icon-more-horizontal"></i>更多工具</a></li>
+						</ul>
+					</div>
+				</aside>
+				<div class="col-12 col-md-12 col-lg-10">
+					<div class="box box-content">
+						<div class="pb-0 pb-sm-2">
+							<h1 class="title-money">汇率换算</h1>
+							<p class="title-p">简单的汇率换算工具，汇率非实时数据，仅供参考。</p>
+						</div>
+						<hr />
+						<div class="row align-items-center">
+							<div class="col">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">CNY</span>
+									<input type="text" class="inputnum form-control" id="cny" value="" title="已选中"/>
+									<span class="gjfh input-group-text">人民币[中国 ¥]</span>
+								</div>
+							</div>
+							<div class="col">
+								<div class="input-group mb-2">
+									<p class="tip-mess">汇率最近更新时间：<span id="updatetime"></span>。如发现数值异常请点击此处：<button
+											id="toupdate">刷新汇率</button></p>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">TWD</span>
+									<input type="text" class="inputnum form-control" id="twd" value="" />
+									<span class="gjfh input-group-text">台币[中国台湾 NT$]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">HKD</span>
+									<input type="text" class="inputnum form-control" id="hkd" value="" />
+									<span class="gjfh input-group-text">港元[中国香港 HK$]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">RUB</span>
+									<input type="text" class="inputnum form-control" id="rub" value="" />
+									<span class="gjfh input-group-text">卢布[俄罗斯 ₽]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">USD</span>
+									<input type="text" class="inputnum form-control" id="usd" value="" />
+									<span class="gjfh input-group-text">美元[美国 $]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">INR</span>
+									<input type="text" class="inputnum form-control" id="inr" value="" />
+									<span class="gjfh input-group-text">卢比[印度 ₹]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">VND</span>
+									<input type="text" class="inputnum form-control" id="vnd" value="" />
+									<span class="gjfh input-group-text">越南盾[越南 ₫]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">JPY</span>
+									<input type="text" class="inputnum form-control" id="jpy" value="" />
+									<span class="gjfh input-group-text">日元[日本 ¥]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">EUR</span>
+									<input type="text" class="inputnum form-control" id="eur" value="" />
+									<span class="gjfh input-group-text">欧元[欧盟 €]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">SGD</span>
+									<input type="text" class="inputnum form-control" id="sgd" value="" />
+									<span class="gjfh input-group-text">新元[新加坡 S$]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">GBP</span>
+									<input type="text" class="inputnum form-control" id="gbp" value="" />
+									<span class="gjfh input-group-text">英镑[英国 £]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">ARS</span>
+									<input type="text" class="inputnum form-control" id="ars" value="" />
+									<span class="gjfh input-group-text">比索[阿根廷 $]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">PHP</span>
+									<input type="text" class="inputnum form-control" id="php" value="" />
+									<span class="gjfh input-group-text">比索[菲律宾 ₱]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">KRW</span>
+									<input type="text" class="inputnum form-control" id="krw" value="" />
+									<span class="gjfh input-group-text">韩元[韩国 ₩]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">TRY</span>
+									<input type="text" class="inputnum form-control" id="try" value="" />
+									<span class="gjfh input-group-text">里拉[土耳其 ₺]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">AUD</span>
+									<input type="text" class="inputnum form-control" id="aud" value="" />
+									<span class="gjfh input-group-text">澳元[澳大利亚 A$]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">CHF</span>
+									<input type="text" class="inputnum form-control" id="chf" value="" />
+									<span class="gjfh input-group-text">法郎[瑞士 Fr]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">THB</span>
+									<input type="text" class="inputnum form-control" id="thb" value="" />
+									<span class="gjfh input-group-text">泰铢[泰国 ฿]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">IDR</span>
+									<input type="text" class="inputnum form-control" id="idr" value="" />
+									<span class="gjfh input-group-text">印尼盾[印度尼西亚 Rp]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">CAD</span>
+									<input type="text" class="inputnum form-control" id="cad" value="" />
+									<span class="gjfh input-group-text">加元[加拿大 C$]</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="input-group mb-2">
+									<span class="hbfh input-group-text">PKR</span>
+									<input type="text" class="inputnum form-control" id="pkr" value="" />
+									<span class="gjfh input-group-text">卢比[巴基斯坦 ₨]</span>
+								</div>
+							</div>
+						</div>
+						<div class="row align-items-center">
+                    		<div class="col-6">
+                    			<div class="input-group mb-2">
+                    				<span class="hbfh input-group-text">MXN</span>
+                    				<input type="text" class="inputnum form-control" id="mxn" value=""/>
+                    				<span class="gjfh input-group-text">比索[墨西哥 $]</span>
+                    			</div>
+                    		</div>
+                    		<div class="col-6">
+                    			<div class="input-group mb-2">
+                    				<span class="hbfh input-group-text">SAR</span>
+                    				<input type="text" class="inputnum form-control" id="sar" value="" />
+                    				<span class="gjfh input-group-text">里亚尔[沙特阿拉伯 SR]</span>
+                    			</div>
+                    		</div>
+                    	</div>
+                    	<div class="row align-items-center">
+                    		<div class="col-6">
+                    			<div class="input-group mb-2">
+                    				<span class="hbfh input-group-text">MYR</span>
+                    				<input type="text" class="inputnum form-control" id="myr" value=""/>
+                    				<span class="gjfh input-group-text">林吉特[马来西亚 RM]</span>
+                    			</div>
+                    		</div>
+                    		<div class="col-6">
+                    			<div class="input-group mb-2">
+                    				<span class="hbfh input-group-text">BDT</span>
+                    				<input type="text" class="inputnum form-control" id="bdt" value="" />
+                    				<span class="gjfh input-group-text">塔卡[孟加拉国 ৳]</span>
+                    			</div>
+                    		</div>
+                    	</div>
+                    	<div class="row align-items-center">
+                    		<div class="col-6">
+                    			<div class="input-group mb-2">
+                    				<span class="hbfh input-group-text">XAU</span>
+                    				<input type="text" class="inputnum form-control" id="xau" value=""/>
+                    				<span class="gjfh input-group-text">国际黄金[克 g]</span>
+                    			</div>
+                    		</div>
+                    		<div class="col-6">
+                    			<div class="input-group mb-2">
+                    				<span class="hbfh input-group-text">BTC</span>
+                    				<input type="text" class="inputnum form-control" id="btc" value="" />
+                    				<span class="gjfh input-group-text">比特币[仅供参考]</span>
+                    			</div>
+                    		</div>
+                    	</div>
+						<hr />
+						<h3 class="title title--h5">汇率工具说明</h3>
+						<p class="tip-p"><strong>功能说明</strong>：<span>因API限制，汇率并非实时数据，仅供参考。</span><br /><strong>新手提示</strong>：点击输入框(数字部分)输入数值，然后再次点击输入框即可更新汇率。
+							<br><strong>最近维护</strong>：2023年10月27日
+						</p>
+					</div>
+					<footer class="footer">©2025 在线工具</footer>
+				</div>
+			</div>
+		</div>
+		<div class="back-to-top"></div>
+		<div id="notification-container"></div>
+		<script src="https://2fa.run/assets/js/jquery-3.4.1.min.js"></script>
+		<script src="https://2fa.run/assets/js/plugins.min.js"></script>
+		<script src="https://2fa.run/assets/js/common.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("#cny").val(100);
+				updateCurrencyValues();
+				$('.inputnum').prop('disabled', true);
+				showNotification("汇率刷新中，请稍等~")
+				
+				setTimeout(function() {
+				    $('.inputnum').prop('disabled', false);
+				},1000)
+				
+				$("#toupdate").on("click", function() {
+					updateCurrencyValues();
+					showNotification("数据已刷新")
+				});
+				
+				$(".inputnum").on("click", function() {
+					recalculateRates(this);
+				});
+				$(".hbfh").on("click", function() {
+					let inputElement = $(this).next();
+					copyToClipboard(inputElement);
+				});
+				
+				$(".inputnum").on("click", function() {
+					$(this).select();
+					$(this).css("color", "red");
+					if ($(this).val() !== "") {
+						showNotification("已全选");
+					}
+				});
+			});
+			
+			function copyToClipboard(element) {
+				element.select();
+				if (document.execCommand('copy')) {
+					showNotification("已复制数据");
+				} else {
+					showNotification("复制失败，请重试!")
+				}
+			}
+			function roundFun(value, n) {
+				return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
+			}
+			function recalculateRates(element) {
+				let id = element.id;
+				let value = parseFloat(element.value);
+				let rate = "h" + id;
+				let multiplier = value / newdate[rate];
+				$(".inputnum").not(element).each(function() {
+					let inputId = this.id;
+					let inputRate = "h" + inputId;
+					$(this).val(roundFun(multiplier * newdate[inputRate], inputId === "btc" || inputId === "usdt" ? 8 :
+						6));
+				});
+			}
+			function updateCurrencyValues() {
+				$.ajax({
+					url: "app/huiapi.php",
+					type: 'GET',
+					contentType: 'application/json; charset=utf-8',
+					dataType: 'json',
+					async: true,
+					success: function(res) {
+						newdate = res;
+						recalculateRates($("#cny")[0]);
+						$("#updatetime").text(res["hnewtime"]);
+					},
+					error: function(XMLHttpRequest) {
+						// Handle errors as required
+					}
+				});
+				
+			}
+			function showNotification(message) {
+				const container = document.getElementById('notification-container');
+				const notification = document.createElement('div');
+				notification.className = 'notification';
+				notification.textContent = message;
+				container.appendChild(notification);
+				void notification.offsetWidth;
+				notification.classList.add('show');
+				setTimeout(() => {
+					notification.remove();
+				}, 3000);
+			}
+		</script>
+	</body>
+</html>

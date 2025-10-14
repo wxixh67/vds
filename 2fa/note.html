@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>文本处理</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="author" content="在线工具网站" />
+		<meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,汇率换算,世界时间,文本处理工具,FB账号批量检测,facebook批量检测,谷歌验证器网页版,Google authenticator网页版" />
+		<meta name="description" content="本站所有在线工具免费使用，旨在方便大家做业务。工具主要有：2FA验证码获取、汇率换算、文本处理、图片编辑、世界时间、节假日倒计时、笔记分享。" />
+		<link rel="apple-touch-icon" sizes="144x144" href="https://2fa.run/assets/images/favicons/apple-touch-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="57x57" href="https://2fa.run/assets/images/favicons/apple-touch-icon-57x57.png">
+		<link rel="shortcut icon" href="https://2fa.run/assets/images/favicons/tools.png" type="image/png">
+		<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/style.css" />
+		<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/editor.css" />
+		<style>
+			* { word-break: break-all;}
+			li { list-style-type: none; float: left;}
+			.note-edit .box-content>.pb-sm-2,.note-edit .box-content>.py-sm-2 { padding: 0px !important;}
+			.title-2fa { position: relative; color: #3B4B5E; font-size: 2rem; font-family: "Poppins", sans-serif; font-weight: 600;}
+			.title-p { margin-bottom: 0px !important;}
+			.tongji { width: 100%; height: 20px; padding: 0px; margin: 0px; font-weight: 600;font-size: 0.65rem;color: #8f8f8f;display: flex;justify-content: center;}
+			.tongji li { line-height: 20px;}
+			.tongji span { color:#2bb281;font-weight: 600;}
+			.note-right ul { float: left; width: 100%; padding: 0px; margin-bottom: 10px;}
+			.note-right li { margin: 0px 0.25rem 0.55rem 0px;}
+			.note-right button { width: 100%; height: 100%; padding-top: 2px; padding-bottom: 0px; border: 1px solid rgb(84 84 84 / 30%); border-radius: 4px; box-shadow: 1px 2px 2px rgb(150 149 149); background-color: #ffffff;}
+			.note-right button:hover { box-shadow: none; background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%); color: white; border-color: white;}
+			.txtbtn{-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+			#editor1,#editor2 { height: 235px; border-radius: 5px; margin-bottom: 10px; font-family: sans-serif; border: 1px solid rgb(163 163 163 / 75%); background: rgb(221 221 221 / 19%); box-shadow: inset 2px 2px 2px 0px rgb(175 175 175);}
+			#editor1:hover,#editor2:hover { background: white;}
+			.w-e-text-container { height: 100%; background: none !important;}
+			.w-e-text-container [data-slate-editor] p { margin: 2px 0px !important; font-size: 0.65rem;}
+			.w-e-text-placeholder { margin-top: -15px !important; margin-left: -8px;}
+			.w-e-text-container [data-slate-editor] { padding: 1px 3px !important;}
+			#notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999;}
+			.notification { background-color: #030303bf; color: #fff; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateX(100%); transition: opacity 0.5s, transform 0.5s;}
+			.notification.show { opacity: 1; transform: translateX(0);}
+			#replaceModal { display: none; position: fixed;top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 36px; background-color: white; border: 1px solid #ccc; border-radius: 3px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 1000;opacity:1;}
+			#replaceModal input { width:100%;border-radius: 3px; border: 1px solid #5095ff;}
+			#replaceModal button { min-width: 45%; font-weight: 600; width: 100%; border: 0px; border-radius: 3px; color: white;background: #5095ff; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45); padding: .35rem .15rem;margin: 5px 0px 10px 0px;}
+			#replaceModal button:hover { color: #000; background: #fff; box-shadow: inset 0px 0px 1px 1px rgba(0, 0, 0, 0.45);}
+			#replaceModal p{ margin-bottom:0.25rem; }
+			#abortBtn:hover { background: #ff4a4a;}
+			.overlay-txt { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 999;}
+			@media only screen and (min-width: 1201px) {
+				.note-right li {  min-width: 45%;  padding: 0px 0.25rem 0.35rem 0px;  margin: 0px 0.25rem 0.50rem 0px; }
+				.note-right button {  font-size: 0.75rem;  padding: 0.25rem 0.55rem; }
+			}
+			@media only screen and (max-width: 1200px) {
+				.note-right li {  min-width: 45%;  padding: 0px 0.25rem 0.35rem 0px;  margin: 0px 0.25rem 0.50rem 0px; }
+				.note-right button {  font-size: 0.75rem;  padding: 0.25rem 0.55rem; }
+			}
+			@media only screen and (max-width: 990px) {
+				.note-right li {  min-width: 40%;  margin: 0px 0.15rem 0.55rem 0px; }
+				.note-right button {  font-size: 0.75rem;  padding: 0.22rem 0.25rem; }
+			}
+			@media only screen and (max-width: 768px) {
+				.note-right li {  min-width: 30%;  padding: 0px 0.15rem 0.15rem 0px;  margin: 0px 0.1rem 0.2rem 0px; }
+				.note-right button {  font-size: 0.85rem;  padding: 0.15rem 0.15rem; }
+				#replaceModal {top: 50%;left: 5%;transform: translateY(-50%);width: 90%;}
+			}
+		</style>
+
+	</head>
+	<body>
+		<div class="container gutter-top note-edit">
+			<div class="row sticky-parent">
+				<aside class="col-12 col-md-12 col-lg-2">
+					<div class="sidebar box sticky-column">
+						<ul class="nav">
+							<li class="nav__item"><a href="index.html"><i class="icon-key"></i>2FA工具</a></li>
+							<li class="nav__item"><a class="active" href="note.html"><i class="icon-clipboard"></i>文本处理</a></li>
+							<li class="nav__item"><a href="work.html"><i class="icon-instagram1"></i>图片处理</a></li>
+							<li class="nav__item"><a href="money.html"><i class="icon-activity"></i>汇率换算</a></li>
+							<li class="nav__item"><a href="more.html"><i class="icon-more-horizontal"></i>更多工具</a></li>
+						</ul>
+					</div>
+				</aside>
+				<div class="col-12 col-md-12 col-lg-10">
+					<div class="box box-content">
+						<div class="pb-0 pb-sm-2">
+							<h1 class="title-2fa">文本处理</h1>
+							<p class="title-p">输入框(上)的内容改变时会自动保存在本地缓存中，输出框(下)结果不会保存。</p>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-md-4 col-sm-12 note-right">
+								<ul class="notefun">
+									<li><button class="txtbtn" id="localCache">加载本地缓存</button></li>
+									<li><button class="txtbtn" id="cleartxt">清除全部内容</button></li>
+									<li><button class="txtbtn" id="edit01save">导出输入文本</button></li>
+									<li><button class="txtbtn" id="edit02save">导出结果文本</button></li>
+									<li><button class="txtbtn" id="copytxt">复制处理结果</button></li>
+									<li><button class="txtbtn" id="movetoTxt">结果转到输入框</button></li>
+								</ul>
+								<ul class="notefun">
+									<li><button class="txtbtn" id="replaceString">替换或添加</button></li>
+									<li><button class="txtbtn" id="clearAllHTML">HTML文本化</button></li>
+									<li><button class="txtbtn" id="clearHTML">清除HTML标签</button></li>
+									<li><button class="txtbtn" id="cleartab">清除每行空格</button></li>
+									<li><button class="txtbtn" id="clearhn">清除空白行</button></li>
+									<li><button class="txtbtn" id="clearallhn">合并多行</button></li>
+								</ul>
+								<ul class="notefun">
+									<li><button class="txtbtn" id="firstbig">首字母大写</button></li>
+									<li><button class="txtbtn" id="allbig">字母全部大写</button></li>
+									<li><button class="txtbtn" id="allsmall">字母全部小写</button></li>
+									<li><button class="txtbtn" id="pinyin">汉字转拼音</button></li>
+								</ul>
+								<ul class="notefun">
+									<li><button class="txtbtn" id="checkfbfast">检测FB[快速]</button></li>
+									<li><button class="txtbtn" id="checkfb">检测FB[统计]</button></li>
+									<li><button class="txtbtn" id="exportBtn">表格导出</button></li>
+									<li><button class="txtbtn" id="exportBtnDie">表格只导禁用</button></li>
+								</ul>
+								<ul class="notefun">
+									<li><button class="txtbtn" id="encode">Base64编码</button></li>
+									<li><button class="txtbtn" id="decode">Base64解码</button></li>
+								</ul>
+							</div>
+							<div class="col-md-8 col-sm-12 note-left">
+								<ul class="tongji">
+									<li>输入框信息[<span id="num_hang">0</span>]行; </li>
+									<li>[<span id="num_sum">0</span>]字; </li>
+									<li>已选中[<span id="num_select">0</span>]字</li>
+								</ul>
+								<div id="toolbar1-container" style="border-bottom: 1px solid #ccc;display:none"></div>
+								<div id="editor1" class="editor-style"></div>
+								<div id="toolbar2-container" style="border-bottom: 1px solid #ccc;display:none"></div>
+								<div id="editor2" class="editor-style"></div>
+							</div>
+						</div>
+						<hr />
+						<h3 class="title title--h5">文本工具说明</h3>
+						<p class="tip-p"><strong>批量检测</strong>：推荐使用 <span style="color:green;">检测FB[快速]</span> ，因为此检测方法只筛选禁用的ID，可以快速出结果。 <span style="color:green;">检测FB[统计]</span>
+								是比较消耗时间，因为要按顺序排队输出，请等待运行完成再导出结果，检测完都会自动复制禁用账户的ID到剪切板，方便筛选废号。目前已全面支持新老ID编号，表格导出仅适用于
+								<span style="color:green;">检测FB[统计]</span>。<br /><strong>新手提示</strong>：文本编辑器输入框的内容保存在本地，刷新网页之后，数据不大会自动加载。如果数据字符数较多，需要点击<span style="color:green;">[加载本地缓存]</span>按钮才能加载本地缓存数据。<span style="color:green;">[替换指定字符]</span>按钮可以批量替换字符，如果想批量删除某些字符，替换数据框留空，点击确认即可批量删除。如果你想保存大量的文本数据为短链接，请前往：<a href="note.1.html" target="_blank">https://2fa.run/note</a>。
+							<br><strong>最近维护</strong>：2023年10月26日
+						</p>
+					</div>
+					<footer class="footer">©2025 在线工具</footer>
+				</div>
+			</div>
+		</div>
+		<div id="notification-container"></div>
+		<div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); z-index:1000;">
+			<button id="abortBtn" style="position:absolute; top:25%; left:50%; transform:translate(-50%, -50%);border-radius:5px;font-size:1.5rem;color:#000;margin-bottom:10px;">终止检测</button>
+			<h5 style="position:absolute; top:55%; left:50%; transform:translate(-50%, -50%);color:white;text-align:center;">检测FB需要时间，请耐心等待。如果发现输入数据错误或者长时间无反应，可点击终止检测按钮。检测完成后本窗口将自动关闭。关闭后自动复制禁用状态的ID到剪切板（部分浏览器首次运行需要获取复制数据权限）。</h5>
+		</div>
+		<div class="overlay-txt" id="overlay_txt"></div>
+		<div id="replaceModal">
+			<span>输入原文字 <input type="text" id="originalText" placeholder="输入需要替换的文字"></span>
+			<span>需要替换为 <input type="text" id="replacementText" placeholder="输入替换后的文字"></span>
+			<button id="confirmBtn">替换文字</button>
+			<hr>
+			<p>每行开始添加 <input type="text" id="startText" placeholder="输入备注文字"></p>
+			<p>每行结尾添加 <input type="text" id="endText" placeholder="输入备注文字"></p>
+			<button id="confirmBtnAdd">添加文字</button>
+			<hr>
+			<P>温馨提示：点击弹窗之外区域可关闭本弹窗，也可以点击下面按钮关闭。<button style="background-color:#ff8d60;" onclick="$('#replaceModal').hide();$('#overlay_txt').hide();">关闭弹窗</button></P>
+		</div>
+		<div class="back-to-top"></div>
+		<script src="https://2fa.run/assets/js/jquery-3.4.1.min.js"></script>
+		<script src="https://2fa.run/assets/js/plugins.min.js"></script>
+		<script src="https://2fa.run/assets/js/common.js"></script>
+		<script src="https://2fa.run/assets/js/editor-v5.js"></script>
+		<script src="https://2fa.run/assets/js/pinyin.js"></script>
+		<script src="https://2fa.run/assets/js/xlsx.full.min.js"></script>
+		<script>
+			let edit01, edit02, edit01val, edit02val;
+			let localkey = window.localStorage;
+			let currentAjaxRequest = null;
+			let dieNum = 0;
+			const E = window.wangEditor;
+			const LANG = location.href.indexOf('lang=en') > 0 ? 'en' : 'zh-CN'
+			E.i18nChangeLanguage(LANG)
+			const editor1 = E.createEditor({
+				selector: '#editor1',
+				content: window.HUGE_CONTENT,
+				mode: 'simple',
+				config: {
+					onChange() {
+						let nowText = editor1.getText();
+						let nowHtml = editor1.getHtml();
+						if (!chechText(nowText)) {
+							localStorage.setItem("edit01", "");
+						} else {
+							localStorage.setItem("edit01", nowHtml);
+							$("#edit01save").css("background-color", "rgb(108 222 49)");
+							$("#cleartxt").css("background-color", "rgb(255 108 108)");
+							if (nowText.match(/\b\d{10,15}\b/)) {
+								$("#checkfb").css("background-color", "rgb(50 178 255)");
+								$("#checkfbfast").css("background-color", "rgb(50 178 255)");
+							} else {
+								$("#checkfb").css("background-color", "#ffffff");
+								$("#checkfbfast").css("background-color", "#ffffff");
+							}
+						}
+						const selectionText = editor1.getSelectionText();
+						$("#num_select").text(selectionText.length);
+						const sumText = editor1.getText().replace(/\n|\r/mg, '');
+						$("#num_sum").text(sumText.length);
+						let sumHang = editor1.getHtml().replace(/<p><br><\/p>/g, "");
+						sumHang = sumHang.split("</p>").length - 1;
+						$("#num_hang").text(sumHang);
+					}
+				}
+			})
+			const editor2 = E.createEditor({
+				selector: '#editor2',
+				content: window.HUGE_CONTENT,
+				mode: 'simple',
+				config: {
+					onChange() {
+						if (chechText(editor2.getText())) {
+							$("#edit02save").css("background-color", "rgb(108 222 49)");
+						}
+					}
+				}
+			})
+			const toolbar1 = E.createToolbar({
+				editor: editor1,
+				selector: '#toolbar1-container',
+				config: {}
+			})
+			const toolbar2 = E.createToolbar({
+				editor: editor2,
+				selector: '#toolbar2-container',
+				config: {}
+			})
+			$(document).ready(function() {
+			    editor1.disable();
+			    editor2.disable();
+				edit01val = localkey.getItem("edit01");
+				if (storageValueSum("edit01", 10000)) {
+					$("#localCache").css("background-color", "rgb(255 161 65)");
+					showNotification("检测到大量本地缓存，需点击按钮加载~");
+				} else {
+					if (chechText(edit01val)) {
+						update_editor(editor1, edit01val);
+					}
+				}
+				setTimeout(function() {
+				    editor1.enable();
+			        editor2.enable();
+			        editor1.focus();
+				},500)
+				
+				var originalOpacity = "1";
+                function toggleDraggable($element, isDraggable) {
+                    $element.attr('draggable', isDraggable);
+                }
+                $('#replaceModal, #replaceModal_2').find('input, p').on({
+                    mouseenter: function() {
+                        toggleDraggable($(this).closest('[id^=replaceModal]'), 'false');
+                    },
+                    mouseleave: function() {
+                        toggleDraggable($(this).closest('[id^=replaceModal]'), 'true');
+                    }
+                });
+                $('[id^=replaceModal]').on({
+                    dragstart: function(event) {
+                        $(this).css('opacity', '0.01');
+                    },
+                    dragend: function(event) {
+                        $(this).css('opacity', originalOpacity);
+                    }
+                });
+				
+			});
+			function storageValueSum(key, limit) {
+				if (!key || !limit) {
+					return false;
+				}
+				let storedValue = window.localStorage.getItem(key);
+				return storedValue && storedValue.length >= limit;
+			}
+			$("#localCache").on("click", function() {
+				edit01val = localkey.getItem("edit01");
+				if (!chechText(edit01val)) {
+					showNotification("无本地缓存数据");
+				} else {
+					if (!storageValueSum("edit01", 10000)) {
+						showNotification("字符数小于10000时自动加载~");
+					} else {
+						update_editor(editor1, edit01val);
+						showNotification("已成功加载本地缓存~");
+					}
+				}
+			})
+			$("#editor1").on("click", function() {
+				editor1.focus();
+			})
+			$("#editor2").on("click", function() {
+				editor2.focus();
+			})
+			$("#edit01save").on("click", function() {
+				if (!chechText(editor1.getText())) {
+					showNotification("输入为空");
+				} else {
+					exportTxt(editor1, edit01);
+				}
+			})
+			$("#edit02save").on("click", function() {
+				if (!chechText(editor2.getText())) {
+					showNotification("结果为空");
+				} else {
+					exportTxt(editor2, edit02);
+				}
+			})
+			$("#cleartxt").on("click", function() {
+				let nullString = "";
+				update_editor(editor1, nullString);
+				update_editor(editor2, nullString);
+				localStorage.setItem("edit01", "");
+				localStorage.setItem("edit02", "");
+				editor1.clear();
+				editor2.clear();
+				editor1.focus(true);
+				$(".txtbtn").css("background-color", "#ffffff");
+				showNotification("已清空全部内容");
+			})
+			$("#copytxt").on("click", function() {
+				if (!chechText(editor2.getText())) {
+					showNotification("结果为空");
+				} else {
+					editor2.selectAll();
+					document.execCommand('copy');
+					showNotification("已复制结果");
+				}
+			})
+			$("#movetoTxt").on("click", function() {
+				if (!chechText(editor2.getText())) {
+					showNotification("结果为空");
+				} else {
+					update_editor(editor1, "<p><br></p>");
+					update_editor(editor1, editor2.getHtml());
+					editor2.clear();
+				}
+			})
+			$("#clearAllHTML").on("click", function() {
+				if (!editor1.isEmpty()) {
+					update_editor(editor2, textChg(editor1));
+				}
+			})
+			$("#clearHTML").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.replace(/(&lt;!--)+[\s\S].*?(--&gt;)/g, "").replace(/(&lt;).*?(&gt;)/g, "");
+					content = content.replace(/<br>/g, "</p><p>");
+					content = content.replace(/&nbsp;/g, " ");
+					content = content.replace(/<p>+[\s]+<\/p>/g, "").replace(/<p>+[\s]+/g, "<p>").replace(/<p><\/p>/g,"");
+					update_editor(editor2, content);
+					showNotification("已移除HTML标签~");
+				}
+			});
+			$("#cleartab").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.replace(/\s+/g, "").replace(/\&nbsp;/g, "");
+					update_editor(editor2, content)
+					showNotification("已清除每行的空格~");
+				}
+			});
+			$("#clearhn").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.replace(/<p>+[\&nbsp;\s]+<\/p>/g, "").replace(/<br>/g, "</p><p>").replace(/<p><\/p>/g, "");
+					update_editor(editor2, content)
+					showNotification("已清除文本的空白行~");
+				}
+			});
+			$("#clearallhn").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.replace(/<p><br><\/p>/g, "").replace(/<p>+[\&nbsp;\s]+<\/p>/g, "").replace(/<\/p><p>/g, "").replace(/<br>/g, "").replace(/\s/g, " ");
+					update_editor(editor2, content);
+					showNotification("已将文本合为1行~");
+				}
+			});
+			$('#replaceString').on("click", function() {
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					event.stopPropagation(); 
+					$('#replaceModal').show();
+				}
+			});
+			$(document).on("click", function(event) {
+				var target = $(event.target);
+				if (!target.closest("#replaceModal").length) {
+					$('#replaceModal').hide();
+					$('#overlay_txt').hide();
+				}
+			});
+			$('#confirmBtn').on("click", function() {
+				let original = $('#originalText').val();
+				let replacement = $('#replacementText').val();
+				let editorContent = textChg(editor1);
+				let replacedContent = editorContent.split(original).join(replacement);
+				update_editor(editor2, replacedContent);
+				// $('#originalText').val('');
+				// $('#replacementText').val('');
+				$('#replaceModal').hide();
+				$('#overlay_txt').hide();
+			});
+			
+			$('#confirmBtnAdd').on("click", function() {
+				let startText = $('#startText').val();
+				let endText = $('#endText').val();
+				let editorContent = textChg(editor1);
+			    let newContent = editorContent.replace(/<p>/g, "<p>"+startText).replace(/<\/p>/g, endText+"</p>");
+				update_editor(editor2, newContent);
+				// $('#originalText').val('');
+				// $('#replacementText').val('');
+				$('#replaceModal').hide();
+				$('#overlay_txt').hide();
+			});
+			
+			$("#firstbig").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.toLowerCase()
+					content = content.replace(/\&nbsp;+/g, " ").replace(/(^|\s)\w/g, function(zm) {
+						return zm.toUpperCase();
+					}).replace(/<p>(\w)/g, function(zm1) {
+						return zm1.toUpperCase();
+					})
+					update_editor(editor2, content);
+					showNotification("已将首字母大写~");
+				}
+			});
+			$("#allbig").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.replace(/\&nbsp;+/g, " ").replace(/[a-zA-z]/g, function(big) {
+						return big.toUpperCase();
+					})
+					update_editor(editor2, content)
+					showNotification("已将字母全部大写~");
+				}
+			});
+			$("#allsmall").on("click", function() {
+				let content = textChg(editor1);
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					content = content.replace(/\&nbsp;+/g, " ").replace(/[a-zA-z]/g, function(small) {
+						return small.toLowerCase();
+					})
+					update_editor(editor2, content)
+					showNotification("已将字母全部小写~");
+				}
+			});
+			let { pinyin } = pinyinPro;
+			$("#pinyin").on("click", function() {
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					let txtpy = localStorage.getItem("edit01");
+					let content = txtpy.replace(/<+[a-zA-Z ]>/g, "").replace(/<+\/+[a-zA-Z]>/g, "");
+					let new_txtpy = "<p>" + content + "</p><p>" + pinyin(content) + "</p>";
+					update_editor(editor2, new_txtpy);
+				}
+			});
+			$('#checkfb').click(function() {
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+				} else {
+					if (!editor1.getText().match(/\b\d{10,15}\b/)) {
+						showNotification("未找到检测的ID编号");
+						return;
+					}
+					const startTime = new Date().getTime();
+					showOverlay();
+					editor2.clear();
+					showNotification("已开始检测，请耐心等待~");
+					let content = textChg(editor1);
+					let lines = content.split('</p><p>').map(line => line.replace(/<p>|<\/p>/g, '').trim());
+					let allUids = [];
+					lines.forEach(line => {
+						try {
+							let match = line.match(/\b\d{10,15}\b/);
+							if (match) {
+								allUids.push({
+									id: allUids.length + 1,
+									uid: match[0]
+								});
+							} else {
+								let displayLine = line.length > 10 ? line.substring(0, 6) + "……" : line;
+								showNotification("此行[" + displayLine + "]未检测到ID编号");
+							}
+						} catch (error) {
+							console.error('Error processing line:', line, 'Error:', error);
+						}
+					});
+					if (allUids.length == 0) {
+						showNotification("无ID编号可检测！");
+						return;
+					}
+					let batches = {};
+					let currentBatchIndex = 1;
+					let totalUidsCount = 0;
+					let activeUidsCount = 0;
+					let disabledUidsCount = 0;
+					let disabledUids = [];
+					function outputBatch(batchIndex) {
+						const batchData = batches[batchIndex];
+						if (batchData) {
+							batchData.forEach(item => {
+								let formattedId = String(item.id).padStart(3, '0');
+								let line = item.sta == "活跃" ? `<p>${formattedId}: ${item.uid} → <span style="color:green;">${item.sta}</span></p></p>` : `<p>${formattedId}: ${item.uid} → <span style="color:red;">${item.sta}</span></p></p>`;
+								add_editor(editor2, line);
+							});
+							delete batches[batchIndex];
+							currentBatchIndex++;
+							outputBatch(currentBatchIndex);
+						}
+					}
+					function sendBatch(uids, index = 0) {
+						let batch = uids.slice(index, index + 50);
+						if (batch.length === 0) {
+							hideOverlay();
+							const endTime = new Date().getTime();
+							const elapsedSeconds = (endTime - startTime) / 1000;
+							let checkTime = `<p>检测完成，耗时：${elapsedSeconds} 秒<br></p>`;
+							add_editor(editor2, checkTime);
+							$("#exportBtn").css("background-color", "rgb(108 222 49)");
+							$("#exportBtnDie").css("background-color", "rgb(108 222 49)");
+							showNotification("检测完成！");
+							if (disabledUids.length > 0) {
+								const disabledText = disabledUids.join('\n');
+								navigator.clipboard.writeText(disabledText)
+									.then(() => {
+										showNotification("禁用ID已复制到剪切板！");
+									})
+									.catch(err => {
+										showNotification("复制失败，请手动复制！");
+									});
+							}
+							return;
+						}
+						currentAjaxRequest = $.ajax({
+							url: 'app/checkfb2.php',
+							method: 'POST',
+							data: JSON.stringify({
+								uids: batch
+							}),
+							contentType: 'application/json',
+				// 			async: true,
+							success: function(response) {
+								if (response.success) {
+									totalUidsCount += response.data.length;
+									for (let item of response.data) {
+										if (item.sta == "活跃") {
+											activeUidsCount++;
+										} else {
+											disabledUids.push(item.uid);
+											disabledUidsCount++;
+										}
+									}
+									const batchIndex = Math.floor(index / 50) + 1;
+									batches[batchIndex] = response.data;
+									outputBatch(currentBatchIndex);
+									sendBatch(uids, index + 50);
+								} else {
+									showNotification(response.message);
+								}
+							},
+							error: function(error) {
+								console.error('检测程序被终止:', error);
+							}
+						});
+					}
+					sendBatch(allUids, 0);
+					function checkCompletion() {
+						if (totalUidsCount == allUids.length) {
+							let activePercentage = ((activeUidsCount / totalUidsCount) * 100).toFixed(2);
+							let disabledPercentage = ((disabledUidsCount / totalUidsCount) * 100).toFixed(2);
+							let sumTexts = `<p>检测数量: ${totalUidsCount}<br>` + `活跃数量: ${activeUidsCount} (占比: ${activePercentage}%)<br>` + `禁用数量: ${disabledUidsCount} (占比: ${disabledPercentage}%)</p>`;
+							add_editor(editor2, sumTexts);
+						} else {
+							setTimeout(checkCompletion, 500);
+						}
+					}
+					checkCompletion();
+				}
+			});
+			$('#abortBtn').click(function() {
+				if (currentAjaxRequest) {
+					currentAjaxRequest.abort();
+				}
+				hideOverlay();
+				showNotification("检测已终止");
+			});
+			function groupArry(array, subGroupLength) {
+				let groups = [];
+				for (let i = 0; i < array.length; i += subGroupLength) {
+					groups.push(array.slice(i, i + subGroupLength).join('|'));
+				}
+				return groups;
+			}
+			$("#checkfbfast").on("click", function() {
+				if (!chechText(editor1.getText())) {
+					showNotification("输入内容为空");
+					return;
+				}
+				if (!editor1.getText().match(/\b\d{10,15}\b/)) {
+					showNotification("未找到检测的ID编号");
+					return;
+				}
+				let editor1Text = editor1.getText().split('\n');
+				let idArray = [];
+				let groupedArray = [];
+				let disabledIds = [];
+
+				editor1Text.forEach(item => {
+					let match = item.match(/\b\d{10,15}\b/);
+					if (match) {
+						idArray.push(match[0]);
+					}
+				});
+
+				if (idArray.length > 10) {
+					groupedArray = groupArry(idArray, 10);
+				} else {
+					groupedArray.push(idArray.join('|'));
+				}
+				editor2.clear();
+				showNotification("已开始检测，请耐心等待。");
+				let requests = groupedArray.map(idGroup => {
+					return $.ajax({
+						url: "app/checkfb.php",
+						type: 'GET',
+						dataType: 'json',
+				// 		async: true,
+						data: {
+							"uids": idGroup
+						},
+						success: function(res) {
+							disabledIds = [];
+							res.forEach(account => {
+								if (account.sta === '禁用') {
+									disabledIds.push(account.uid);
+									dieNum++;
+								}
+							});
+							if (disabledIds.length) {
+								let currentHtml = editor2.getHtml();
+								currentHtml = currentHtml.replace(/<p><br><\/p>/g, '');
+								let separator = currentHtml ? '<p>' : '';
+								let nowdieUid = separator + '<p>' + disabledIds.join('</p><p>') + '</p>';
+								add_editor(editor2, nowdieUid);
+							}
+						}
+					});
+				});
+				if (dieNum != 0) {
+					showNotification("注意输出结果！有禁用账户！");
+				}
+				$.when(...requests).done(function() {
+					if (dieNum == 0) {
+						add_editor(editor2,"<p><span style='color:green;font-weight:800;font-size:20px;'>恭喜，被检测账户全部正常~</span></P>"
+							);
+					} else {
+						showNotification("有" + dieNum + "个账户禁用！结果已输出结果框！")
+					}
+					dieNum = 0;
+				})
+			});
+			function showOverlay() {
+				$('#overlay').show();
+			}
+			function hideOverlay() {
+				$('#overlay').hide();
+			}
+			$("#exportBtn").on('click', function() {
+				if (!chechText(editor2.getText())) {
+					showNotification("检测结果为空");
+				} else {
+					let data = [];
+					let parsedHtml = $.parseHTML(editor2.getHtml());
+					$(parsedHtml).filter('p').each(function() {
+						let text = $(this).text();
+						let parts = text.split(/\s+/);
+						if (parts.length === 4) {
+							data.push([
+								parts[0].replace(':', ''),
+								parts[1],
+								parts[2],
+								parts[3]
+							]);
+						}
+					});
+					let wb = XLSX.utils.book_new();
+					let ws_name = "检测结果";
+					let ws = XLSX.utils.aoa_to_sheet(data);
+					ws['!cols'] = setColsWidth(data);
+					XLSX.utils.book_append_sheet(wb, ws, ws_name);
+					let myDate = new Date();
+					XLSX.writeFile(wb, "FB检测结果_" + myDate.toLocaleString() + ".xlsx");
+				}
+			});
+			$("#exportBtnDie").on('click', function() {
+				if (!chechText(editor2.getText())) {
+					showNotification("检测结果为空");
+				} else {
+					let data = [];
+					let parsedHtml = $.parseHTML(editor2.getHtml());
+					$(parsedHtml).filter('p').each(function() {
+						let text = $(this).text();
+						if (text.includes("活跃")) {
+							return;
+						}
+						let parts = text.split(/\s+/);
+						if (parts.length === 4) {
+							data.push([
+								parts[0].replace(':', ''),
+								parts[1],
+								parts[2],
+								parts[3]
+							]);
+						}
+					});
+					if (data.length === 0) {
+						showNotification("恭喜，账户都是活跃的状态~");
+						return;
+					}
+					let wb = XLSX.utils.book_new();
+					let ws_name = "检测结果";
+					let ws = XLSX.utils.aoa_to_sheet(data);
+					ws['!cols'] = setColsWidth(data);
+					XLSX.utils.book_append_sheet(wb, ws, ws_name);
+					let myDate = new Date();
+					XLSX.writeFile(wb, "FB检测结果_禁用_" + myDate.toLocaleString() + ".xlsx");
+				}
+			});
+			function setColsWidth(data) {
+				var minColWidth = 4;
+				var colsWidth = data.map(row => row.map(val => {
+					return {
+						wch: val.toString().length
+					};
+				}));
+				return colsWidth[0].map((col, i) => {
+					let maxWidth = colsWidth.reduce((max, row) => row[i].wch > max.wch ? row[i] : max, {
+						wch: 0
+					}).wch;
+					return {
+						wch: Math.max(maxWidth, minColWidth)
+					};
+				});
+			}
+			$('#encode').on('click', function() {
+				var inputData = editor1.getText().replace(/\s+/g, "").replace(/\n/g, "");;
+				if (isBase64Encoded(inputData)) {
+					showNotification("数据已被Base64编码!");
+					return;
+				}
+				if (!chechText(editor1.getText())) {
+					showNotification("检测结果为空！");
+				} else {
+					var encodedData = "<p>" + btoa(unescape(encodeURIComponent(inputData))) + "</p>";
+					editor2.clear();
+					add_editor(editor2, encodedData);
+					showNotification("数据编码成功~");
+				}
+			});
+            $('#decode').on('click', function() {
+                var lines = editor1.getText().trim().split('\n');
+                var decodedLines = '';
+                
+                lines = lines.filter(function(line) {
+                    return line.trim() !== '';
+                });
+                
+                for (var i = 0; i < lines.length; i++) {
+                    var lineData = lines[i].replace(/\s+/g, "");
+                    // console.log(lineData);
+                    if (!isBase64Encoded(lineData)) {
+                        showNotification("数据无效，非Base64编码!");
+                        return;
+                    }
+                    try {
+                        var decodedData = decodeURIComponent(escape(atob(lineData)));
+                        decodedLines += "<p>" + decodedData.replace(/\s+/g, "") + "</p>";
+                    } catch (e) {
+                        showNotification("第 " + (i + 1) + " 行解码失败: " + e.message);
+                        return; 
+                    }
+                }
+                if (!chechText(editor1.getText())) {
+                    showNotification("检测结果为空！");
+                } else if (decodedLines) {
+                    editor2.clear();
+                    add_editor(editor2, decodedLines);
+                    showNotification("数据解码成功~");
+                }
+            });
+            
+			function isBase64Encoded(str) {
+				return /^[a-zA-Z0-9+/]+={0,2}$/.test(str);
+			}
+			function chechText(texts) {
+				if (texts == "" || texts == null || texts == undefined || texts === "<p><br></p>") {
+					return false;
+				}
+				return true;
+			}
+			function update_editor(editors, newtext) {
+				if (editors.isDisabled()) editors.enable()
+				if (!editors.isFocused()) editors.focus()
+				editors.select([])
+				editors.deleteFragment()
+				E.SlateTransforms.setNodes(editors, {
+					type: 'paragraph'
+				}, {
+					mode: 'highest'
+				})
+				editors.dangerouslyInsertHtml(newtext)
+			}
+			function add_editor(editors, newtext) {
+				if (editors.isDisabled()) editors.enable()
+				if (!editors.isFocused()) editors.focus()
+				E.SlateTransforms.setNodes(editors, {
+					type: 'paragraph'
+				}, {
+					mode: 'highest'
+				})
+				editors.dangerouslyInsertHtml(newtext)
+			}
+			function textChg(editors) {
+				let oktext = editors.getHtml()
+					.replace(/<\/td>/g, " ")
+					.replace(/<\/tr>|<\/[ahpPH(li)(div)^>]+>/g, "$%@")
+					.replace(/&nbsp;/g, " ")
+					.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, "")
+					.replace(/(\$%@)\1+/g, "$%@")
+					.replace(/\$%@/g, "</p><p>");
+				oktext = "<p>" + oktext + "</p>";
+				return oktext.replace(/<p><\/p>/g, "");
+			}
+			function showNotification(message) {
+				const container = document.getElementById('notification-container');
+				const notification = document.createElement('div');
+				notification.className = 'notification';
+				notification.textContent = message;
+				container.appendChild(notification);
+				void notification.offsetWidth;
+				notification.classList.add('show');
+				setTimeout(() => {
+					notification.remove();
+				}, 3000);
+			}
+			function exportTxt(editers, key) {
+				saveTxt(editers, key);
+				let txtData = textChg(editers);
+				if (!editers.isEmpty(editers)) {
+					var newdata = txtData.replace(/<\/.?>/g, "\r\n").replace(/<\/?.+?>/g, "").replace(/&nbsp;/g, " ").replace(
+						/\&lt;/g, "<").replace(/\&gt;/g, ">");
+					var myDate = new Date();
+					var nameTxt = "";
+					if (editers == editor1) {
+						nameTxt = '输入文本_' + myDate.toLocaleString() + '.txt';
+					} else if (editers == editor2) {
+						nameTxt = '结果文本_' + myDate.toLocaleString() + '.txt';
+					} else {
+						nameTxt = 'TXT_' + myDate.toLocaleString() + '.txt';
+					}
+					exportRaw(newdata, nameTxt);
+					showNotification("正在导出，请选择位置保存。");
+				} else {
+					showNotification("编辑器内容为空！");
+					return;
+				}
+			}
+			function saveTxt(editers, key) {
+				let txtcont = editers.getHtml();
+				localStorage.setItem(key, txtcont);
+			}
+			function exportRaw(data, name) {
+				let urlObject = window.URL || window.webkitURL || window;
+				let export_blob = new Blob(["\ufeff" + data], {
+					type: 'text/txt;charset=utf-8;'
+				});
+				let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+				save_link.href = urlObject.createObjectURL(export_blob);
+				save_link.download = name;
+				save_link.click();
+			}
+			function copyClassVal(copyValClass) {
+				window.getSelection().removeAllRanges();
+				var copyvalue = document.querySelector(copyValClass);
+				var range = document.createRange();
+				range.selectNode(copyvalue);
+				window.getSelection().addRange(range);
+				document.execCommand('copy');
+				window.getSelection().removeAllRanges();
+			}
+			function copyMess(mess) {
+				var input = document.createElement("input");
+				input.value = mess;
+				document.body.appendChild(input);
+				input.select();
+				input.setSelectionRange(0, input.value.length), document.execCommand('Copy');
+				document.body.removeChild(input);
+			}
+		</script>
+	</body>
+</html>

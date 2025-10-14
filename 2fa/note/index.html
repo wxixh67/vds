@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+	<title>笔记分享</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="在线工具网站" />
+	<meta name="keywords" content="2FA,2fa,2fa在线工具,双重验证工具,汇率换算,世界时间,文本处理工具,FB账号批量检测,facebook批量检测,在线工具" />
+	<meta name="description" content="本站所有在线工具免费使用，旨在方便大家做业务。工具主要有：2FA验证码获取、汇率换算、文本处理、节假日倒计时。" />
+	<link rel="apple-touch-icon" sizes="144x144" href="https://2fa.run/assets/images/favicons/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="57x57" href="https://2fa.run/assets/images/favicons/apple-touch-icon-57x57.png">
+	<link rel="shortcut icon" href="https://2fa.run/assets/images/favicons/tools.png" type="image/png">
+	<link rel="stylesheet" type="text/css" href="https://2fa.run/assets/styles/style.css" />
+    <style>
+        *{padding:0px;margin:0px;word-break: break-all;}
+        ul,li{list-style-type:none;}
+        .share_txt br {
+            content: " ";
+            margin: 2px;
+            display: block;
+            border: 3px dashed rgba(0,0,0,0);
+        }
+        a,a:hover { text-decoration: none; color: rgba(0, 0, 0, .85);}
+        .share_txt input, textarea {
+            box-sizing: border-box;
+        }
+        #line-numbers {
+          width: 50px;
+          float: left;
+          text-align: right;
+        }
+        .share_txt #noteForm{
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            min-height: 50vh;
+        }
+        .share_txt input{
+            width: 100%;
+            height: 30px;
+            margin: 10px 0px;
+            padding: 5px;
+            border: 0px;
+            box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.15);
+            border-radius: 5px;
+            font-weight: 600;
+            background: #cce8cf;
+        }
+        .share_txt textarea{
+            width: 100%;
+            padding: 5px;
+            height: 380px!important;
+            box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.15);
+            border: 0px;
+            border-radius: 5px;
+            background: #cce8cf;
+            font-size: 0.825rem;
+        }
+        .share_txt textarea::-webkit-scrollbar{
+            width: 0px;
+        }
+        .share_txt h1{
+            width: 100%;
+            margin: 10px 0px;
+            padding: 5px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow:inset 0px 0px 1px 1px rgba(0,0,0,0.08);
+            border-radius: 5px;
+        }
+        .share_txt p{
+            width: 100%;
+            min-height: 300px;
+            margin: 0px 0px 10px 0px;
+            padding: 5px;
+            font-size: 0.825rem;
+            line-height: 25px;
+            box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.08);
+            border-radius: 5px;
+        }
+        .caption-share{
+            height: 28px;
+            display: inline;
+        }
+        .caption-share a{
+            display: flex;
+        }
+        .title-share{
+            color: #3B4B5E;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.8;
+            max-width: 60%!important;
+            margin-right: 10px;
+            float: left;
+        }
+        #showSavedNotes,#godSave,#tempSave,#saveLineButton,.sharebtn{
+            line-height: 1.5;
+            padding: 3px 6px;
+            margin-left: 5px;
+            border:0px;
+            border-radius: 5px;
+            background: #0ba360;
+            color: white;
+        }
+        #showSavedNotes{margin-top:6px;}
+        .sharebtn:hover,#noteForm button:hover{
+            box-shadow: 1px 1px 3px rgba(0,0,0,.55);
+            background: #fff;
+            color:black;
+        }
+        .line_btn{
+            padding: 3px 5px;
+            border:0px;
+            border-radius: 5px;
+            background: #ffd3a6;
+            color:black;
+        }
+        .del_note{
+            border:0px;
+            border-radius: 5px;
+            background: #d3d3d394;
+            padding:0px 5px;
+            color: #ff4242;
+            margin: 2px 0px 2px 20px;
+        }
+        .del_note:hover{
+            background: red;
+            color:white;
+        }
+        .li_note:hover{
+            background: #a9e879;
+        }
+        .txtbtn{-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+        #copyContent{
+            display: block;
+            width: 100%;
+            margin: 0px;
+        }
+        #line_num{
+            font-weight: 800;
+        }
+        #tempSave{
+            background: #ffa343;
+        }
+        #savedNotesList li{
+            margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(0,0,0,.25);
+            max-width: 80vw;
+            min-width: 20vw;
+            margin: auto;
+        }
+        #notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999;}
+        .notification { background-color: #030303bf; color: #fff; padding: 15px; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateX(100%); transition: opacity 0.5s, transform 0.5s;}
+        .notification.show { opacity: 1; transform: translateX(0);}
+        #replaceModal{ display: none; position: fixed;top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background-color: white; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 99900;max-height:80vh;overflow-y: scroll;}
+        @media only screen and (max-width: 580px){
+            .pb-2 a{margin-right: 0.5rem!important;}
+            #replaceModal{max-height: 85vh;min-width: 100%;}
+        }
+    </style>
+</head>
+<body>
+	<main class="main">
+		<div class="container gutter-top">
+			<div class="row sticky-parent">
+				<aside class="col-12 col-md-12 col-lg-2">
+					<div class="sidebar box sticky-column">
+						<ul class="nav">
+							<li class="nav__item"><a href="../index.html"><i class="icon-key"></i>2FA工具</a></li>
+							<li class="nav__item"><a href="../note.html"><i class="icon-clipboard"></i>文本处理</a></li>
+							<li class="nav__item"><a href="../work.html"><i class="icon-instagram1"></i>图片处理</a></li>
+							<li class="nav__item"><a href="../money.html"><i class="icon-activity"></i>汇率换算</a></li>
+							<li class="nav__item"><a class="active" href="../more.html"><i class="icon-more-horizontal"></i>更多工具</a></li>
+						</ul>
+					</div>
+				</aside>
+				<div class="col-12 col-md-12 col-lg-10">
+					<div class="box box-content">
+						<div class="pb-2">
+							<a style="margin-right: 2rem;" href="../more.html">
+								<< 返回工具导航</a>
+							<div style="float:right;">
+							    <button class="sharebtn" id="copyLink">复制分享链接</button>
+						        <a href="../note.1.html" target="_blank"><button class="sharebtn">创建新笔记</button></a>
+							</div>
+						</div>
+						<hr>
+						<div class="caption-share">
+							<h1 class="title title-share">笔记分享</h1>
+							<button class="line_btn" disabled>提醒：笔记内容共计 <span id="line_num"></span> 行。
+							                                    <span class="expireTxt">过期时间：0000 00-00</span>
+                                							</button>
+						</div>
+						<div class="share_txt">
+							                            <div id="noteForm">
+                                <input type="text" id="titleTxt" placeholder="Title" value="">
+                                <textarea id="contentTxt"></textarea>
+                                <button id="godSave" >长期保存</button>
+                                <button id="tempSave" >临时保存(3天)</button>
+                                <button id="saveLineButton" >按行保存(批量)</button>
+                                <button id="showSavedNotes">查看已分享的笔记</button>
+                            </div>
+                            						</div>
+						<hr>
+						<h3 class="title title--h5">笔记分享说明</h3>
+						<p class="tip-p"><strong>功能说明</strong>：<span>该工具适用于发送较多的文本信息，例如用于发送Cookie数据或文字教程。需要注意：只有创建者才有权限更改保存格式和编辑文本。只要缓存未被清除，可以通过点击<span style="color:green;">[查看已分享的笔记]</span>按钮来查看所有创建的笔记。其他通过分享链接访问的人只能查看，无法编辑。<span style="color:green;">[按行保存(批量)] </span>推荐用来保存cookie数据，每行的cookie数据可转为1条短链接。使用时须保证每行开始要带有说明信息，比如：001---cookie001这样的格式，保存后就会显示：001---cookie数据的短链接（只能有1组分界符号 --- ，超过将无法按行保存。访问cookie数据的短链接即可查看复制cookie。）。</span><br /><strong>友情提示</strong>：请勿使用访客浏览器或无痕浏览器保存笔记，否则关闭浏览器将永久失去编辑权限！如果清除浏览器缓存，也会永久失去编辑权限！创建笔记内容后，会实时过滤敏感字，请勿用来记录或宣传色情、恐怖、赌博、诈骗等违法犯罪活动。<br /><strong>数据安全</strong>：虽然该工具已采取较为全面的安全措施，但仍不建议用它来分享重要信息。使用前请悉知，我们不保证分享数据的绝对安全。
+							<br><strong>最近维护</strong>：2023年10月22日
+						</p>
+					</div>
+					<footer class="footer">©2025 在线工具</footer>
+				</div>
+			</div>
+		</div>
+	</main>
+    <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); z-index:1000;">
+        <button id="abortBtn" style="position:absolute; top:25%; left:50%; transform:translate(-50%, -50%);border-radius:5px;font-size:1.5rem;color:#000;margin-bottom:10px;">停止保存</button>
+        <h5 style="position:absolute; top:55%; left:50%; transform:translate(-50%, -50%);color:white;text-align:center;">保存大量数据需要时间，请耐心等待。如果发现此页面一直未消失，请点击停止保存按钮。</h5>
+    </div>
+    <div id="replaceModal">
+        <ul id="savedNotesList"></ul>
+    </div>
+    <div id="notification-container"></div>
+    <div class="back-to-top"></div>
+    <script src="https://2fa.run/assets/js/jquery-3.4.1.min.js"></script>
+	<script src="https://2fa.run/assets/js/plugins.min.js"></script>
+	<script src="https://2fa.run/assets/js/common.js"></script>
+    <script>
+        let currentAjaxRequest = null;
+        $(document).ready(function() {
+             let urlNow = window.location.href;
+             if(urlNow == "https://2fa.run/note/"){
+                 $(".expireTxt").hide();
+             }else{
+                 $(".expireTxt").show();
+             }
+             getLineNumbers();
+             $("#contentTxt").on("input", getLineNumbers);
+        });
+        function getLineNumbers(){
+            let content = $('#contentTxt').val();
+            let contentDispaly = $("#display_p").html();
+            // var totalChars = content.length;
+            // $('#totalChars').text(totalChars);
+            if(!chechText(content)){
+                $("#line_num").text("0");
+                if(chechText(contentDispaly)){
+                    // console.log(contentDispaly)
+                    var linesDisplay = contentDispaly.split('<br>').length;
+                    $("#line_num").text(linesDisplay);
+                }
+            }else{
+                let lines = content.split('\n').length;
+                $("#line_num").text(lines);
+            }
+        }
+        function chechText(texts) {
+            if (texts == "" || texts == null || texts == undefined || texts === "<p><br></p>") {
+                return false;
+            }
+            return true;
+        }
+        function saveData(isTemporary) {
+            let titleText = $("#titleTxt").val();
+            let contentText = $("#contentTxt").val();
+            let urlNow = window.location.href;
+            const regex = /note\/(.*)/;
+            let randomStringText = null;
+        
+            if (urlNow !== "https://2fa.run/note/") {
+                randomStringText = urlNow.match(regex)[1];
+            }
+            let data = {
+                title: titleText,
+                content: contentText,
+                is_temporary: isTemporary,
+                random_string: randomStringText
+            };
+            let delayNotification;
+            currentAjaxRequest = $.ajax({
+                url: 'save.php',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                beforeSend: function() {
+                    delayNotification = setTimeout(function() {
+                        $('#overlay').show();
+                    }, 2000);
+                },
+                success: function(response) {
+                    clearTimeout(delayNotification);
+                    if (response.error) {
+                        $('#overlay').hide();
+                        showNotification(response.error_message);
+                    } else {
+                        let titleT = data["title"];
+                        let noteLink = "https://2fa.run/note/" + response.random_string;
+                        let tempTag = data["is_temporary"];
+                        let savedNotes = JSON.parse(localStorage.getItem('savedNotes') || '[]');
+                        // 检查 savedNotes 是否已包含该 noteLink
+                        let existingNoteIndex = savedNotes.findIndex(note => note.link === noteLink);
+                        if (existingNoteIndex !== -1) {
+                            savedNotes[existingNoteIndex].title = titleT;
+                            savedNotes[existingNoteIndex].tag = tempTag;
+                        } else {
+                            savedNotes.push({ title: titleT, link: noteLink , tag: tempTag});
+                        }
+                        localStorage.setItem('savedNotes', JSON.stringify(savedNotes));
+                        
+                        let message = isTemporary ? "临时保存成功" : "保存成功";
+                        $('#overlay').hide();
+                        showNotification(message);
+                        setTimeout(function() {
+                            window.location.href = "https://2fa.run/note/" + response.random_string;
+                        }, 1000);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("请求失败: " + textStatus, errorThrown);
+                }
+            });
+        }
+        $("#godSave").on("click", function() {
+            saveData(0);
+        });
+        $("#tempSave").on("click", function() {
+            saveData(1);
+        });
+        $('#abortBtn').click(function() {
+            if (currentAjaxRequest) {
+                currentAjaxRequest.abort();
+            }
+            $('#overlay').hide();
+            showNotification("已终止操作，未成功保存");
+        });
+        $("#copyLink").on("click",function(){
+            urlLink = window.location.href;
+            if(urlLink == "https://2fa.run/note/"){
+                showNotification("未生成分享链接！");
+                return;
+            }
+            navigator.clipboard.writeText(urlLink).then(function() {
+                showNotification("已复制分享链接");
+            }).catch(function(err) {
+                showNotification("复制链接出错，请检查控制面板！");
+                console.error('无法复制URL', err);
+            });
+        })
+        $("#copyContent").on("click",function(){
+            urlLink = window.location.href;
+            if(urlLink == "https://2fa.run/note/"){
+                showNotification("未找到分享内容！");
+                return;
+            }
+            copyClassVal(".display-content");
+            showNotification("成功复制内容~");
+        })
+        $('#showSavedNotes').on("click",function() {
+            let savedNotes = JSON.parse(localStorage.getItem('savedNotes') || '[]');
+            if(savedNotes.length == 0){
+                showNotification("未找到历史记录！");
+                return;
+            }
+            $('#savedNotesList').empty();
+            savedNotes.forEach(function(note) {
+                if(note.tag === 0){
+                    $('#savedNotesList').append('<li class="li_note"><a style="color:#31b586;" href="https://2fa.run/note/'&#32;+&#32;note.link&#32;+&#32;'" target="_blank">' + note.title + '[点击查看]</a><button class="del_note">删除记录</button></li>');
+                }
+                if(note.tag === 1){
+                    $('#savedNotesList').append('<li class="li_note"><a style="color:#ff982e;" href="https://2fa.run/note/'&#32;+&#32;note.link&#32;+&#32;'" target="_blank">' + note.title + '[点击查看]</a><button class="del_note">删除记录</button></li>');
+                }
+            });
+            $("#replaceModal").show();
+        });
+        
+        $(document).on('click', '.del_note', function(e) {
+            var linkToDelete = $(this).siblings('a').attr('href');
+            var data = localStorage.getItem('savedNotes');
+            var dataArray = JSON.parse(data);
+            var updatedDataArray = dataArray.filter(function(item) {
+                return item.link !== linkToDelete;
+            });
+            localStorage.setItem('savedNotes', JSON.stringify(updatedDataArray));
+            $(this).closest('.li_note').remove();
+            if(localStorage.getItem('savedNotes') === "[]"){
+                showNotification("已删除全部记录");
+            }else{
+                setTimeout(() => {
+                    $("#replaceModal").show();
+                    showNotification("已删除所选记录");
+                }, 300);
+            }
+        });
+        $(document).on("click", function(event) {
+            var target = $(event.target);
+            if (!target.closest("#replaceModal").length && !target.is('#showSavedNotes')) {
+                $('#replaceModal').hide();
+            }
+        });
+        function showNotification(message) {
+        	const container = document.getElementById('notification-container');
+        	const notification = document.createElement('div');
+        	notification.className = 'notification';
+        	notification.textContent = message;
+        	container.appendChild(notification);
+        	void notification.offsetWidth;
+        	notification.classList.add('show');
+        	setTimeout(() => {
+        		notification.remove();
+        	}, 3000);
+        }
+        function copyClassVal(copyValClass) {
+            window.getSelection().removeAllRanges();
+            var copyvalue = document.querySelector(copyValClass);
+            var range = document.createRange();
+            range.selectNode(copyvalue);
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+        }
+        
+        $("#saveLineButton").click(function(){
+            var titleText = $("#titleTxt").val();
+            var contentText = $("#contentTxt").val().trim();
+            if(!contentText.includes('---')) {
+                showNotification("保存失败！未查询到分隔符 ---");
+                return;
+            }
+            if(contentText.includes('---https://2fa.run/note')) {
+                showNotification("已按行保存，请点击长期保存哦");
+                return;
+            }
+            $.ajax({
+                url: 'save_line.php',
+                type: 'POST',
+                data: {
+                    title: titleText,
+                    content: contentText
+                },
+                dataType: 'json',
+                success: function(response) {
+                    // console.log(response.notes_links);
+                    if (!response.error) {
+                        var currentDate = new Date();
+                        var dateString = currentDate.getFullYear() + "."
+                                       + (currentDate.getMonth()+1) + "."
+                                       + currentDate.getDate();
+                        var newTitle = dateString + " - " + titleText + " - " + response.notes_links.length + "条数据";
+                        $("#titleTxt").val(newTitle);
+                        $("#contentTxt").val('');
+                        var linksText = response.notes_links.join('\n') + "\n注意：如需记住这些链接，请再次点击长期保存！";
+                        $("#contentTxt").val(linksText);
+                    } else {
+                         showNotification(response.error_message);
+                    }
+                },
+                error: function($xhr,textStatus,errorThrown) {
+                    console.log("ERROR :", errorThrown);
+                    console.log("ERROR :", $xhr);
+                    console.log("ERROR :", textStatus);
+                }
+            });
+        });
+        
+    </script>
+</body>
+</html>
