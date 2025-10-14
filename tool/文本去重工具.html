@@ -10,401 +10,214 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            padding: 2rem;
-        }
-
-        .header {
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            padding: 20px;
         }
-
-        .header h1 {
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
             font-size: 24px;
             color: #333;
-            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
         }
-
-        .icon {
-            width: 24px;
-            height: 24px;
+        .form-group {
+            margin-bottom: 25px;
         }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .panel {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .panel-title {
-            font-size: 15px;
-            color: #333;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
             font-weight: 500;
+            font-size: 14px;
         }
-
-        .badge {
-            background: #f0f0f0;
-            color: #666;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
         textarea {
             width: 100%;
-            min-height: 400px;
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
             border-radius: 6px;
-            font-family: 'Courier New', monospace;
             font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            min-height: 150px;
             resize: vertical;
-            transition: border-color 0.2s;
         }
-
         textarea:focus {
             outline: none;
-            border-color: #999;
+            border-color: #667eea;
         }
-
-        textarea:read-only {
-            background: #fafafa;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            padding: 20px;
-            border-radius: 6px;
-            background: white;
-            border: 1px solid #e0e0e0;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .controls {
+        .button-group {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
         }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #333;
+        button {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 10px 16px;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .btn:hover {
-            background: #555;
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
-
-        .btn.secondary {
-            background: #f0f0f0;
-            color: #333;
+        button:active {
+            transform: translateY(0);
         }
-
-        .btn.secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .options {
-            background: #fafafa;
-            padding: 16px;
+        .stats {
+            display: none;
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
             border-radius: 6px;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 2rem;
-        }
-
-        .options-title {
+            margin-bottom: 20px;
             font-size: 14px;
+            color: #555;
+        }
+        .stats.show {
+            display: block;
+        }
+        .stats-item {
+            margin: 5px 0;
+        }
+        .output-group {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            display: none;
+        }
+        .output-group.show {
+            display: block;
+        }
+        .output-label {
+            color: #555;
             font-weight: 500;
-            color: #333;
+            font-size: 14px;
             margin-bottom: 12px;
         }
-
-        .option-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
+        .output-code {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
             color: #333;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
             font-size: 14px;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: background 0.3s;
         }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+        .copy-btn:hover {
+            background: #45a049;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #333;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            <h1>文本去重工具</h1>
+        <h1>文本去重工具</h1>
+        
+        <div class="form-group">
+            <label for="textInput">输入文本（每行一个）：</label>
+            <textarea 
+                id="textInput" 
+                placeholder="每行输入一个文本&#10;例如：&#10;text1&#10;text2&#10;text1"
+            ></textarea>
         </div>
-
-        <div class="options">
-            <div class="options-title">去重选项</div>
-            <div class="option-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="caseSensitive">
-                    <span>区分大小写</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="trimWhitespace" checked>
-                    <span>忽略首尾空格</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="keepOrder" checked>
-                    <span>保持原始顺序</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="sortOutput">
-                    <span>结果排序</span>
-                </label>
-            </div>
+        
+        <div class="button-group">
+            <button onclick="deduplicateText()">去重</button>
+            <button onclick="clearAll()">清空</button>
         </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-label">原始行数</div>
-                <div class="stat-value" id="originalCount">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">去重后行数</div>
-                <div class="stat-value" id="uniqueCount">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">空行数</div>
-                <div class="stat-value" id="emptyCount">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">删除重复</div>
-                <div class="stat-value" id="duplicateCount">0</div>
-            </div>
+        
+        <div class="stats" id="stats">
+            <div class="stats-item">原始行数：<strong id="originalCount">0</strong></div>
+            <div class="stats-item">去重后：<strong id="deduplicatedCount">0</strong></div>
+            <div class="stats-item">删除行数：<strong id="removedCount">0</strong></div>
         </div>
-
-        <div class="main-content">
-            <div class="panel">
-                <div class="panel-header">
-                    <span class="panel-title">输入文本</span>
-                </div>
-                <textarea id="inputText" placeholder="在此输入文本，每行一条数据..."></textarea>
-            </div>
-
-            <div class="panel">
-                <div class="panel-header">
-                    <span class="panel-title">去重结果</span>
-                    <span class="badge" id="resultBadge">未处理</span>
-                </div>
-                <textarea id="outputText" readonly placeholder="去重结果将显示在这里..."></textarea>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button class="btn" onclick="deduplicateText()">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
-                执行去重
-            </button>
-            <button class="btn" onclick="copyResult()">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                </svg>
-                复制结果
-            </button>
-            <button class="btn" onclick="downloadResult()">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                下载结果
-            </button>
-            <button class="btn secondary" onclick="clearAll()">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                清空
-            </button>
+        
+        <div class="output-group" id="outputGroup">
+            <div class="output-label">去重结果：</div>
+            <div class="output-code" id="outputCode"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">复制结果</button>
         </div>
     </div>
 
     <script>
         function deduplicateText() {
-            const input = document.getElementById('inputText').value;
-            const lines = input.split('\n');
+            const textInput = document.getElementById('textInput').value;
             
-            if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) {
-                alert('请输入文本！');
+            if (textInput.trim() === '') {
+                alert('请输入文本');
                 return;
             }
-
-            const caseSensitive = document.getElementById('caseSensitive').checked;
-            const trimWhitespace = document.getElementById('trimWhitespace').checked;
-            const keepOrder = document.getElementById('keepOrder').checked;
-            const sortOutput = document.getElementById('sortOutput').checked;
-
-            let emptyLines = 0;
-            const processedLines = [];
-            const seen = new Set();
-            const uniqueLines = [];
-
-            lines.forEach(line => {
-                if (line.trim() === '') {
-                    emptyLines++;
-                    return;
-                }
-
-                let processedLine = line;
-                if (trimWhitespace) {
-                    processedLine = line.trim();
-                }
-
-                const compareKey = caseSensitive ? processedLine : processedLine.toLowerCase();
-
-                if (!seen.has(compareKey)) {
-                    seen.add(compareKey);
-                    uniqueLines.push(processedLine);
-                }
-            });
-
-            let result = uniqueLines;
-            if (sortOutput) {
-                result = uniqueLines.sort((a, b) => {
-                    const aCompare = caseSensitive ? a : a.toLowerCase();
-                    const bCompare = caseSensitive ? b : b.toLowerCase();
-                    return aCompare.localeCompare(bCompare);
-                });
-            }
-
-            const outputText = result.join('\n');
-            document.getElementById('outputText').value = outputText;
-
-            // 更新统计
-            document.getElementById('originalCount').textContent = lines.length;
-            document.getElementById('uniqueCount').textContent = uniqueLines.length;
-            document.getElementById('emptyCount').textContent = emptyLines;
-            document.getElementById('duplicateCount').textContent = lines.length - uniqueLines.length - emptyLines;
-            document.getElementById('resultBadge').textContent = '已完成';
+            
+            const lines = textInput.split('\n').map(line => line.trim()).filter(line => line !== '');
+            const originalCount = lines.length;
+            
+            const uniqueLines = [...new Set(lines)];
+            const deduplicatedCount = uniqueLines.length;
+            const removedCount = originalCount - deduplicatedCount;
+            
+            document.getElementById('outputCode').textContent = uniqueLines.join('\n');
+            document.getElementById('originalCount').textContent = originalCount;
+            document.getElementById('deduplicatedCount').textContent = deduplicatedCount;
+            document.getElementById('removedCount').textContent = removedCount;
+            
+            document.getElementById('outputGroup').classList.add('show');
+            document.getElementById('stats').classList.add('show');
         }
-
-        function copyResult() {
-            const output = document.getElementById('outputText');
-            if (output.value === '') {
-                alert('没有可复制的内容！');
-                return;
-            }
-            output.select();
-            document.execCommand('copy');
-            alert('已复制到剪贴板！');
-        }
-
-        function downloadResult() {
-            const output = document.getElementById('outputText').value;
-            if (output === '') {
-                alert('没有可下载的内容！');
-                return;
-            }
-            const blob = new Blob([output], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'deduplicated_text.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
+        
         function clearAll() {
-            document.getElementById('inputText').value = '';
-            document.getElementById('outputText').value = '';
-            document.getElementById('originalCount').textContent = '0';
-            document.getElementById('uniqueCount').textContent = '0';
-            document.getElementById('emptyCount').textContent = '0';
-            document.getElementById('duplicateCount').textContent = '0';
-            document.getElementById('resultBadge').textContent = '未处理';
+            document.getElementById('textInput').value = '';
+            document.getElementById('outputGroup').classList.remove('show');
+            document.getElementById('stats').classList.remove('show');
         }
-
-        // 实时统计输入行数
-        document.getElementById('inputText').addEventListener('input', function() {
-            const lines = this.value.split('\n');
-            document.getElementById('originalCount').textContent = lines.length;
-        });
+        
+        function copyToClipboard() {
+            const outputCode = document.getElementById('outputCode').textContent;
+            navigator.clipboard.writeText(outputCode).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '已复制！';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
     </script>
 </body>
 </html>
