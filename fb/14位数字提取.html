@@ -16,7 +16,7 @@
     <link rel="canonical" href="index.html">
     <link rel="alternate" href="en.html" hreflang="en-us">
     <link rel="alternate" href="vi.html" hreflang="vi-vn">
-    <title>2FA Auth-2FA工具-2FA验证-谷歌身份验证器网页版Google Authenticator</title>
+    <title>14位数字提取工具 - 2FA Auth工具集</title>
     <!-- Favicon-->
     <link rel="shortcut icon" href="static/picture/favicon.png">
 
@@ -31,15 +31,15 @@
     <link href="static/css/app.min.css" media="all" type="text/css" rel="stylesheet">
     <link href="static/css/custom-style.css" rel="stylesheet" type="text/css">
 
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="tDlUXDaRc3M8UeDis8DOfZl5AM4RswFv97nmlTua">
+    <!-- CSRF Token (from index.html) -->
+    <meta name="csrf-token" content="uWuXNcr6VvE401osW7KXYmw9xTUoLNuHt97zOKNy">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics (from index.html) -->
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-8W6M18WFZ9');
+        gtag('config', 'G-2LHDVQE57M');
     </script>
 
     <style>
@@ -262,7 +262,16 @@
             }
         });
 
-        // 原有功能代码
+        // From index.html
+        var app_url = '';
+        var datatable;
+
+        setInterval(function () {
+            var f = new Function('', 'window;');
+            f();
+        }, 0);
+
+        // 14位数字提取功能
         let data = [];
         
         function extract() {
@@ -319,33 +328,24 @@
                 extract();
             }
         });
-
-        // 从 index.html 添加的代码
-        var app_url = '';
-        var datatable;
-
-        setInterval(function () {
-            var f = new Function('', 'window;');
-            f();
-        }, 0);
     </script>
 
-    <!-- Core Vendors JS (从 index.html 添加) -->
+    <!-- Core Vendors JS (from index.html) -->
     <script src="static/js/vendors.min.js"></script>
-    <!-- Core JS -->
+    <!-- Core JS (from index.html) -->
     <script src="static/js/app.min.js"></script>
 
-    <!-- Other JS plugins -->
+    <!-- Other JS plugins (from index.html) -->
     <script src="static/js/toastr.min.js"></script>
     <script src="static/js/sweetalert.min.js"></script>
     <script src="static/js/moment.js"></script>
     <script src="static/js/autosize.min.js"></script>
     <script src="static/js/select2.min.js"></script>
 
-    <!-- axios -->
+    <!-- axios (from index.html) -->
     <script src="static/js/axios.min-1.js"></script>
 
-    <!--User defined js code -->
+    <!--User defined js code (from index.html) -->
     <script src="static/js/common.js"></script>
     <script src="static/js/buffer.min.js"></script>
     <script src="static/js/otplib.min.js"></script>
