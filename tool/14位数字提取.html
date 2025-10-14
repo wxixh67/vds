@@ -1,339 +1,501 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>14位数字提取工具</title>
-    
-    <!-- Favicon-->
-    <link rel="shortcut icon" href="static/picture/favicon.png">
-
-    <!-- 外部资源 -->
-    <script src="https://cdn.tailwindcss.com/"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14位数字提取器</title>
     <style>
-        /* 自定义样式 */
-        .sidebar-link.active {
-            background-color: rgba(79, 70, 229, 0.1);
-            border-left: 3px solid #4f46e5;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .sidebar-link:hover {
-            background-color: rgba(79, 70, 229, 0.05);
-            transition: all 0.3s ease;
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0e27;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
-        .card {
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(138, 180, 248, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            animation: pulse 15s ease-in-out infinite;
         }
-        .btn-primary {
-            background-color: #4f46e5;
-            border-color: #4f46e5;
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
-        .btn-primary:hover {
-            background-color: #4338ca;
-            border-color: #4338ca;
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
-        .btn-success {
-            background-color: #10b981;
-            border-color: #10b981;
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .btn-success:hover {
-            background-color: #059669;
-            border-color: #059669;
+        
+        h1 {
+            color: #fff;
+            font-size: 3em;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(138, 180, 248, 0.5);
         }
-        .usage-instructions {
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-            border: 1px solid #e2e8f0;
+        
+        .subtitle {
+            color: #8ab4f8;
+            font-size: 1.2em;
+            font-weight: 300;
         }
-        .result-item {
-            padding: 12px 20px;
-            border-bottom: 1px solid #e5e7eb;
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .panel:hover {
+            border-color: rgba(138, 180, 248, 0.5);
+            box-shadow: 0 8px 32px rgba(138, 180, 248, 0.2);
+        }
+        
+        .panel-title {
+            color: #fff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .icon {
+            font-size: 1.2em;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: #fff;
+            font-size: 14px;
             font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
+            resize: vertical;
+            transition: all 0.3s;
         }
-        .result-item:last-child {
-            border-bottom: none;
+        
+        textarea:focus {
+            outline: none;
+            border-color: #8ab4f8;
+            box-shadow: 0 0 20px rgba(138, 180, 248, 0.3);
+        }
+        
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .file-upload {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        
+        .file-label {
+            display: block;
+            padding: 15px;
+            background: rgba(138, 180, 248, 0.1);
+            border: 2px dashed rgba(138, 180, 248, 0.5);
+            border-radius: 15px;
+            text-align: center;
+            color: #8ab4f8;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-label:hover {
+            background: rgba(138, 180, 248, 0.2);
+            border-color: #8ab4f8;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        button span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .extract-btn {
+            background: linear-gradient(135deg, #8ab4f8 0%, #7877c6 100%);
+            color: #fff;
+        }
+        
+        .extract-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(138, 180, 248, 0.5);
+        }
+        
+        .clear-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c94b7e 100%);
+            color: #fff;
+        }
+        
+        .clear-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.5);
+        }
+        
+        .copy-btn {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.5);
+        }
+        
+        .stats-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #8ab4f8;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8ab4f8 0%, #ff77c6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .result-box::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .result-box::-webkit-scrollbar-thumb {
+            background: rgba(138, 180, 248, 0.5);
+            border-radius: 10px;
+        }
+        
+        .number-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(138, 180, 248, 0.1);
+            border-left: 3px solid #8ab4f8;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .number-item:hover {
+            background: rgba(138, 180, 248, 0.2);
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(138, 180, 248, 0.3);
+        }
+        
+        .number-index {
+            color: #8ab4f8;
+            font-weight: 700;
+            min-width: 40px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2em;
         }
     </style>
 </head>
-
-<body class="bg-gray-50 min-h-screen">
-    <div class="app is-default flex h-screen overflow-hidden">
-        <!-- 侧边导航 -->
-        <div class="w-64 bg-white shadow-lg z-10 hidden md:block">
-            <div class="p-4 border-b">
-                <div class="flex items-center">
-                    <img src="static/picture/2falogo.png" alt="2FA工具" class="h-10">
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ 数字提取器</h1>
+            <div class="subtitle">高性能 14 位数字识别系统</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <span class="icon">📥</span>
+                    输入数据
+                </div>
+                
+                <div class="file-upload">
+                    <input type="file" id="fileInput" accept=".txt">
+                    <label for="fileInput" class="file-label">
+                        📁 点击上传文本文件 或 拖拽文件到此处
+                    </label>
+                </div>
+                
+                <textarea id="inputText" placeholder="粘贴包含 14 位数字的文本...&#10;支持大量数据处理 (99999+ 行)"></textarea>
+                
+                <div class="controls">
+                    <button class="extract-btn" onclick="extractNumbers()">
+                        <span>🔍 开始提取</span>
+                    </button>
+                    <button class="clear-btn" onclick="clearAll()">
+                        <span>🗑️ 清空</span>
+                    </button>
                 </div>
             </div>
             
-            <nav class="p-4">
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">菜单</p>
-                <ul>
-                    <li class="mb-1">
-                        <a href="2fa-otp.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa fa-key w-5 text-indigo-500 mr-3"></i>
-                            <span>获取2FA验证码</span>
-                        </a>
-                    </li>
-                    <li class="mb-1">
-                        <a href="check-live.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
-                            <span>检测FB账户存活</span>
-                        </a>
-                    </li>
-                    <li class="mb-1">
-                        <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa fa-envelope w-5 text-emerald-500 mr-3"></i>
-                            <span>快速阅读邮件</span>
-                        </a>
-                    </li>
-                    <li class="mb-1">
-                        <a href="#" class="sidebar-link active flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa fa-search w-5 text-indigo-500 mr-3"></i>
-                            <span>14位数字提取</span>
-                        </a>
-                    </li>
-                    <li class="mb-1">
-                        <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                            <i class="fa fa-file-text w-5 text-indigo-500 mr-3"></i>
-                            <span>在线文本处理</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        
-        <!-- 移动端菜单按钮 -->
-        <div class="md:hidden fixed bottom-4 right-4 z-50">
-            <button id="mobile-menu-button" class="bg-indigo-600 text-white p-3 rounded-full shadow-lg">
-                <i class="fa fa-bars"></i>
-            </button>
-        </div>
-        
-        <!-- 移动端侧边栏 -->
-        <div id="mobile-sidebar" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden">
-            <div class="bg-white h-full w-64 p-4 transform transition-transform">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center">
-                        <img src="static/picture/2falogo.png" alt="2FA工具" class="h-8">
+            <div class="panel">
+                <div class="result-header">
+                    <div class="panel-title">
+                        <span class="icon">📊</span>
+                        提取结果
                     </div>
-                    <button id="close-menu" class="text-gray-500">
-                        <i class="fa fa-times text-xl"></i>
+                    <button class="copy-btn" onclick="copyResults()" id="copyBtn" style="display: none;">
+                        <span>📋 复制</span>
                     </button>
                 </div>
                 
-                <nav class="p-4">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">菜单</p>
-                    <ul>
-                        <li class="mb-1">
-                            <a href="2fa-otp.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-key w-5 text-indigo-500 mr-3"></i>
-                                <span>获取2FA验证码</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="check-live.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
-                                <span>检测FB账户存活</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="check-ins-live.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
-                                <span>检测INS账户存活</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="check-x-live.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-refresh w-5 text-emerald-500 mr-3"></i>
-                                <span>检测 X (Twitter)账户存活</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="email-reader.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-envelope w-5 text-emerald-500 mr-3"></i>
-                                <span>快速阅读邮件</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="#" class="sidebar-link active flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-search w-5 text-indigo-500 mr-3"></i>
-                                <span>14位数字提取</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="text-processor.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-file-text w-5 text-indigo-500 mr-3"></i>
-                                <span>在线文本处理</span>
-                            </a>
-                        </li>
-                        <li class="mb-1">
-                            <a href="note-sharing.html" class="sidebar-link flex items-center px-3 py-2 text-gray-700 rounded-md">
-                                <i class="fa fa-sticky-note w-5 text-indigo-500 mr-3"></i>
-                                <span>在线笔记分享</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="result-box" id="resultBox">
+                    <div class="empty-state">等待数据输入...</div>
+                </div>
             </div>
         </div>
-
-        <!-- 主内容区域 -->
-        <div class="flex-1 overflow-y-auto bg-gray-50">
-            <div class="container mx-auto p-4 md:p-6">
-                <div class="card bg-white p-6 mt-4">
-                    <div class="d-flex justify-content-between align-items-center mb-6">
-                        <h1 class="text-2xl font-bold text-gray-800">14位数字提取工具</h1>
-                    </div>
-
-                    <form id="form_extract" class="space-y-4" onsubmit="return false;">
-                        <div class="form-group">
-                            <label for="INPUT_TEXT" class="block text-sm font-medium text-gray-700 mb-1">输入文本内容</label>
-                            <textarea id="INPUT_TEXT" name="INPUT_TEXT" rows="6" class="form-control w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="在这里输入或粘贴文本内容，系统将自动提取所有14位数字"></textarea>
-
-                            <p class="mt-1 text-sm text-gray-500">
-                                提示：支持 Ctrl/⌘ + Enter 快速提取
-                            </p>
-                        </div>
-
-                        <div class="flex gap-3">
-                            <button type="submit" class="btn btn-primary px-4 py-2 rounded-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <i class="fa fa-search"></i>
-                                提取数字
-                            </button>
-                            <button type="button" id="copyBtn" onclick="copyResult()" class="btn btn-success px-4 py-2 rounded-md font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                                <i class="fa fa-copy"></i>
-                                复制结果
-                            </button>
-                        </div>
-                    </form>
-
-                    <hr class="my-6 border-gray-200">
-
-                    <div id="result-area" style="display: none;">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-lg font-semibold text-gray-800">提取结果</h3>
-                            <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
-                                共 <span id="count">0</span> 个
-                            </span>
-                        </div>
-                        <div id="result-box" class="border border-gray-300 rounded-md bg-gray-50 max-h-96 overflow-y-auto">
-                            <!-- 结果将显示在这里 -->
-                        </div>
-                    </div>
-
-                    <!-- 使用说明区域 -->
-                    <div class="usage-instructions mt-6 p-5">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">14位数字提取工具使用指南</h3>
-                        <p class="text-gray-700 mb-3">本工具可以快速从文本中提取所有14位连续数字，常用于提取身份证号、订单号等固定格式的数字信息。</p>
-                        <p class="text-gray-700 mb-3">使用步骤：
-                            <ol class="list-decimal list-inside ml-2 mt-1 space-y-1">
-                                <li>将包含数字的文本粘贴到输入框中</li>
-                                <li>点击"提取数字"按钮或使用快捷键 Ctrl/⌘ + Enter</li>
-                                <li>系统将自动识别并提取所有14位数字</li>
-                                <li>点击"复制结果"可一键复制所有提取的数字</li>
-                            </ol>
-                        </p>
-                        <p class="text-gray-700">提示：提取结果会自动去重，每个14位数字只显示一次。</p>
-                    </div>
+        
+        <div class="stats-container" id="statsContainer">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">总数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="uniqueCount">0</div>
+                    <div class="stat-label">唯一数字</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="processTime">0ms</div>
+                    <div class="stat-label">处理时间</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let extractedData = [];
+        let extractedNumbers = [];
         
-        // 移动端菜单控制
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            document.getElementById('mobile-sidebar').classList.remove('hidden');
-        });
-        
-        document.getElementById('close-menu').addEventListener('click', function() {
-            document.getElementById('mobile-sidebar').classList.add('hidden');
-        });
-        
-        document.getElementById('mobile-sidebar').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('inputText').value = e.target.result;
+                };
+                reader.readAsText(file);
             }
         });
-
-        // 提取14位数字
+        
         function extractNumbers() {
-            const text = document.getElementById('INPUT_TEXT').value;
-            const regex = /\b\d{14}\b/g;
-            const matches = text.match(regex) || [];
+            const startTime = performance.now();
+            const text = document.getElementById('inputText').value;
             
-            // 去重
-            extractedData = [...new Set(matches)];
-            
-            const resultArea = document.getElementById('result-area');
-            const resultBox = document.getElementById('result-box');
-            const count = document.getElementById('count');
-            
-            if (extractedData.length > 0) {
-                count.textContent = extractedData.length;
-                resultBox.innerHTML = extractedData.map(item => 
-                    `<div class="result-item">${item}</div>`
-                ).join('');
-                resultArea.style.display = 'block';
-            } else {
-                count.textContent = 0;
-                resultBox.innerHTML = '<div class="text-center text-gray-500 py-8">未找到14位数字</div>';
-                resultArea.style.display = 'block';
-            }
-        }
-
-        // 复制结果
-        function copyResult() {
-            if (extractedData.length === 0) {
-                alert('没有内容可复制');
+            if (!text.trim()) {
+                alert('请先输入文本！');
                 return;
             }
             
-            const text = extractedData.join('\n');
-            const btn = document.getElementById('copyBtn');
-            const originalHTML = btn.innerHTML;
+            const regex = /\b\d{14}\b/g;
+            const matches = text.match(regex) || [];
+            
+            extractedNumbers = matches;
+            const uniqueNumbers = [...new Set(matches)];
+            
+            const endTime = performance.now();
+            const processTime = (endTime - startTime).toFixed(2);
+            
+            document.getElementById('totalCount').textContent = matches.length;
+            document.getElementById('uniqueCount').textContent = uniqueNumbers.length;
+            document.getElementById('processTime').textContent = processTime + 'ms';
+            document.getElementById('statsContainer').style.display = 'block';
+            
+            const resultBox = document.getElementById('resultBox');
+            if (uniqueNumbers.length === 0) {
+                resultBox.innerHTML = '<div class="empty-state">未找到 14 位数字</div>';
+                document.getElementById('copyBtn').style.display = 'none';
+            } else {
+                resultBox.innerHTML = uniqueNumbers.map((num, index) => 
+                    `<div class="number-item">
+                        <span class="number-index">${index + 1}</span>
+                        <span>${num}</span>
+                    </div>`
+                ).join('');
+                document.getElementById('copyBtn').style.display = 'block';
+            }
+        }
+        
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('resultBox').innerHTML = '<div class="empty-state">等待数据输入...</div>';
+            document.getElementById('statsContainer').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            extractedNumbers = [];
+        }
+        
+        function copyResults() {
+            if (extractedNumbers.length === 0) {
+                alert('没有可复制的内容！');
+                return;
+            }
+            
+            const uniqueNumbers = [...new Set(extractedNumbers)];
+            const text = uniqueNumbers.join('\n');
             
             navigator.clipboard.writeText(text).then(() => {
-                btn.innerHTML = '<i class="fa fa-check"></i> 已复制';
-                btn.style.backgroundColor = '#10b981';
-                
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>✅ 已复制</span>';
                 setTimeout(() => {
-                    btn.innerHTML = originalHTML;
-                    btn.style.backgroundColor = '';
+                    btn.innerHTML = originalText;
                 }, 2000);
             }).catch(() => {
-                // 降级方案
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                alert('已复制到剪贴板');
+                alert('复制失败，请手动复制');
             });
         }
-
-        // 表单提交
-        document.getElementById('form_extract').addEventListener('submit', function(e) {
-            e.preventDefault();
-            extractNumbers();
-        });
-
-        // 快捷键支持
-        document.getElementById('INPUT_TEXT').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                extractNumbers();
-            }
-        });
     </script>
 </body>
 </html>
