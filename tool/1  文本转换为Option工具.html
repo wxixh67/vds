@@ -156,7 +156,7 @@
             }
             
             const lines = textInput.split('\n').filter(line => line.trim() !== '');
-            const optionCodes = lines.map(line => `<option value="option4">@${line.trim()}</option>`).join('\n');
+            const optionCodes = lines.map(line => `<option value="@${line.trim()}">${line.trim()}</option>`).join('\n');
             
             document.getElementById('outputCode').textContent = optionCodes;
             document.getElementById('outputGroup').classList.add('show');
