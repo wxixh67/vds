@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="renderer" content="webkit">
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="icon" type="image/png" href="../Public/img/favicon.png">
+<link rel="apple-touch-icon-precomposed" href="../Public/img/app-icon72x72@2x.png">
+<title>积分_蛙蛙工具</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="../Public/css/wawa.min.css@v=9d5f5e86cb.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.wwads.cn/js/makemoney.js" async></script><link href="../Public/css/user.min.css@v=ad6a7f0673.css" rel="stylesheet">
+<link href="../Public/css/shop.min.css@v=fbc14bd0cd.css" rel="stylesheet">
+</head>
+<body class="light">
+<div class="user-header">
+	<div class="user-header-int">
+		<div class="user-logo">
+			<a href="../index.html" title="返回蛙蛙工具首页"><img alt="蛙蛙工具" src="../Public/img/logo.png" srcset="../Public/img/logo@2x.png 2x" /><h1>蛙蛙工具</h1></a>
+		</div>
+		<div class="user-menu">
+			<a href="../index.html">首页</a> <a href="../rank.html">排行榜</a> <a href="../cart/index.html">购物车</a> <a href="../user/favorite.html">登录</a> <a href="../user/signup.html">注册</a>		</div>
+	</div>
+</div>
+<div class="shop-content">
+	<div class="shop-product">
+		<div class="shop-cart-form">
+			<form name="order_form" method="post" id="order_form" action="https://www.iamwawa.cn/cart/add.html" class="clearfix">
+				<div class="shop-product-thumb"><img src="../Uploads/Products/2025/04-27/680dd47750f51.png" alt="积分" /></div>
+				<div class="shop-spec">
+					<h1>积分</h1>
+									    <table border="0" cellspacing="0" cellpadding="0"><tr>
+							<td class="shop-spec-dt">规格：</td>
+							<td class="shop-spec-dd"><span onClick="switch_spec(this);" class="shop-spec-checked">
+											100积分											<input type="radio" style="display:none;" name="goods_spec[规格]" value="5" checked="checked"  />
+									</span><span onClick="switch_spec(this);" class="">
+											1000积分											<input type="radio" style="display:none;" name="goods_spec[规格]" value="6"   />
+									</span>							</td>
+						</tr>						<tr>
+							<td class="shop-spec-dt">数量：</td>
+							<td>
+								<div class="shop-switch-num">
+									<a onClick="switch_num(-1);" title="减">-</a>
+									<input type="text" value="1" name="quantity" id="goods_num" readonly/>
+									<a onClick="switch_num(1);" title="加">+</a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="shop-spec-dt">价格：</td>
+							<td class="shop-spec-price">￥<strong id="goods_price"></strong></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><button class="btn btn-success" onClick="javascript:buy();" type="button">立即购买</button><input type="hidden" name="pid" value="5" /></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+		</div>
+		<div class="shop-product-body"><p>
+	兑换比率：1元=100积分
+</p>
+<p>
+	拍10个，就是1000积分，如此类推。
+</p>
+<p>
+	积分可用于部分需要消耗积分的工具。
+</p></div>
+		<div class="shop-product-back"><a href="../shop.1.html"><i class="icon-menu"></i>返回列表</a></div>
+	</div>
+</div>
+<div class="footer">
+	<div class="footer-nav"><a href="../about.html">关于</a><span>-</span><a href="../support.html">赞赏</a><span>-</span><a href="../feedback.html">反馈</a><span>-</span><a href="../user/index.html" rel="nofollow">会员</a><span>-</span><a href="index.html">摆个摊</a><span>-</span><a href="../blog/index.html">文章</a></div>
+	<p>Copyright © 2025 蛙蛙工具-阿粥的技术分享 版权所有   <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">粤ICP备18006158号</a></p>
+</div>
+
+<div class="scroll-nav">
+	<a id="go-top"><i class="icon-up-big"></i><p>返回顶部</p></a>
+	<a id="theme-toggle"><i class="icon-sun-inv"></i><p>切换主题</p></a>
+    <a href="../user/index.html" rel="nofollow"><i class="icon-user"></i><p>会员中心</p></a>
+	<a href="../feedback.html"><i class="icon-chat"></i><p>建议反馈</p></a>
+</div>
+<script type="text/javascript">var WW_APP='/';var WW_PUBLIC='/Public/';var WW_URL='/home/shop/';var WW_TID=0;var WW_UID=0;var WW_VIP=0;var WW_SBS=1;</script>
+<script src="../Public/js/public.min.js@v=c4da3f0b4e"></script>
+<script type="text/javascript">
+var goods_price = 1.00; 
+var store_count = 1; 
+var limit_buy = 1000; 
+var spec_products_price = {"6":{"key":"6","price":"10.00","num":"999982"},"5":{"key":"5","price":"1.00","num":"999937"}};  
+
+get_products_price();
+function switch_spec(spec){
+	$(spec).find('input').prop('checked','checked');
+	$(spec).parent().find("span").removeClass('shop-spec-checked'); 
+	$(spec).addClass('shop-spec-checked'); 
+	get_products_price();
+}
+function switch_num(num){
+	var num2 = parseInt($("#goods_num").val());
+	num2 += num;
+	if(num2 < 1) num2 = 1; 
+	$("#goods_num").val(num2); 
+	get_products_price();
+}
+function sortNumber(a,b){
+	return a - b;
+}
+function get_products_price(){
+	if(spec_products_price != null)
+	{
+		goods_spec_arr = new Array();
+		$("input[name^='goods_spec']:checked").each(function(){
+			goods_spec_arr.push($(this).val());
+		});
+		var spec_key = goods_spec_arr.sort(sortNumber).join('_');  
+		goods_price = spec_products_price[spec_key]['price'];
+		store_count = spec_products_price[spec_key]['num']; 
+	}
+	
+	var goods_num = parseInt($("#goods_num").val());
+	if(goods_num > limit_buy)
+	{
+		goods_num = limit_buy;
+		cocoMessage.error('此商品每次限制购买 '+limit_buy+' 件');
+		$("#goods_num").val(limit_buy); 
+	}
+	
+	if(goods_num > store_count)
+	{
+		goods_num = store_count;
+		cocoMessage.error('此商品规格库存仅剩 '+store_count+' 件');
+		$("#goods_num").val(store_count); 
+	}
+	goods_price = (goods_price *goods_num).toFixed(2);
+	$("#goods_price").html(goods_price); 
+}
+function buy(){
+	$.ajax({
+        url: "/cart/add.html",
+        method: "POST",
+		dataType: "json",
+        data: $("#order_form").serialize(),
+        success: function(data) {
+            if(data.status == 1){
+				cocoMessage.success("已加入购物车！为您跳转到确认页面。",1500);
+				setTimeout(function(){
+					window.location.href="/cart/index";
+				},1000);
+				return false;
+			}else{
+				cocoMessage.error(data.info,2000);
+				return false;
+			}
+        },
+        error: function(error) {
+            alert("发生错误，请联系管理员！");
+        }
+    })
+}
+</script>
+</body>
+</html>
