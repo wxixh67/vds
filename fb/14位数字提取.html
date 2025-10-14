@@ -72,22 +72,18 @@
             background-color: #059669;
             border-color: #059669;
         }
+        .btn-secondary {
+            background-color: #64748b;
+            border-color: #64748b;
+        }
+        .btn-secondary:hover {
+            background-color: #475569;
+            border-color: #475569;
+        }
         .instructions {
             background-color: #f8fafc;
             border-radius: 0.5rem;
             border: 1px solid #e2e8f0;
-        }
-        .copy-btn {
-            margin-top: 0.5rem;
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .copy-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -215,18 +211,24 @@
                             </button>
                         </div>
                         
-                        <div id="result" class="mt-6">
-                            <div class="flex items-center mb-2">
-                                <h3 class="text-lg font-semibold text-green-600">
+                        <div class="form-group">
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="resultBox" class="block text-gray-700 font-medium">
                                     提取结果
                                     <span id="count" class="ml-2 bg-cyan-100 text-cyan-800 text-xs font-medium px-2.5 py-0.5 rounded">0</span>
-                                </h3>
+                                </label>
+                                <div>
+                                    <button class="btn btn-success px-4 py-1.5 rounded-md font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none mr-2" onclick="copyResult()">
+                                        <i class="fa fa-copy mr-1"></i> 复制结果
+                                    </button>
+                                    <button class="btn btn-secondary px-4 py-1.5 rounded-md font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none" onclick="clearAll()">
+                                        <i class="fa fa-trash mr-1"></i> 清空
+                                    </button>
+                                </div>
                             </div>
-                            <textarea id="resultBox" class="form-control w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" 
-                                    rows="8" style="background: rgba(0,201,167,0.1); border-color: #00c9a7;"></textarea>
-                            <button class="copy-btn bg-green-600 text-white" onclick="copyResult()">
-                                <i class="fa fa-copy mr-1"></i>复制
-                            </button>
+                            <textarea id="resultBox" class="form-control w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                                    rows="8" readonly placeholder="提取的14位数字将显示在这里..."></textarea>
+                            <div id="copy-alert" class="mt-2 text-sm hidden"></div>
                         </div>
 
                         <!-- 使用说明区域 -->
@@ -238,7 +240,8 @@
                                 <li>在输入框中粘贴或输入包含14位数字的文本</li>
                                 <li>点击"提取"按钮进行提取</li>
                                 <li>系统将自动识别并去重所有14位数字</li>
-                                <li>点击"复制"按钮可一键复制所有结果</li>
+                                <li>点击"复制结果"按钮可一键复制所有结果</li>
+                                <li>点击"清空"按钮可以清除所有输入和输出内容</li>
                             </ol>
                         </div>
                     </div>
@@ -274,15 +277,32 @@
 
         // 14位数字提取功能
         let data = [];
+        const copyAlert = document.getElementById('copy-alert');
+        
+        // 显示复制提示
+        function showCopyAlert(message, isSuccess = true) {
+            copyAlert.textContent = message;
+            copyAlert.className = `mt-2 text-sm ${isSuccess ? 'text-green-600' : 'text-red-600'}`;
+            copyAlert.classList.remove('hidden');
+            
+            setTimeout(() => {
+                copyAlert.classList.add('hidden');
+            }, 2000);
+        }
         
         function extract() {
             const text = document.getElementById('input').value;
+            
+            if (!text.trim()) {
+                showCopyAlert('请先输入需要提取的文本', false);
+                return;
+            }
+            
             const regex = /\b\d{14}\b/g;
             const matches = text.match(regex) || [];
             
             data = [...new Set(matches)];
             
-            const result = document.getElementById('result');
             const resultBox = document.getElementById('resultBox');
             const count = document.getElementById('count');
             
@@ -292,30 +312,30 @@
             } else {
                 count.textContent = 0;
                 resultBox.value = '';
+                showCopyAlert('未找到14位数字', false);
             }
         }
         
         function copyResult() {
             const resultBox = document.getElementById('resultBox');
             
-            const btn = event.target.closest('button');
-            const originalHTML = btn.innerHTML;
+            if (!resultBox.value.trim()) {
+                showCopyAlert('没有可复制的内容', false);
+                return;
+            }
             
-            navigator.clipboard.writeText(resultBox.value).then(() => {
-                btn.innerHTML = '<i class="fa fa-check mr-1"></i> 复制成功';
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalHTML;
-                }, 2000);
-            }).catch(() => {
-                resultBox.select();
-                document.execCommand('copy');
-                btn.innerHTML = '<i class="fa fa-check mr-1"></i> 复制成功';
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalHTML;
-                }, 2000);
-            });
+            resultBox.select();
+            document.execCommand('copy');
+            
+            showCopyAlert('内容已复制到剪贴板');
+        }
+        
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('resultBox').value = '';
+            document.getElementById('count').textContent = '0';
+            copyAlert.classList.add('hidden');
+            data = [];
         }
     </script>
 
