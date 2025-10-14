@@ -99,7 +99,7 @@
             <div class="form-group">
                 <label for="selectOption">选择选项：</label>
                 <select id="selectOption">
-                    <option value="">-- 请选择 --</option>
+                    <option value="">-- 随机 --</option>
 <option value="@14club.org.uk">14club.org.uk</option>
 <option value="@29thnewport.org.uk">29thnewport.org.uk</option>
 <option value="@2ndwhartonscoutgroup.org.uk">2ndwhartonscoutgroup.org.uk</option>
@@ -228,22 +228,33 @@
             
             let redirectUrl;
             
-            // 情况1: 输入为空 - 跳转到基础URL
-            if (!textInput) {
-                redirectUrl = 'https://mail.chatgpt.org.uk/';
-            }
-            // 情况2: 输入包含@ - 跳转到输入文本
-            else if (textInput.includes('@')) {
+            // 情况1: 输入包含@ - 不管选择什么都跳转到输入文本
+            if (textInput && textInput.includes('@')) {
                 redirectUrl = `https://mail.chatgpt.org.uk/${textInput}`;
             }
-            // 情况3: 输入不包含@ 且 选择了域名 - 跳转到输入文本+选项文本
-            else if (selectOption && selectOption !== '') {
+            // 情况2: 输入为空且选择了具体域名 - 跳转到随机6位字母+域名
+            else if (!textInput && selectOption && selectOption !== '') {
+                const randomCode = generateRandomCode();
+                redirectUrl = `https://mail.chatgpt.org.uk/${randomCode}${selectOption}`;
+            }
+            // 情况3: 输入为空且选择随机 - 跳转到随机6位字母+随机域名
+            else if (!textInput && (!selectOption || selectOption === '')) {
+                const randomCode = generateRandomCode();
+                const randomDomain = getRandomDomain();
+                redirectUrl = `https://mail.chatgpt.org.uk/${randomCode}${randomDomain}`;
+            }
+            // 情况4: 输入不包含@ 且选择了具体域名 - 跳转到输入文本+域名
+            else if (textInput && !textInput.includes('@') && selectOption && selectOption !== '') {
                 redirectUrl = `https://mail.chatgpt.org.uk/${textInput}${selectOption}`;
             }
-            // 情况4: 输入不包含@ 且 未选择域名 - 跳转到输入文本+随机域名
-            else {
+            // 情况5: 输入不包含@ 且选择随机 - 跳转到输入文本+随机域名
+            else if (textInput && !textInput.includes('@') && (!selectOption || selectOption === '')) {
                 const randomDomain = getRandomDomain();
                 redirectUrl = `https://mail.chatgpt.org.uk/${textInput}${randomDomain}`;
+            }
+            // 默认情况
+            else {
+                redirectUrl = 'https://mail.chatgpt.org.uk/';
             }
             
             window.location.href = redirectUrl;
