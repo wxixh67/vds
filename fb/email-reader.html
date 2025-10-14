@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh">
-
-
-<!-- Mirrored from 2fa.fun/email-reader.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:28:20 GMT -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -35,10 +32,10 @@
     <link href="static/css/app.min.css" media="all" type="text/css" rel="stylesheet">
     <link href="static/css/custom-style.css" rel="stylesheet" type="text/css">
 
-    <!-- CSRF Token -->
+    <!-- CSRF Token (from index.html) -->
     <meta name="csrf-token" content="uWuXNcr6VvE401osW7KXYmw9xTUoLNuHt97zOKNy">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics (from index.html) -->
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -293,6 +290,7 @@
             }
         });
 
+        // From index.html
         var app_url = '';
         var datatable;
 
@@ -384,7 +382,7 @@
                                 <div class="p-4">
                                     <p class="mb-1"><span class="font-medium">📅 日期:</span> ${msg.date ? new Date(msg.date).toLocaleString() : "未知"}</p>
                                     <p class="mb-1"><span class="font-medium">📨 发件人:</span> ${msg.from && msg.from.length > 0 ? `${msg.from[0].name || "未知"} &lt;${msg.from[0].address || "未知"}&gt;` : "未知"}</p>
-                                    <p class="mb-2"><span class="font-medium">🔖 标题:</span> ${msg.subject || "无标题"}</p>
+                                    <p class="mb-2"><span class="font-medium">📖 标题:</span> ${msg.subject || "无标题"}</p>
                                     ${msg.code ? `<p class="mb-3"><span class="font-medium">🔑 验证码:</span> <span class="verification-code">${msg.code}</span>
                                                 <button class="ml-2 px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded text-sm transition-colors" 
                                                         onclick="copyToClipboard('${msg.code}')">
@@ -428,27 +426,27 @@
         }
     </script>
 
-    <!-- Core Vendors JS -->
+    <!-- Core Vendors JS (from index.html) -->
     <script src="static/js/vendors.min.js"></script>
-    <!-- Core JS -->
+    <!-- Core JS (from index.html) -->
     <script src="static/js/app.min.js"></script>
 
-    <!-- Other JS plugins -->
+    <!-- Other JS plugins (from index.html) -->
     <script src="static/js/toastr.min.js"></script>
     <script src="static/js/sweetalert.min.js"></script>
     <script src="static/js/moment.js"></script>
     <script src="static/js/autosize.min.js"></script>
     <script src="static/js/select2.min.js"></script>
 
-    <!-- axios -->
+    <!-- axios (from index.html) -->
     <script src="static/js/axios.min-1.js"></script>
 
-    <!--User defined js code -->
+    <!--User defined js code (from index.html) -->
     <script src="static/js/common.js"></script>
+    <script src="static/js/buffer.min.js"></script>
+    <script src="static/js/otplib.min.js"></script>
+    <script src="static/js/get-2fa-otp.js"></script>
     <script src="static/js/platform.js" async="" defer=""></script>
     <script src="static/js/auth.js"></script>
 </body>
-
-
-<!-- Mirrored from 2fa.fun/email-reader.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 13 Oct 2025 12:28:20 GMT -->
 </html>
