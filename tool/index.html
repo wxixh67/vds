@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自动导航目录</title>
+    <title>导航目录</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -50,11 +50,17 @@
         #navigation-menu a:hover {
             text-decoration: underline;
         }
-        #loading, #error {
+        .item-number {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             text-align: center;
-            color: #888;
-            font-size: 1.2em;
-            padding: 20px;
+            line-height: 28px;
+            margin-right: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -62,78 +68,59 @@
 
     <header>
         <h1>项目页面导航</h1>
-        <p></p>
     </header>
 
-    <div id="loading">正在加载文件列表...</div>
-    <div id="error" style="display: none;"></div>
-
     <ul id="navigation-menu">
-        <!-- 导航链接将通过 JavaScript 动态插入到这里 -->
+        <!-- 导航链接将在这里显示 -->
     </ul>
 
     <script>
-        // --- 配置区域 ---
-        const config = {
-            username: "wxixh67",
-            repo: "vds",
-            path: "tool/"                   
-        };
+        // --- 手动配置区域 ---
+        const navItems = [
+            { name: "邮件跳转工具.html" },
+            { name: "14位数字提取.html" },
+            { name: "文本去重工具.html" },
+            { name: "邮箱后缀提取工具.html" },
+            { name: "文本转换为Option工具.html" },
+            { name: "Facebook 个人主页跳转.html" }
+        ];
         // -----------------
 
         const currentFileName = window.location.pathname.split('/').pop() || 'index.html';
+        const navMenu = document.getElementById('navigation-menu');
+        let itemNumber = 1;
 
-        async function fetchAndCreateNav() {
-            const navMenu = document.getElementById('navigation-menu');
-            const loadingIndicator = document.getElementById('loading');
-            const errorContainer = document.getElementById('error');
+        navItems.forEach(item => {
+            // 跳过当前文件
+            if (item.name === currentFileName) return;
+
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
             
-            const apiUrl = `https://api.github.com/repos/${config.username}/${config.repo}/contents/${config.path}`;
+            link.onclick = function(e) {
+                e.preventDefault();
+                window.location.href = item.name;
+            };
+            
+            // 创建序号圆圈和文本
+            const numberSpan = document.createElement('span');
+            numberSpan.className = 'item-number';
+            numberSpan.textContent = itemNumber;
+            
+            link.appendChild(numberSpan);
+            link.appendChild(document.createTextNode(item.name));
+            
+            listItem.appendChild(link);
+            navMenu.appendChild(listItem);
+            
+            itemNumber++;
+        });
 
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`GitHub API 请求失败: ${response.status} ${response.statusText}`);
-                }
-                const files = await response.json();
-
-                const htmlFiles = files.filter(file => 
-                    file.type === 'file' && 
-                    file.name.endsWith('.html') &&
-                    file.name !== currentFileName
-                );
-
-                loadingIndicator.style.display = 'none';
-
-                if (htmlFiles.length === 0) {
-                    navMenu.innerHTML = '<li>此目录下未找到其他 HTML 文件。</li>';
-                    return;
-                }
-
-                htmlFiles.forEach(file => {
-                    const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    
-                    // 点击时在当前页面导航（不打开新页面）
-                    link.onclick = function(e) {
-                        e.preventDefault();
-                        window.location.href = file.name;
-                    };
-                    
-                    link.textContent = file.name.replace('.html', '');
-                    listItem.appendChild(link);
-                    navMenu.appendChild(listItem);
-                });
-
-            } catch (error) {
-                loadingIndicator.style.display = 'none';
-                errorContainer.style.display = 'block';
-                errorContainer.textContent = `加载失败：${error.message}。请检查你的用户名和仓库名配置是否正确，并确保仓库是公开的。`;
-                console.error("获取文件列表时出错:", error);
-            }
+        if (navMenu.children.length === 0) {
+            const emptyItem = document.createElement('li');
+            emptyItem.textContent = '没有其他可用的页面。';
+            navMenu.appendChild(emptyItem);
         }
-
-        document.addEventListener('DOMContentLoaded', fetchAndCreateNav);
     </script>
 
 </body>
