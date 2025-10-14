@@ -45,6 +45,7 @@
             color: #007bff;
             font-weight: 500;
             font-size: 1.1em;
+            cursor: pointer;
         }
         #navigation-menu a:hover {
             text-decoration: underline;
@@ -73,17 +74,13 @@
 
     <script>
         // --- 配置区域 ---
-        // 请修改为你自己的 GitHub 用户名和仓库名
         const config = {
-            username: "wxixh67", // 替换为你的 GitHub 用户名
-            repo: "vds",    // 替换为你的仓库名
-            // 如果你的文件在子目录中，请指定路径，例如 "docs/" 或 "project/files/"
-            // 如果在根目录，保持为空字符串 ''
+            username: "wxixh67",
+            repo: "vds",
             path: "tool/"                   
         };
         // -----------------
 
-        // 获取当前 HTML 文件的名称，以便在列表中排除它自己
         const currentFileName = window.location.pathname.split('/').pop() || 'index.html';
 
         async function fetchAndCreateNav() {
@@ -91,7 +88,6 @@
             const loadingIndicator = document.getElementById('loading');
             const errorContainer = document.getElementById('error');
             
-            // 构建 GitHub API URL
             const apiUrl = `https://api.github.com/repos/${config.username}/${config.repo}/contents/${config.path}`;
 
             try {
@@ -101,11 +97,10 @@
                 }
                 const files = await response.json();
 
-                // 筛选出 HTML 文件
                 const htmlFiles = files.filter(file => 
                     file.type === 'file' && 
                     file.name.endsWith('.html') &&
-                    file.name !== currentFileName // 排除当前页面本身
+                    file.name !== currentFileName
                 );
 
                 loadingIndicator.style.display = 'none';
@@ -115,15 +110,17 @@
                     return;
                 }
 
-                // 为每个 HTML 文件创建列表项和链接
                 htmlFiles.forEach(file => {
                     const listItem = document.createElement('li');
                     const link = document.createElement('a');
                     
-                    link.href = file.name;
-                    // 显示更友好的名称（移除 .html 后缀）
-                    link.textContent = file.name.replace('.html', '');
+                    // 点击时在当前页面导航（不打开新页面）
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        window.location.href = file.name;
+                    };
                     
+                    link.textContent = file.name.replace('.html', '');
                     listItem.appendChild(link);
                     navMenu.appendChild(listItem);
                 });
@@ -136,7 +133,6 @@
             }
         }
 
-        // 页面加载完成后执行函数
         document.addEventListener('DOMContentLoaded', fetchAndCreateNav);
     </script>
 
