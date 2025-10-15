@@ -229,7 +229,7 @@
 
         <!-- 链接列表 -->
         <div class="links-section">
-            <a href="https://fh10.zmfaka.cn/shop/24XZCD9E" class="link-card" target="_blank">
+            <a href="https://fh10.zmfaka.cn/shop/24XZCD9E" class="link-card">
                 <div class="link-icon icon-blue">
                     🛒
                 </div>
@@ -240,7 +240,7 @@
                 <div class="link-arrow">→</div>
             </a>
 
-            <a href="https://t.me/Facebookkf_bot" class="link-card" target="_blank">
+            <a href="https://t.me/Facebookkf_bot" class="link-card">
                 <div class="link-icon icon-cyan">
                     💬
                 </div>
@@ -251,7 +251,7 @@
                 <div class="link-arrow">→</div>
             </a>
 
-            <a href="https://t.me/fb180" class="link-card" target="_blank">
+            <a href="https://t.me/fb180" class="link-card">
                 <div class="link-icon icon-green">
                     👥
                 </div>
@@ -262,7 +262,7 @@
                 <div class="link-arrow">→</div>
             </a>
 
-            <a href="https://www.facebook.com/" class="link-card" target="_blank">
+            <a href="https://www.facebook.com/" class="link-card">
                 <div class="link-icon icon-coral">
                     📘
                 </div>
@@ -286,14 +286,14 @@
 
     <script>
         // 为链接卡片添加点击动画效果
-        const links = {};
         document.querySelectorAll('.link-card').forEach((card, i) => {
             card.addEventListener('click', (e) => {
-                e.preventDefault();
                 card.style.transform = 'scale(0.98)';
                 setTimeout(() => {
                     card.style.transform = '';
+                    window.location.href = card.href;
                 }, 150);
+                e.preventDefault();
             });
             
             // 为每个卡片添加延迟动画
