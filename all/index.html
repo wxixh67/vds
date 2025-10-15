@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>链接聚合 | Link Hub</title>
+    <title>导航页面</title>
     <style>
         * {
             margin: 0;
@@ -12,467 +12,130 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #C85E47 0%, #A54937 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .container {
-            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
             width: 100%;
-            background: #F5F5F0;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        .header {
-            background: linear-gradient(135deg, #9BAF6E 0%, #8B9E5F 100%);
-            padding: 30px 40px;
-            position: relative;
-            overflow: hidden;
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .header h1 {
-            color: #F5F5F0;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header p {
-            color: rgba(245,245,240,0.85);
-            font-size: 14px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .search-box {
-            padding: 20px 40px;
-            background: #fff;
-            border-bottom: 2px solid #eee;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background: #fafafa;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #9BAF6E;
-            background: #fff;
-        }
-
-        .links-container {
-            padding: 20px 40px 40px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .link-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            margin-bottom: 8px;
-            background: #fff;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #1A1A1A;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .link-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: linear-gradient(180deg, #4ECDC4, #FF6B9D, #FFE66D);
-            transform: translateX(-4px);
-            transition: transform 0.3s;
-        }
-
-        .link-item:hover {
-            transform: translateX(4px);
-            border-color: #9BAF6E;
-            box-shadow: 0 4px 12px rgba(155,175,110,0.2);
-        }
-
-        .link-item:hover::before {
-            transform: translateX(0);
-        }
-
-        .link-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #4ECDC4, #3BBDB4);
-            border-radius: 8px;
+        .nav-link {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 16px;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .link-content {
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .link-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .link-title {
-            font-weight: 600;
-            font-size: 15px;
-            color: #1A1A1A;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .link-desc {
-            font-size: 12px;
-            color: #666;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .link-url {
-            font-size: 11px;
-            color: #999;
-            font-family: 'Courier New', monospace;
-            flex-shrink: 0;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .category {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #eee;
-        }
-
-        .category:first-child {
-            margin-top: 0;
-            padding-top: 0;
-            border-top: none;
-        }
-
-        .category-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #8B5A3C;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding-left: 12px;
-            border-left: 4px solid #9BAF6E;
-        }
-
-        .add-link-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #C85E47, #A54937);
-            border: none;
-            border-radius: 50%;
+            gap: 8px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(200,94,71,0.4);
-            transition: all 0.3s;
-        }
-
-        .add-link-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 6px 20px rgba(200,94,71,0.6);
-        }
-
-        .no-results {
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
             text-align: center;
-            padding: 40px;
-            color: #999;
-            font-size: 14px;
+            font-size: 1.05em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
+        .nav-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
+        .nav-link:active {
+            transform: translateY(-1px);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #9BAF6E;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #8B9E5F;
+        .emoji {
+            font-size: 1.3em;
         }
 
         @media (max-width: 768px) {
-            .header, .search-box, .links-container {
-                padding-left: 20px;
-                padding-right: 20px;
+            .nav-links {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
             }
 
-            .link-url {
-                display: none;
+            h1 {
+                font-size: 1.5em;
             }
 
-            .link-item {
-                padding: 12px 16px;
+            .nav-link {
+                padding: 15px;
+                font-size: 0.95em;
+            }
+
+            .nav-links {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🔗 我的链接中心</h1>
-            <p>快速访问常用网站和工具</p>
-        </div>
-
-        <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="搜索链接...">
-        </div>
-
-        <div class="links-container" id="linksContainer">
-            <div class="category">
-                <div class="category-title">🎨 设计工具</div>
-                <a href="https://www.figma.com" class="link-item" target="_blank">
-                    <div class="link-icon">🎨</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Figma</div>
-                            <div class="link-desc">协作设计工具，在线原型制作</div>
-                        </div>
-                        <div class="link-url">figma.com</div>
-                    </div>
-                </a>
-                <a href="https://www.canva.com" class="link-item" target="_blank">
-                    <div class="link-icon">✨</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Canva</div>
-                            <div class="link-desc">简单易用的平面设计平台</div>
-                        </div>
-                        <div class="link-url">canva.com</div>
-                    </div>
-                </a>
-                <a href="https://www.adobe.com" class="link-item" target="_blank">
-                    <div class="link-icon">🖌️</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Adobe Creative Cloud</div>
-                            <div class="link-desc">专业创意软件套装</div>
-                        </div>
-                        <div class="link-url">adobe.com</div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="category">
-                <div class="category-title">💻 开发工具</div>
-                <a href="https://github.com" class="link-item" target="_blank">
-                    <div class="link-icon">🐙</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">GitHub</div>
-                            <div class="link-desc">代码托管与协作开发平台</div>
-                        </div>
-                        <div class="link-url">github.com</div>
-                    </div>
-                </a>
-                <a href="https://stackoverflow.com" class="link-item" target="_blank">
-                    <div class="link-icon">💬</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Stack Overflow</div>
-                            <div class="link-desc">程序员问答社区</div>
-                        </div>
-                        <div class="link-url">stackoverflow.com</div>
-                    </div>
-                </a>
-                <a href="https://code.visualstudio.com" class="link-item" target="_blank">
-                    <div class="link-icon">📝</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">VS Code</div>
-                            <div class="link-desc">强大的代码编辑器</div>
-                        </div>
-                        <div class="link-url">code.visualstudio.com</div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="category">
-                <div class="category-title">📚 学习资源</div>
-                <a href="https://www.coursera.org" class="link-item" target="_blank">
-                    <div class="link-icon">🎓</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Coursera</div>
-                            <div class="link-desc">在线课程学习平台</div>
-                        </div>
-                        <div class="link-url">coursera.org</div>
-                    </div>
-                </a>
-                <a href="https://www.youtube.com" class="link-item" target="_blank">
-                    <div class="link-icon">📺</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">YouTube</div>
-                            <div class="link-desc">视频分享与教程平台</div>
-                        </div>
-                        <div class="link-url">youtube.com</div>
-                    </div>
-                </a>
-                <a href="https://medium.com" class="link-item" target="_blank">
-                    <div class="link-icon">📖</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Medium</div>
-                            <div class="link-desc">优质内容创作与阅读平台</div>
-                        </div>
-                        <div class="link-url">medium.com</div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="category">
-                <div class="category-title">🛠️ 实用工具</div>
-                <a href="https://www.notion.so" class="link-item" target="_blank">
-                    <div class="link-icon">📋</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Notion</div>
-                            <div class="link-desc">全能工作空间与笔记工具</div>
-                        </div>
-                        <div class="link-url">notion.so</div>
-                    </div>
-                </a>
-                <a href="https://trello.com" class="link-item" target="_blank">
-                    <div class="link-icon">📊</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Trello</div>
-                            <div class="link-desc">可视化项目管理工具</div>
-                        </div>
-                        <div class="link-url">trello.com</div>
-                    </div>
-                </a>
-                <a href="https://www.dropbox.com" class="link-item" target="_blank">
-                    <div class="link-icon">☁️</div>
-                    <div class="link-content">
-                        <div class="link-info">
-                            <div class="link-title">Dropbox</div>
-                            <div class="link-desc">云存储与文件同步服务</div>
-                        </div>
-                        <div class="link-url">dropbox.com</div>
-                    </div>
-                </a>
-            </div>
+        <h1>📁 选择目录</h1>
+        <div class="nav-links">
+            <a href="/2fa" class="nav-link">
+                <span class="emoji">🔐</span>
+                <span>2FA</span>
+            </a>
+            <a href="/club" class="nav-link">
+                <span class="emoji">🎯</span>
+                <span>Club</span>
+            </a>
+            <a href="/fb" class="nav-link">
+                <span class="emoji">📘</span>
+                <span>FB</span>
+            </a>
+            <a href="/p" class="nav-link">
+                <span class="emoji">📦</span>
+                <span>P</span>
+            </a>
+            <a href="/qmy" class="nav-link">
+                <span class="emoji">🔷</span>
+                <span>QMY</span>
+            </a>
+            <a href="/tm" class="nav-link">
+                <span class="emoji">⏰</span>
+                <span>TM</span>
+            </a>
+            <a href="/tool" class="nav-link">
+                <span class="emoji">🔧</span>
+                <span>Tool</span>
+            </a>
+            <a href="/web_sites" class="nav-link">
+                <span class="emoji">🌐</span>
+                <span>Web Sites</span>
+            </a>
         </div>
     </div>
-
-    <button class="add-link-btn" onclick="alert('点击添加新链接功能（可自定义）')">+</button>
-
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const linksContainer = document.getElementById('linksContainer');
-        const allLinks = Array.from(document.querySelectorAll('.link-item'));
-        const categories = Array.from(document.querySelectorAll('.category'));
-
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            let hasResults = false;
-
-            categories.forEach(category => {
-                const links = category.querySelectorAll('.link-item');
-                let categoryHasVisible = false;
-
-                links.forEach(link => {
-                    const title = link.querySelector('.link-title').textContent.toLowerCase();
-                    const desc = link.querySelector('.link-desc').textContent.toLowerCase();
-                    const url = link.querySelector('.link-url')?.textContent.toLowerCase() || '';
-
-                    if (title.includes(searchTerm) || desc.includes(searchTerm) || url.includes(searchTerm)) {
-                        link.style.display = 'flex';
-                        categoryHasVisible = true;
-                        hasResults = true;
-                    } else {
-                        link.style.display = 'none';
-                    }
-                });
-
-                category.style.display = categoryHasVisible ? 'block' : 'none';
-            });
-
-            const existingNoResults = document.querySelector('.no-results');
-            if (existingNoResults) {
-                existingNoResults.remove();
-            }
-
-            if (!hasResults && searchTerm) {
-                const noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.textContent = '未找到匹配的链接';
-                linksContainer.appendChild(noResults);
-            }
-        });
-
-        allLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                link.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    link.style.transform = '';
-                }, 100);
-            });
-        });
-    </script>
 </body>
 </html>
