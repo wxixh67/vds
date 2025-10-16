@@ -329,7 +329,7 @@
                 <strong>⚠️ 提示：</strong>数字数量较多，为避免页面卡顿，仅显示前1000个结果。所有数字仍可通过"复制全部"按钮获取。
             </div>
             <div class="result-box" id="resultBox"></div>
-            <button class="copy-all-btn" onclick="copyAll()">📋 复制全部数字</button>
+            <button class="copy-all-btn" onclick="copyAll(event)">📋 复制全部数字</button>
         </div>
     </div>
 
@@ -409,7 +409,34 @@
         }
 
         function copySingle(number, button) {
-            navigator.clipboard.writeText(number).then(() => {
+            // 使用传统方法作为备选方案
+            const copyToClipboard = (str) => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(str);
+                } else {
+                    // 备选方案：使用 textarea
+                    const textArea = document.createElement('textarea');
+                    textArea.value = str;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    textArea.style.top = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    
+                    return new Promise((resolve, reject) => {
+                        try {
+                            document.execCommand('copy') ? resolve() : reject();
+                        } catch (err) {
+                            reject(err);
+                        } finally {
+                            textArea.remove();
+                        }
+                    });
+                }
+            };
+            
+            copyToClipboard(number).then(() => {
                 const originalText = button.textContent;
                 button.textContent = '✓ 已复制';
                 button.classList.add('copied');
@@ -424,7 +451,7 @@
             });
         }
 
-        function copyAll() {
+        function copyAll(event) {
             const input = document.getElementById('inputText').value;
             const regex = /\b\d{14}\b/g;
             const matches = input.match(regex);
@@ -433,8 +460,35 @@
                 const uniqueNumbers = [...new Set(matches)];
                 const text = uniqueNumbers.join('\n');
                 
-                navigator.clipboard.writeText(text).then(() => {
-                    const btn = event.target;
+                // 使用传统方法作为备选方案
+                const copyToClipboard = (str) => {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        return navigator.clipboard.writeText(str);
+                    } else {
+                        // 备选方案：使用 textarea
+                        const textArea = document.createElement('textarea');
+                        textArea.value = str;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-999999px';
+                        textArea.style.top = '-999999px';
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        
+                        return new Promise((resolve, reject) => {
+                            try {
+                                document.execCommand('copy') ? resolve() : reject();
+                            } catch (err) {
+                                reject(err);
+                            } finally {
+                                textArea.remove();
+                            }
+                        });
+                    }
+                };
+                
+                copyToClipboard(text).then(() => {
+                    const btn = event ? event.target : document.querySelector('.copy-all-btn');
                     const originalText = btn.textContent;
                     btn.textContent = '✓ 已复制全部';
                     btn.style.background = '#1e7e34';
@@ -447,6 +501,8 @@
                 }).catch(() => {
                     showToast('复制失败，请手动复制');
                 });
+            } else {
+                showToast('没有可复制的内容');
             }
         }
 
@@ -516,7 +572,10 @@
             // Ctrl/Cmd + Shift + C 复制全部
             if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
                 e.preventDefault();
-                copyAll();
+                const btn = document.querySelector('.copy-all-btn');
+                if (btn) {
+                    copyAll({ target: btn });
+                }
             }
         });
     </script>
