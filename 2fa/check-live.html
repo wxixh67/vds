@@ -9,24 +9,31 @@
     <meta property="og:title" content="2FA Auth-2FA工具-2FA验证-谷歌身份验证器网页版Google Authenticator">
     <meta property="og:type" content="article">
     <meta name="author" content="2fa在线工具网站">
-    <meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,谷歌验证器网页版,Google authenticator网页版">
-    <meta property="og:description" content="2FA验证，谷歌身份验证网页版，双因素验证(Two-factor authentication)在线工具">
+    <meta property="og:image:alt" content="获取2FA代码-在线保存文本">
+    <meta name="keywords" content="2FA,2fa,2fa在线工具,2FA Auth,2FA live,2FA Code,双重验证工具,在线文本处理工具,FB账号批量检测存活,无需登录检测FB账户存活,谷歌验证器网页版,Google authenticator网页版">
+    <meta property="og:description" content="2FA验证，谷歌身份验证网页版，双因素验证(Two-factor authentication,简称 2FA，又名二步验证、双重验证)，是保证账户安全的一道有效防线。在登录或进行敏感操作时，需要输入验证器上的动态密码（类似于银行U盾），进一步保护您的帐户免受潜在攻击者的攻击。双因素验证的动态密码生成器分为软件和硬件两种，最常用的软件有OTP Auth和谷歌验证器 (Google Authenticator)。而此处要实现的功能就是：利用JS或PHP代码生成动态密码，简化用户登录账号获取验证码的流程。点击上面的"立即使用"按钮进入获取验证码页面">
+    <meta name="google-signin-client_id" content="">
+    <link rel="canonical" href="https://2fa.fun/">
+    <link rel="alternate" href="https://2fa.fun/en" hreflang="en-us">
+    <link rel="alternate" href="https://2fa.fun/vi" hreflang="vi-vn">
     
-    <title>2FA Auth-2FA工具-2FA验证-谷歌身份验证器网页版Google Authenticator</title>
+    <title>无需登录实时检查FB账户存活状态工具-Check Live UID Facebook</title>
     
-    <!-- Favicon -->
+    <!-- Favicon-->
     <link rel="shortcut icon" href="static/picture/favicon.png">
 
-    <!-- CSS Files -->
     <link href="static/css/icon.css" rel="stylesheet" type="text/css">
+
+    <!-- Other Css -->
     <link href="static/css/toastr.min.css" rel="stylesheet" type="text/css">
     <link href="static/css/select2.css" rel="stylesheet" type="text/css">
+
     <link href="static/css/app.min.css" media="all" type="text/css" rel="stylesheet">
     <link href="static/css/custom-style.css" rel="stylesheet" type="text/css">
     <link href="static/css/landing.css" rel="stylesheet" type="text/css">
 
     <!-- CSRF Token -->
-    <meta name="csrf-token" content="uWuXNcr6VvE401osW7KXYmw9xTUoLNuHt97zOKNy">
+    <meta name="csrf-token" content="PuQauEs7ttkNk5Tx1Ma4QrKxprqh6G31RwgdAw1u">
 
     <!-- Google Analytics -->
     <script>
@@ -58,11 +65,6 @@
 
                 <div class="nav-wrap">
                     <ul class="nav-left">
-                        <li class="desktop-toggle" style="display: none;">
-                            <a href="javascript:void(0);">
-                                <i class="anticon"></i>
-                            </a>
-                        </li>
                         <li class="mobile-toggle">
                             <a href="javascript:void(0);">
                                 <i class="anticon"></i>
@@ -77,10 +79,6 @@
             <div class="side-nav">
                 <div class="side-nav-inner">
                     <ul class="side-nav-menu scrollable">
-                        <li class="user-info" style="display:none">
-                            <div class="image"></div>
-                        </li>
-
                         <li class="header-nav">菜单</li>
 
                         <li class="nav-item">
@@ -199,48 +197,40 @@
             <!-- Main Content START -->
             <section class="page-container">
                 <div class="main-content">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">在线2FA验证工具</h5>
-                                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="m-b--20">Facebook账户实时检测存活工具</h5>
 
-                                    <form id="form_secret" class="mt-4" onsubmit="return false;">
-                                        <div class="form-group">
-                                            <label for="SECRET2FA">2FA双重验证码/二步验证码获取工具（谷歌身份验证器的网页版）</label>
-                                            <textarea id="SECRET2FA" name="SECRET2FA" rows="6" class="form-control" placeholder="在这里输入完整的2FA密钥"></textarea>
-                                            <span class="form-text text-muted">
-                                                可以输入完整格式：UID|密码|2FA|邮箱|邮箱密码... 每行1个账户
-                                            </span>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary btn-tone btn-nw">
-                                            <i class="anticon anticon-safety"></i>
-                                            获取验证码
-                                        </button>
-                                    </form>
-
-                                    <hr>
-
-                                    <div id="toggle-2fa-list">
-                                        <!-- 动态生成的验证码列表将显示在这里 -->
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <span>无需登录FB账户即可实时检测账号死活/Facebook账户批量检测/查看Facebook实时UID</span>
+                                    <textarea id="list_uid" class="form-control" placeholder="在这里输入FB UID，或输入完整账号信息，每行1个账户..." rows="10"></textarea>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="col-lg-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="justify-content-between align-items-center">
-                                        <h6 class="mb-2">
-                                            <img width="25" src="static/picture/notify.svg" alt="广告"> 广告
-                                        </h6>
+                                <div class="col-md-12 text-center form-group">
+                                    <button id="btn-check" class="btn btn-success btn-nw">
+                                        <i class="anticon anticon-check-circle"></i>
+                                        实时检测
+                                    </button>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <h5 class="text-success">
+                                                存活账户
+                                                <span id="live_count" class="badge badge-pill badge-cyan" style="font-size: 14px">0</span>
+                                            </h5>
+                                            <textarea id="list_live" class="form-control" rows="7" style="background: rgba(0,201,167,0.1); border-color: #00c9a7;"></textarea>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
+                                            <h5 class="text-danger">
+                                                封禁账户
+                                                <span id="die_count" class="badge badge-pill badge-red" style="font-size: 14px">0</span>
+                                            </h5>
+                                            <textarea id="list_die" class="form-control" rows="7" style="background: rgba(222,68,54,0.05); border-color: tomato;"></textarea>
+                                        </div>
                                     </div>
-                                    <p>+ CEOACC.COM各类海外账号源头、一个号也是代理价、专业技术扶持、共同出海掘金=> <a href="https://ceoacc.com/" target="_blank">请看这里！</a></p>
-                                    <p>+ 以全球最低价格购买值得信赖的TikTok、Telegram、Apple ID账户，并提供保修=> <a href="https://fbpfw.com/" target="_blank">请看这里！</a></p>
                                 </div>
                             </div>
                         </div>
@@ -279,12 +269,8 @@
     <!-- User defined js code -->
     <script src="static/js/common.js"></script>
 
-    <!-- 2FA Core Libraries -->
-    <script src="static/js/buffer.min.js"></script>
-    <script src="static/js/otplib.min.js"></script>
-
-    <!-- 2FA Main Script -->
-    <script src="static/js/get-2fa-otp.js"></script>
+    <!-- Check Live FB Script -->
+    <script src="static/js/check-live-fb-id.js"></script>
 
     <!-- Platform & Auth -->
     <script src="static/js/platform.js" async="" defer=""></script>
