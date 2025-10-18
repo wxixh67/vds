@@ -28,12 +28,12 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="uWuXNcr6VvE401osW7KXYmw9xTUoLNuHt97zOKNy">
 
-    <!-- Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-8W6M18WFZ9');
+        gtag('config', 'G-2LHDVQE57M');
     </script>
 </head>
 
@@ -102,49 +102,40 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="textfree.html">
+                            <a href="email-reader.html">
                                 <span class="icon-holder">
                                     <img class="img menu" src="static/picture/pencil.svg" alt="">
                                 </span>
-                                <span class="title">文本处理工具</span>
+                                <span class="title">快速阅读邮件</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="privacy.html">
+                            <a href="text-processor.html">
                                 <span class="icon-holder">
-                                    <img class="img menu" src="static/picture/notify.svg" alt="">
+                                    <img class="img menu" src="static/picture/pencil.svg" alt="">
                                 </span>
-                                <span class="title">知识共享</span>
+                                <span class="title">在线文本处理</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="14位数字提取.html">
+                                <span class="icon-holder">
+                                    <img class="img menu" src="static/picture/pencil.svg" alt="">
+                                </span>
+                                <span class="title">14位数字提取工具</span>
                             </a>
                         </li>
 
                         <li class="header-nav">广告</li>
 
                         <li class="nav-item">
-                            <a href="https://ceoacc.com/" target="_blank">
+                            <a href="https://fh10.zmfaka.cn/shop/24XZCD9E" target="_blank">
                                 <span class="icon-holder">
-                                    <img class="img menu" src="static/picture/facebook-vip.svg" alt="CEOACC.COM各类海外账号源头">
+                                    <img class="img menu" src="static/picture/facebook-vip.svg" alt="Facebook海外账号源头">
                                 </span>
-                                <span class="title" style="font-size:14px;font-weight:400;">CEOACC.COM各类海外账号源头</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="https://fbpfw.com/" target="_blank">
-                                <span class="icon-holder">
-                                    <img class="img menu" src="static/picture/facebook-vip.svg" alt="Tiktok/Telegram/Apple ID账号购买">
-                                </span>
-                                <span class="title" style="font-size:14px;font-weight:400;">Tiktok/Telegram/Apple ID账号购买</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="https://fsceo.com/" target="_blank">
-                                <span class="icon-holder">
-                                    <img class="img menu" src="static/picture/fb-like.svg" alt="FB/INS/Twitter/Tiktok刷粉">
-                                </span>
-                                <span class="title" style="font-size:14px;font-weight: 400;">FB/INS/Twitter/Tiktok刷粉</span>
+                                <span class="title" style="font-size:14px;font-weight:400;">Facebook海外账号源头</span>
                             </a>
                         </li>
                     </ul>
@@ -210,9 +201,9 @@
                                     <form id="form_secret" class="mt-4" onsubmit="return false;">
                                         <div class="form-group">
                                             <label for="SECRET2FA">2FA双重验证码/二步验证码获取工具（谷歌身份验证器的网页版）</label>
-                                            <textarea id="SECRET2FA" name="SECRET2FA" rows="6" class="form-control" placeholder="在这里输入完整的2FA密钥"></textarea>
+                                            <textarea id="SECRET2FA" name="SECRET2FA" rows="6" class="form-control" placeholder="在这里输入完整的2FA密钥，可多个/每行一个"></textarea>
                                             <span class="form-text text-muted">
-                                                可以输入完整格式：UID|密码|2FA|邮箱|邮箱密码... 每行1个账户
+                                                也可以输入完整格式：UID|密码|2FA|邮箱|邮箱密码... 每行1个账户
                                             </span>
                                         </div>
 
@@ -236,11 +227,20 @@
                                 <div class="card-body">
                                     <div class="justify-content-between align-items-center">
                                         <h6 class="mb-2">
-                                            <img width="25" src="static/picture/notify.svg" alt="广告"> 广告
+                                            <img width="25" src="static/picture/notify.svg" alt="使用说明"> 使用说明
                                         </h6>
                                     </div>
-                                    <p>+ CEOACC.COM各类海外账号源头、一个号也是代理价、专业技术扶持、共同出海掘金=> <a href="https://ceoacc.com/" target="_blank">请看这里！</a></p>
-                                    <p>+ 以全球最低价格购买值得信赖的TikTok、Telegram、Apple ID账户，并提供保修=> <a href="https://fbpfw.com/" target="_blank">请看这里！</a></p>
+                                    <p><strong>谷歌身份验证器网页版使用指南</strong></p>
+                                    <p>2FA双重验证（Two-factor authentication）是保障账户安全的重要机制，在登录时除密码外还需输入动态验证码。</p>
+                                    <p>本工具作为谷歌身份验证器(Google Authenticator)的网页版本，支持通过2FA密钥生成6位动态验证码，适用于各种需要二次验证的平台。</p>
+                                    <p><strong>使用步骤：</strong></p>
+                                    <ol>
+                                        <li>输入您的2FA密钥</li>
+                                        <li>点击"获取验证码"按钮</li>
+                                        <li>系统将生成当前有效的验证码，您可以复制使用</li>
+                                        <li>验证码每30秒自动更新一次</li>
+                                    </ol>
+                                    <p><strong>提示：</strong>请妥善保管您的2FA密钥，不要泄露给他人，以确保您的账户安全。</p>
                                 </div>
                             </div>
                         </div>
