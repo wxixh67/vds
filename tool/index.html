@@ -86,6 +86,9 @@
         const navMenu = document.getElementById('navigation-menu');
         let itemNumber = 1;
         
+        // 获取当前页面的完整路径（不包括文件名）
+        const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        
         navItems.forEach(item => {
             // 跳过当前文件
             if (item.name === currentFileName) return;
@@ -93,8 +96,8 @@
             const listItem = document.createElement('li');
             const link = document.createElement('a');
             
-            // 关键修改：直接使用 href，让浏览器处理相对路径
-            link.href = item.name;
+            // 🔥 关键修改：使用当前完整路径 + 文件名
+            link.href = currentPath + item.name;
             
             // 创建序号圆圈和文本
             const numberSpan = document.createElement('span');
@@ -115,6 +118,10 @@
             emptyItem.textContent = '没有其他可用的页面。';
             navMenu.appendChild(emptyItem);
         }
+        
+        // 调试信息（可选，部署后可以删除）
+        console.log('当前路径:', currentPath);
+        console.log('当前文件名:', currentFileName);
     </script>
 </body>
 </html>
