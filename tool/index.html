@@ -3,125 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导航目录</title>
+    <title>工具导航</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-            background-color: #f9f9f9;
-        }
-        header {
-            text-align: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        h1 {
-            color: #1a1a1a;
-        }
-        #navigation-menu {
-            list-style: none;
+        * {
+            margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        #navigation-menu li {
-            background-color: #fff;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
             margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            font-size: 2.5em;
         }
-        #navigation-menu li:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        #navigation-menu a {
-            display: block;
-            padding: 15px 20px;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: 500;
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
             font-size: 1.1em;
         }
-        #navigation-menu a:hover {
-            text-decoration: underline;
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
-        .item-number {
-            display: inline-block;
-            background-color: #007bff;
+
+        .tool-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
             color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 28px;
-            margin-right: 10px;
-            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .tool-info {
+            flex: 1;
+        }
+
+        .tool-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tool-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .tool-icon {
+            font-size: 2em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>项目页面导航</h1>
-    </header>
-    <ul id="navigation-menu">
-        <!-- 导航链接将在这里显示 -->
-    </ul>
-    <script>
-        // --- 手动配置区域 ---
-        const navItems = [
-            { name: "邮件跳转工具.html" },
-            { name: "14位数字提取.html" },
-            { name: "文本去重工具.html" },
-            { name: "邮箱后缀提取工具.html" },
-            { name: "文本转换为Option工具.html" },
-            { name: "Facebook 个人主页跳转.html" }
-        ];
-        // -----------------
+    <div class="container">
+        <h1>🛠️ 工具导航</h1>
+        <p class="subtitle">选择您需要的工具</p>
         
-        const currentFileName = window.location.pathname.split('/').pop() || 'index.html';
-        const navMenu = document.getElementById('navigation-menu');
-        let itemNumber = 1;
-        
-        // 获取当前页面的完整路径（不包括文件名）
-        const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        
-        navItems.forEach(item => {
-            // 跳过当前文件
-            if (item.name === currentFileName) return;
-            
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            
-            // 🔥 关键修改：使用当前完整路径 + 文件名
-            link.href = currentPath + item.name;
-            
-            // 创建序号圆圈和文本
-            const numberSpan = document.createElement('span');
-            numberSpan.className = 'item-number';
-            numberSpan.textContent = itemNumber;
-            
-            link.appendChild(numberSpan);
-            link.appendChild(document.createTextNode(item.name));
-            
-            listItem.appendChild(link);
-            navMenu.appendChild(listItem);
-            
-            itemNumber++;
-        });
-        
-        if (navMenu.children.length === 0) {
-            const emptyItem = document.createElement('li');
-            emptyItem.textContent = '没有其他可用的页面。';
-            navMenu.appendChild(emptyItem);
-        }
-        
-        // 调试信息（可选，部署后可以删除）
-        console.log('当前路径:', currentPath);
-        console.log('当前文件名:', currentFileName);
-    </script>
+        <div class="tools-grid">
+            <a href="/tool/14位数字提取.html" class="tool-card">
+                <div class="tool-info">
+                    <div class="tool-title">14位数字提取</div>
+                    <div class="tool-desc">提取文本中的14位数字</div>
+                </div>
+                <div class="tool-icon">🔢</div>
+            </a>
+
+            <a href="/tool/Facebook%20个人主页跳转.html" class="tool-card">
+                <div class="tool-info">
+                    <div class="tool-title">Facebook 个人主页跳转</div>
+                    <div class="tool-desc">快速跳转到Facebook个人主页</div>
+                </div>
+                <div class="tool-icon">📘</div>
+            </a>
+
+            <a href="/tool/文本去重工具.html" class="tool-card">
+                <div class="tool-info">
+                    <div class="tool-title">文本去重工具</div>
+                    <div class="tool-desc">去除重复的文本内容</div>
+                </div>
+                <div class="tool-icon">🗑️</div>
+            </a>
+
+            <a href="/tool/文本转换为Option工具.html" class="tool-card">
+                <div class="tool-info">
+                    <div class="tool-title">文本转换为Option</div>
+                    <div class="tool-desc">将文本转换为Option格式</div>
+                </div>
+                <div class="tool-icon">🔄</div>
+            </a>
+
+            <a href="/tool/邮件跳转工具.html" class="tool-card">
+                <div class="tool-info">
+                    <div class="tool-title">邮件跳转工具</div>
+                    <div class="tool-desc">快速创建邮件链接</div>
+                </div>
+                <div class="tool-icon">✉️</div>
+            </a>
+
+            <a href="/tool/邮箱后缀提取工具.html" class="tool-card">
+                <div class="tool-info">
+                    <div class="tool-title">邮箱后缀提取</div>
+                    <div class="tool-desc">提取邮箱地址的后缀</div>
+                </div>
+                <div class="tool-icon">📧</div>
+            </a>
+        </div>
+    </div>
 </body>
 </html>
