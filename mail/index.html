@@ -500,7 +500,7 @@
         window.onload = function() {
             loadSettings();
             randomGenerate();
-            fetchDomains();
+            // 第一次加载不自动刷新域名
         };
 
         // 标签页切换
@@ -588,7 +588,7 @@
             const address = `${username}@${domain}`;
             showLoading(true);
             document.getElementById('result').style.display = 'none';
-            lastRequestTime = Date.now();
+            const requestStartTime = Date.now();
 
             try {
                 const response = await fetch('https://api.mail.tm/accounts', {
@@ -604,6 +604,9 @@
                 showLoading(false);
 
                 if (response.ok) {
+                    // 只有成功时才更新lastRequestTime
+                    lastRequestTime = requestStartTime;
+                    
                     let data;
                     try {
                         data = JSON.parse(responseText);
@@ -632,10 +635,12 @@
                     // 自动生成新的账户信息
                     randomGenerate();
                 } else {
+                    // 请求失败，不更新lastRequestTime
                     handleErrorResponse(response.status, responseText);
                 }
             } catch (error) {
                 showLoading(false);
+                // 网络错误，不更新lastRequestTime
                 showResult('error', '❌ 请求失败', `
                     <p>网络错误或CORS限制</p>
                     <p style="font-size: 12px; margin-top: 5px;">错误详情: ${error.message}</p>
@@ -682,7 +687,7 @@
 
             showLoading(true);
             document.getElementById('domains').style.display = 'none';
-            lastRequestTime = Date.now();
+            const requestStartTime = Date.now();
 
             try {
                 const response = await fetch('https://api.mail.tm/domains');
@@ -690,6 +695,9 @@
                 showLoading(false);
 
                 if (response.ok) {
+                    // 只有成功时才更新lastRequestTime
+                    lastRequestTime = requestStartTime;
+                    
                     const data = JSON.parse(responseText);
                     const domainSelect = document.getElementById('domain');
                     const domainList = document.getElementById('domainList');
@@ -713,10 +721,16 @@
                             domainList.appendChild(tag);
                         });
                         document.getElementById('domains').style.display = 'block';
+                        showResult('success', '✅ 刷新成功', `已加载 ${data['hydra:member'].length} 个可用域名`);
                     }
+                } else {
+                    // 请求失败，不更新lastRequestTime
+                    showResult('error', '❌ 获取域名失败', `状态码: ${response.status}<br>${responseText}`);
                 }
             } catch (error) {
                 showLoading(false);
+                // 网络错误，不更新lastRequestTime
+                showResult('error', '❌ 网络错误', `无法连接到服务器<br>错误: ${error.message}`);
             }
         }
 
