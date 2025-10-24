@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮件Magic Link提取器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .log-container {
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .log-info {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .log-success {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .log-error {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .magic-link {
+            background: #fff3e0;
+            color: #e65100;
+            word-break: break-all;
+            font-weight: bold;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .redirect-notice {
+            background: #e1f5fe;
+            color: #0277bd;
+            padding: 15px;
+            border-left: 4px solid #03a9f4;
+            font-weight: 600;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 邮件Magic Link提取器</h1>
+        
+        <div style="margin-bottom: 20px;">
+            <label for="emailInput" style="display: block; margin-bottom: 8px; color: #555; font-weight: 600;">请输入邮箱地址：</label>
+            <input 
+                type="email" 
+                id="emailInput" 
+                placeholder="例如: your-email@example.com" 
+                style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; transition: border-color 0.3s;"
+                onfocus="this.style.borderColor='#667eea'"
+                onblur="this.style.borderColor='#e0e0e0'"
+            >
+        </div>
+        
+        <button class="btn" id="fetchBtn" onclick="fetchEmails()">获取邮件并提取Magic Link</button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">正在获取邮件...</p>
+        </div>
+        
+        <div class="log-container" id="logContainer"></div>
+    </div>
+
+    <script>
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            logItem.textContent = message;
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        async function fetchEmails() {
+            const loading = document.getElementById('loading');
+            const logContainer = document.getElementById('logContainer');
+            const emailInput = document.getElementById('emailInput');
+            const fetchBtn = document.getElementById('fetchBtn');
+            
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                alert('请输入邮箱地址！');
+                emailInput.focus();
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('请输入有效的邮箱地址！');
+                emailInput.focus();
+                return;
+            }
+            
+            logContainer.innerHTML = '';
+            fetchBtn.disabled = true;
+            emailInput.disabled = true;
+            loading.classList.add('active');
+            
+            addLog('开始获取邮件...', 'info');
+            addLog(`邮箱地址: ${email}`, 'info');
+            
+            try {
+                const apiUrl = `https://mail.chatgpt.org.uk/api/get-emails?email=${encodeURIComponent(email)}`;
+                addLog(`请求API: ${apiUrl}`, 'info');
+                
+                const corsProxies = [
+                    `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
+                    `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`
+                ];
+                
+                let data = null;
+                let lastError = null;
+                
+                for (let i = 0; i < corsProxies.length; i++) {
+                    try {
+                        addLog(`正在获取数据...`, 'info');
+                        const response = await fetch(corsProxies[i], {
+                            method: 'GET',
+                            mode: 'cors'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP错误! 状态: ${response.status}`);
+                        }
+                        
+                        data = await response.json();
+                        addLog('✅ 成功获取邮件数据', 'success');
+                        break;
+                    } catch (error) {
+                        lastError = error;
+                        if (i < corsProxies.length - 1) {
+                            addLog('尝试备用方式...', 'info');
+                        } else {
+                            addLog(`获取失败: ${error.message}`, 'error');
+                        }
+                    }
+                }
+                
+                if (!data) {
+                    throw lastError || new Error('所有请求方式都失败了');
+                }
+                
+                addLog(`邮件数量: ${data.emails.length}`, 'info');
+                addLog('开始遍历所有邮件查找Magic Link...', 'info');
+                
+                if (data.emails && data.emails.length > 0) {
+                    let foundLink = false;
+                    
+                    for (let i = 0; i < data.emails.length; i++) {
+                        const email = data.emails[i];
+                        addLog(`\n检查邮件 ${i + 1}/${data.emails.length}`, 'info');
+                        addLog(`- ID: ${email.id}`, 'info');
+                        addLog(`- 发件人: ${email.from}`, 'info');
+                        addLog(`- 主题: ${email.subject}`, 'info');
+                        
+                        const htmlContent = email.htmlContent || '';
+                        const magicLinkRegex = /https:\/\/claude\.ai\/magic-link[^"'\s]*/g;
+                        const matches = htmlContent.match(magicLinkRegex);
+                        
+                        if (matches && matches.length > 0) {
+                            const magicLink = matches[0];
+                            addLog(`✅ 在邮件 ${i + 1} 中找到Magic Link!`, 'success');
+                            
+                            const linkDiv = document.createElement('div');
+                            linkDiv.className = 'log-item magic-link';
+                            linkDiv.textContent = magicLink;
+                            logContainer.appendChild(linkDiv);
+                            
+                            const redirectDiv = document.createElement('div');
+                            redirectDiv.className = 'log-item redirect-notice';
+                            redirectDiv.textContent = '🚀 正在跳转到 Magic Link...';
+                            logContainer.appendChild(redirectDiv);
+                            
+                            console.log('Magic Link:', magicLink);
+                            foundLink = true;
+                            
+                            // 立即跳转
+                            window.location.href = magicLink;
+                            break;
+                        } else {
+                            addLog(`- 此邮件不含Magic Link`, 'info');
+                        }
+                    }
+                    
+                    if (!foundLink) {
+                        addLog('❌ 在所有邮件中都未找到Magic Link', 'error');
+                    }
+                } else {
+                    addLog('没有邮件数据', 'error');
+                }
+                
+            } catch (error) {
+                addLog(`❌ 最终错误: ${error.message}`, 'error');
+                addLog('提示: 由于浏览器CORS限制，可能需要使用浏览器扩展或服务器端代理', 'info');
+                console.error('错误详情:', error);
+            } finally {
+                loading.classList.remove('active');
+                fetchBtn.disabled = false;
+                emailInput.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
