@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Edge浏览器 Facebook Cookie导出教程</title>
+    
+    <meta name="description" content="详细的Edge浏览器使用Cookie-Editor扩展导出Facebook Cookie的教程，附带完整步骤和截图说明。">
+    <meta name="keywords" content="Edge浏览器,Facebook,Cookie导出,Cookie-Editor,浏览器扩展">
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --color-canvas-default: #ffffff;
+            --color-canvas-subtle: #f6f8fa;
+            --color-border-default: #d0d7de;
+            --color-border-muted: #d8dee4;
+            --color-fg-default: #1f2328;
+            --color-fg-muted: #656d76;
+            --color-accent-fg: #0969da;
+            --color-accent-emphasis: #0969da;
+            --color-success-fg: #1a7f37;
+            --color-success-emphasis: #1f883d;
+            --color-success-subtle: #dafbe1;
+            --color-attention-fg: #9a6700;
+            --color-attention-subtle: #fff8c5;
+            --color-danger-fg: #d1242f;
+            --color-neutral-muted: rgba(175,184,193,0.2);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--color-fg-default);
+            background-color: var(--color-canvas-default);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .header {
+            background-color: #24292f;
+            padding: 16px;
+            box-shadow: inset 0 -1px 0 rgba(255,255,255,0.1);
+        }
+        
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .octicon {
+            fill: #ffffff;
+            width: 32px;
+            height: 32px;
+        }
+        
+        .header-title {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .markdown-body {
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        
+        .markdown-body h2 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+            padding-bottom: 0.3em;
+            font-size: 1.5em;
+            border-bottom: 1px solid var(--color-border-muted);
+        }
+        
+        .markdown-body h2:first-child {
+            margin-top: 0;
+        }
+        
+        .markdown-body p {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        
+        .flash {
+            position: relative;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+        
+        .flash-warn {
+            color: var(--color-attention-fg);
+            background-color: var(--color-attention-subtle);
+            border-color: #d4a72c;
+        }
+        
+        .flash-success {
+            color: var(--color-success-fg);
+            background-color: var(--color-success-subtle);
+            border-color: #2da44e;
+        }
+        
+        .flash-icon {
+            float: left;
+            margin-right: 12px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .timeline {
+            position: relative;
+            margin: 24px 0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 48px;
+            margin-bottom: 24px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 32px;
+            bottom: -24px;
+            width: 2px;
+            background-color: var(--color-border-muted);
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .timeline-badge {
+            position: absolute;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--color-success-emphasis);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 1;
+        }
+        
+        .timeline-body {
+            background-color: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            padding: 16px;
+        }
+        
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-fg-default);
+        }
+        
+        .timeline-content p {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .timeline-content p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .link-card {
+            background-color: #ddf4ff;
+            border: 1px solid #54aeff66;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        
+        .link-card a {
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            word-break: break-all;
+            font-size: 14px;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+        
+        .link-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .border {
+            border: 1px solid var(--color-border-default) !important;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .border img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        ul {
+            padding-left: 2em;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        
+        li {
+            margin: 0.25em 0;
+        }
+        
+        code {
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            white-space: break-spaces;
+            background-color: var(--color-neutral-muted);
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+        
+        strong {
+            font-weight: 600;
+        }
+        
+        .highlight-text {
+            background-color: var(--color-attention-subtle);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid var(--color-border-muted);
+            text-align: center;
+            color: var(--color-fg-muted);
+        }
+        
+        .footer p {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: var(--color-border-muted);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg class="octicon" viewBox="0 0 16 16" version="1.1">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                <h1 class="header-title">Edge浏览器 Facebook Cookie导出教程</h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="markdown-body">
+            <h2>📖 简介</h2>
+            <p>本教程将指导您如何使用Edge浏览器的Cookie-Editor扩展导出Facebook的Cookie信息。</p>
+            
+            <div class="flash flash-warn">
+                <svg class="flash-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+                </svg>
+                <div>
+                    <strong>安全提醒：</strong>Cookie包含您的登录凭证，请妥善保管，不要分享给他人，以保护您的账号安全。
+                </div>
+            </div>
+            
+            <h2>📋 使用步骤</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-badge">1</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">下载Edge浏览器</div>
+                        <div class="timeline-content">
+                            <p>如果您还没有安装Edge浏览器，请访问官网下载：</p>
+                            <div class="link-card">
+                                <a href="https://www.microsoft.com/edge" target="_blank">https://www.microsoft.com/edge</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">2</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">打开Facebook官网</div>
+                        <div class="timeline-content">
+                            <p>使用Edge浏览器打开Facebook移动版：</p>
+                            <div class="link-card">
+                                <a href="https://m.facebook.com/" target="_blank">https://m.facebook.com/</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">3</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">登录账号</div>
+                        <div class="timeline-content">
+                            <p>输入您的Facebook账号和密码，完成登录。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">4</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">打开菜单</div>
+                        <div class="timeline-content">
+                            <p>点击浏览器<span class="highlight-text">右下角</span>的菜单按钮（三条横线）。</p>
+                            <div class="border">
+                                <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/edge/IMG_20251025_210346.jpg" alt="点击右下角菜单">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">5</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">点击扩展按钮</div>
+                        <div class="timeline-content">
+                            <p>在菜单中找到并点击<span class="highlight-text">"扩展"</span>选项。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">6</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">添加Cookie-Editor扩展</div>
+                        <div class="timeline-content">
+                            <p>找到<span class="highlight-text">Cookie-Editor</span>扩展并点击添加。如果没有找到，请先从Edge扩展商店安装：</p>
+                            <div class="link-card">
+                                <a href="https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlfi" target="_blank">Cookie-Editor扩展商店页面</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">7</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">再次打开菜单</div>
+                        <div class="timeline-content">
+                            <p>点击浏览器<span class="highlight-text">右下角</span>的菜单按钮（三条横线）。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">8</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">再次点击扩展按钮</div>
+                        <div class="timeline-content">
+                            <p>在菜单中再次点击<span class="highlight-text">"扩展"</span>选项。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">9</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">打开Cookie-Editor</div>
+                        <div class="timeline-content">
+                            <p>在扩展列表中找到并点击已添加的<span class="highlight-text">Cookie-Editor</span>扩展。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">10</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">找到Export按钮</div>
+                        <div class="timeline-content">
+                            <p>在Cookie-Editor界面中，找到<span class="highlight-text">最右边的Export按钮</span>并点击。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-badge">11</div>
+                    <div class="timeline-body">
+                        <div class="timeline-title">导出Cookie</div>
+                        <div class="timeline-content">
+                            <p>点击<span class="highlight-text">Header String</span>选项，Cookie会自动复制到您的剪贴板。</p>
+                            <div class="flash flash-success">
+                                <svg class="flash-icon" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.042.751.751 0 0 0-1.042-.018L6.75 9.19 5.28 7.72a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042l2 2a.75.75 0 0 0 1.06 0Z"></path>
+                                </svg>
+                                <div>
+                                    <strong>导出完成！</strong> Cookie已复制到剪贴板，您可以将其保存到安全的地方。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <h2>💡 注意事项</h2>
+            <ul>
+                <li>请确保在<code>m.facebook.com</code>域名下进行操作</li>
+                <li>导出的Cookie格式为Header String格式，可直接用于API调用</li>
+                <li>请妥善保管您的Cookie信息，不要分享给他人</li>
+                <li>Cookie有时效性，过期后需要重新登录并导出</li>
+                <li>定期更换密码可提高账号安全性</li>
+            </ul>
+            
+            <h2>🔧 Cookie用途说明</h2>
+            <p>导出的Cookie可用于：</p>
+            <ul>
+                <li>API开发和测试</li>
+                <li>自动化脚本登录</li>
+                <li>跨设备快速登录</li>
+                <li>数据分析工具使用</li>
+            </ul>
+            <p><strong>重要提醒：</strong>请仅在合法和授权的场景下使用Cookie，遵守Facebook的使用条款和相关法律法规。</p>
+        </div>
+        
+        <div class="footer">
+            <p>📚 本教程仅供学习交流使用，请遵守相关法律法规和平台使用条款</p>
+            <p>Made with ❤️ | © 2025</p>
+        </div>
+    </div>
+</body>
+</html>
