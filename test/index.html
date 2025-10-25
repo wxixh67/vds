@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Cookie 注入器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning ul {
+            color: #856404;
+            margin-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #1877f2;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1877f2;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #166fe5;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .info {
+            background: #e7f3ff;
+            border-left: 4px solid #1877f2;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #004085;
+        }
+
+        .steps {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .steps h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .steps ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #666;
+        }
+
+        .steps ol li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning">
+            <h3>⚠️ 安全警告</h3>
+            <ul>
+                <li>仅在自己的设备上使用自己的Cookie</li>
+                <li>切勿使用他人的Cookie，这属于非法访问</li>
+                <li>Cookie包含敏感信息，注意保护隐私</li>
+                <li>此方法可能违反Facebook服务条款</li>
+            </ul>
+        </div>
+
+        <h1>🍪 Facebook Cookie 注入器</h1>
+
+        <div class="input-group">
+            <label for="cookieInput">粘贴 Cookie 字符串：</label>
+            <textarea 
+                id="cookieInput" 
+                placeholder="格式示例: name=value; name2=value2; name3=value3"
+            ></textarea>
+        </div>
+
+        <button class="btn" onclick="injectCookies()">注入 Cookie</button>
+
+        <div class="result" id="result"></div>
+
+        <div class="info">
+            <strong>📌 使用说明：</strong><br>
+            1. 确保当前正在访问 m.facebook.com<br>
+            2. 粘贴完整的Cookie字符串<br>
+            3. 点击"注入Cookie"按钮<br>
+            4. 页面将自动刷新并登录
+        </div>
+
+        <div class="steps">
+            <h3>如何获取Cookie？</h3>
+            <ol>
+                <li>在已登录的Facebook页面按F12打开开发者工具</li>
+                <li>切换到"Console"（控制台）标签</li>
+                <li>输入：<code>document.cookie</code> 并回车</li>
+                <li>复制显示的Cookie字符串</li>
+                <li>粘贴到上方文本框中</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function injectCookies() {
+            const resultDiv = document.getElementById('result');
+            const input = document.getElementById('cookieInput').value.trim();
+
+            // 检查域名
+            if (window.location.hostname !== 'm.facebook.com' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                showResult('error', '✗ 此工具仅适用于 https://m.facebook.com\n当前域名: ' + window.location.hostname);
+                return;
+            }
+
+            // 检查输入
+            if (!input) {
+                showResult('error', '✗ 请粘贴Cookie字符串');
+                return;
+            }
+
+            // 解析并注入Cookie
+            const cookies = input.split(';');
+            let count = 0;
+            const errors = [];
+
+            cookies.forEach(function(c) {
+                c = c.trim();
+                if (c && c.includes('=')) {
+                    const parts = c.split('=');
+                    const name = parts[0].trim();
+                    
+                    if (name) {
+                        try {
+                            // 设置Cookie
+                            document.cookie = c + '; domain=.facebook.com; path=/; max-age=31536000; SameSite=None; Secure';
+                            count++;
+                        } catch (e) {
+                            errors.push(name);
+                        }
+                    }
+                }
+            });
+
+            // 显示结果
+            if (count > 0) {
+                showResult('success', '✓ 成功注入 ' + count + ' 个Cookie\n页面将在3秒后刷新...');
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            } else {
+                showResult('error', '✗ 未检测到有效Cookie' + (errors.length > 0 ? '\n错误: ' + errors.join(', ') : ''));
+            }
+        }
+
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + type;
+            resultDiv.textContent = message;
+            resultDiv.style.display = 'block';
+        }
+
+        // 允许按Enter键提交
+        document.getElementById('cookieInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                injectCookies();
+            }
+        });
+    </script>
+</body>
+</html>
