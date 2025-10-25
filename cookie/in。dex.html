@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Via浏览器 FB Cookie注入器教程</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="详细的Via浏览器Facebook Cookie注入器使用教程，通过书签功能快速登录Facebook移动版，附带完整步骤和截图说明。">
+    <meta name="keywords" content="Via浏览器,Facebook,Cookie注入,快速登录,书签工具,移动浏览器">
+    <meta name="author" content="Via Browser Tutorial">
+    
+    <!-- Open Graph Meta Tags (Facebook, LinkedIn, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Via浏览器教程">
+    <meta property="og:title" content="Via浏览器 FB Cookie注入器教程">
+    <meta property="og:description" content="📱 使用Via浏览器通过Cookie注入快速登录Facebook | 完整图文教程 | 9个简单步骤">
+    <meta property="og:image" content="https://584136.xyz/%E5%A4%B4%E5%83%8F/Image_1761384208726.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://yourdomain.com">
+    <meta property="og:locale" content="zh_CN">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Via浏览器 FB Cookie注入器教程">
+    <meta name="twitter:description" content="📱 使用Via浏览器通过Cookie注入快速登录Facebook | 完整图文教程">
+    <meta name="twitter:image" content="https://584136.xyz/%E5%A4%B4%E5%83%8F/Image_1761384208726.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #24292f;
+            background-color: #ffffff;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        header {
+            background-color: #24292f;
+            color: white;
+            padding: 16px;
+            border-bottom: 1px solid #d1d9e0;
+        }
+        
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .github-icon {
+            width: 32px;
+            height: 32px;
+            fill: white;
+            flex-shrink: 0;
+        }
+        
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .markdown-body {
+            background-color: #ffffff;
+        }
+        
+        .markdown-body h2 {
+            font-size: 24px;
+            font-weight: 600;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #d8dee4;
+            line-height: 1.25;
+        }
+        
+        .markdown-body h2:first-child {
+            margin-top: 0;
+        }
+        
+        .markdown-body h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 16px;
+            line-height: 1.25;
+        }
+        
+        .markdown-body p {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #24292f;
+        }
+        
+        .markdown-body strong {
+            font-weight: 600;
+        }
+        
+        .alert {
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .alert-warning {
+            background-color: #fff8c5;
+            border-color: #d4a72c;
+            color: #3f2a00;
+        }
+        
+        .alert-success {
+            background-color: #dafbe1;
+            border-color: #2da44e;
+            color: #0d1117;
+        }
+        
+        .alert svg {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: text-bottom;
+            margin-right: 8px;
+        }
+        
+        .step-container {
+            margin: 24px 0;
+        }
+        
+        .step {
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #f6f8fa;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .step-number {
+            background-color: #1f883d;
+            color: white;
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #24292f;
+        }
+        
+        .step-content {
+            padding-left: 44px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #24292f;
+        }
+        
+        .step-content p {
+            margin-bottom: 12px;
+        }
+        
+        .highlight {
+            background-color: #fff8c5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background-color: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 12px 0;
+            position: relative;
+            overflow-x: auto;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+            line-height: 1.45;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            color: #24292f;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: #f6f8fa;
+            border: 1px solid rgba(31, 35, 40, 0.15);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #24292f;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-button:hover {
+            background-color: #f3f4f6;
+            border-color: rgba(31, 35, 40, 0.15);
+        }
+        
+        .copy-button:active {
+            background-color: #e1e4e8;
+        }
+        
+        .copy-button.copied {
+            border-color: #1a7f37;
+            color: #1a7f37;
+        }
+        
+        .link-card {
+            background-color: #ddf4ff;
+            border: 1px solid #54aeff66;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        
+        .link-card a {
+            color: #0969da;
+            text-decoration: none;
+            word-break: break-all;
+            font-size: 14px;
+        }
+        
+        .link-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .image-container {
+            margin: 16px 0;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        ul {
+            padding-left: 32px;
+            margin-bottom: 16px;
+        }
+        
+        li {
+            margin: 8px 0;
+            color: #24292f;
+        }
+        
+        code {
+            background-color: rgba(175, 184, 193, 0.2);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 85%;
+            font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        }
+        
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d8dee4;
+            border: 0;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding: 24px 0;
+            border-top: 1px solid #d8dee4;
+            text-align: center;
+            color: #656d76;
+            font-size: 12px;
+        }
+        
+        footer p {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <svg class="github-icon" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+            <h1>Via浏览器 FB Cookie注入器教程</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="markdown-body">
+            <h2>📖 简介</h2>
+            <p>本教程将指导您如何使用Via浏览器的书签功能，通过Cookie注入器快速登录Facebook移动版。</p>
+            
+            <div class="alert alert-warning">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>
+                <strong>安全提醒：</strong>请确保Cookie来源可靠，不要使用来历不明的Cookie，以保护您的账号安全。
+            </div>
+            
+            <h2>📋 使用步骤</h2>
+            
+            <div class="step-container">
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <div class="step-title">下载Via浏览器</div>
+                    </div>
+                    <div class="step-content">
+                        <p>点击下方链接下载并安装Via浏览器：</p>
+                        <div class="link-card">
+                            <a href="https://res.viayoo.com/v1/via-release-cn.apk" target="_blank">https://res.viayoo.com/v1/via-release-cn.apk</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <div class="step-title">访问Facebook</div>
+                    </div>
+                    <div class="step-content">
+                        <p>使用Via浏览器打开Facebook移动版：</p>
+                        <div class="link-card">
+                            <a href="https://m.facebook.com/" target="_blank">https://m.facebook.com/</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <div class="step-title">打开菜单</div>
+                    </div>
+                    <div class="step-content">
+                        <p>点击浏览器<span class="highlight">右下角</span>的菜单按钮（三条横线）。</p>
+                        <div class="image-container">
+                            <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/Image_1761384208726.jpg" alt="点击右下角菜单">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <div class="step-title">添加书签</div>
+                    </div>
+                    <div class="step-content">
+                        <p>在菜单中点击<span class="highlight">"添加书签"</span>选项。</p>
+                        <div class="image-container">
+                            <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/D161FB0C38240402C06DD3F54D1BA3AC.jpg" alt="点击添加书签">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <div class="step-title">填写书签信息</div>
+                    </div>
+                    <div class="step-content">
+                        <p><strong>标题填写：</strong></p>
+                        <div class="code-block">
+                            <pre id="titleText">FB cookie注入器</pre>
+                            <button class="copy-button" onclick="copyTitle()">Copy</button>
+                        </div>
+                        
+                        <p><strong>链接填写：</strong></p>
+                        <div class="code-block">
+                            <pre id="codeText">javascript:(function(){if(window.location.hostname!=='m.facebook.com'){alert('✗ 此工具仅适用于 https://m.facebook.com\n当前域名: '+window.location.hostname);return;}var input=prompt('粘贴Cookie字符串：\n格式: name=value; name2=value2');if(!input)return;var cookies=input.split(';');var count=0;cookies.forEach(function(c){c=c.trim();if(c&&c.includes('=')){var parts=c.split('=');if(parts[0].trim()){document.cookie=c+'; domain=m.facebook.com; path=/; max-age=31536000';count++;}}});if(count>0){alert('✓ 成功注入 '+count+' 个Cookie\n页面即将刷新');setTimeout(function(){location.reload()},500);}else{alert('✗ 未检测到有效Cookie');}})();</pre>
+                            <button class="copy-button" onclick="copyCode()">Copy</button>
+                        </div>
+                        
+                        <p>填写完成后点击<span class="highlight">确定</span>保存。</p>
+                        <div class="image-container">
+                            <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/Image_1761384212112.jpg" alt="填写书签信息">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        <div class="step-title">再次打开菜单</div>
+                    </div>
+                    <div class="step-content">
+                        <p>点击浏览器<span class="highlight">右下角</span>的菜单按钮。</p>
+                        <div class="image-container">
+                            <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/Image_1761384208726.jpg" alt="再次点击右下角菜单">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
+                        <div class="step-title">打开书签列表</div>
+                    </div>
+                    <div class="step-content">
+                        <p>在菜单中点击<span class="highlight">"书签"</span>。</p>
+                        <div class="image-container">
+                            <img src="https://www.584136.xyz/%E5%A4%B4%E5%83%8F/2A74C2C1A6DEA102850905434AD1D878.jpg" alt="点击书签">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">8</div>
+                        <div class="step-title">运行注入器</div>
+                    </div>
+                    <div class="step-content">
+                        <p>点击刚才添加的书签：<span class="highlight">"FB cookie注入器"</span>。</p>
+                        <div class="image-container">
+                            <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/E42AD6F64F6D4A67232A839374A9F661.jpg" alt="点击FB cookie注入器书签">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">9</div>
+                        <div class="step-title">注入Cookie</div>
+                    </div>
+                    <div class="step-content">
+                        <p>在弹出框中粘贴您的Cookie字符串，点击<span class="highlight">确定</span>。</p>
+                        <div class="image-container">
+                            <img src="https://584136.xyz/%E5%A4%B4%E5%83%8F/Image_1761384210775.jpg" alt="注入Cookie">
+                        </div>
+                        <div class="alert alert-success">
+                            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm3.78-9.72a.751.751 0 0 0-.018-1.042.751.751 0 0 0-1.042-.018L6.75 9.19 5.28 7.72a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042l2 2a.75.75 0 0 0 1.06 0Z"></path></svg>
+                            <strong>恭喜完成！</strong> 页面将自动刷新，您已成功登录Facebook！
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <h2>💡 注意事项</h2>
+            <ul>
+                <li>此工具仅适用于 <code>m.facebook.com</code> 域名</li>
+                <li>Cookie格式应为：<code>name=value; name2=value2</code></li>
+                <li>请妥善保管您的Cookie信息，不要分享给他人</li>
+                <li>如果注入失败，请检查Cookie格式是否正确</li>
+                <li>建议定期更新Cookie以保持登录状态</li>
+            </ul>
+            
+            <h2>🔧 技术原理</h2>
+            <p>该工具使用JavaScript书签（Bookmarklet）技术，通过执行JavaScript代码直接操作浏览器的Cookie存储，实现快速登录功能。代码会验证当前域名，解析Cookie字符串，并将其注入到Facebook移动版网站。</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>📚 本教程仅供学习交流使用，请遵守相关法律法规和平台使用条款</p>
+        <p>Made with ❤️ | © 2025</p>
+    </footer>
+    
+    <script>
+        function copyTitle() {
+            const text = document.getElementById('titleText').textContent.trim();
+            copyToClipboard(text, event.target);
+        }
+        
+        function copyCode() {
+            const text = document.getElementById('codeText').textContent.trim();
+            copyToClipboard(text, event.target);
+        }
+        
+        function copyToClipboard(text, button) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showSuccess(button);
+                }).catch(() => {
+                    fallbackCopy(text, button);
+                });
+            } else {
+                fallbackCopy(text, button);
+            }
+        }
+        
+        function fallbackCopy(text, button) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showSuccess(button);
+            } catch (err) {
+                alert('复制失败，请手动复制');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+        
+        function showSuccess(button) {
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
